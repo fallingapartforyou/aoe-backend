@@ -1,4 +1,5 @@
-async function register() {
+async function register()
+{
 
 const name =
 document.getElementById("name").value.trim();
@@ -20,7 +21,7 @@ if(!Validator.name(name))
 return alert("Invalid name");
 
 if(!Validator.email(email))
-return alert("Invalid gmail");
+return alert("Invalid email");
 
 if(!Validator.phone(phone))
 return alert("Invalid phone");
@@ -29,6 +30,9 @@ if(!Validator.password(password))
 return alert("Invalid password");
 
 
+try
+{
+
 await API.request(
 
 "/auth/register",
@@ -36,13 +40,11 @@ await API.request(
 "POST",
 
 {
-
 name,
 email,
 phone,
 password,
 role
-
 }
 
 );
@@ -50,5 +52,22 @@ role
 alert("Register success");
 
 Router.goLogin();
+
+}
+
+catch(err)
+{
+
+console.error(err);
+
+alert(
+
+err.message ||
+
+"Register failed"
+
+);
+
+}
 
 }

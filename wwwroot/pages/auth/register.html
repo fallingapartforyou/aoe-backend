@@ -12,53 +12,70 @@
 <script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
 <script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/modules/utils/validator.js"></script>
 
 <script defer
 src="../../assets/js/modules/auth/register.js">
 </script>
 
+<link rel="stylesheet"
+href="../../assets/css/auth.css">
+
 </head>
 
 <body>
 
-<h2>Register</h2>
+<div class="bg-circle circle1"></div>
+<div class="bg-circle circle2"></div>
 
-<input id="name" placeholder="Name" />
-<br><br>
+<div class="glass-card">
 
-<input id="email" placeholder="Email" />
-<br><br>
+<h2>Create Account</h2>
 
-<input id="phone" placeholder="Phone" />
-<br><br>
+<input
+id="name"
+placeholder="Full name">
 
-<input id="password" type="password"
-placeholder="Password" />
-<br><br>
+<input
+id="email"
+placeholder="Email">
+
+<input
+id="phone"
+placeholder="Phone">
+
+<input
+id="password"
+type="password"
+placeholder="Password">
 
 <select id="role">
 
 <option value="teacher">
-
 Teacher
-
 </option>
 
 <option value="student">
-
 Student
-
 </option>
 
 </select>
 
+<button onclick="register()">
+Register
+</button>
+
 <br><br>
 
-<button onclick="register()">
+<button
+onclick="Router.goLogin()"
+class="secondary-btn">
 
-Register
+Back to login
 
 </button>
+
+</div>
 
 </body>
 

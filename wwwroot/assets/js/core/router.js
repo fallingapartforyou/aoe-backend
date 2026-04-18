@@ -1,39 +1,35 @@
 const Router = {
 
-    redirectByRole() {
+redirectByRole() {
 
-        const role =
-            Storage.getRole();
+const role =
+Storage.getRole();
 
-        if (
-            role ===
-            CONFIG.ROLES.TEACHER
-        )
-
-            location.href =
-                "/pages/teacher/dashboard.html";
-
-        else if (
-            role ===
-            CONFIG.ROLES.STUDENT
-        )
-
-            location.href =
-                "/pages/student/dashboard.html";
-
-        else
-
-            location.href =
-                "/pages/auth/login.html";
-
-    },
-    
-    goTeacherClasses() {
+if(
+role ===
+CONFIG.ROLES.TEACHER
+)
 
 location.href =
-"/pages/teacher/classes.html";
+"/pages/teacher/dashboard.html";
+
+else if(
+role ===
+CONFIG.ROLES.STUDENT
+)
+
+location.href =
+"/pages/student/dashboard.html";
+
+else
+
+location.href =
+"/pages/auth/login.html";
 
 },
+
+
+/* ================= AUTH ================= */
 
 goLogin() {
 
@@ -42,6 +38,16 @@ location.href =
 
 },
 
+goRegister() {
+
+location.href =
+"/pages/auth/register.html";
+
+},
+
+
+/* ================= TEACHER ================= */
+
 goTeacherDashboard() {
 
 location.href =
@@ -49,10 +55,10 @@ location.href =
 
 },
 
-goStudentDashboard() {
+goTeacherClasses() {
 
 location.href =
-"/pages/student/dashboard.html";
+"/pages/teacher/classes.html";
 
 },
 
@@ -60,6 +66,26 @@ goAssignments() {
 
 location.href =
 "/pages/teacher/assignments.html";
+
+},
+
+goAssignmentResults(assignmentId) {
+
+location.href =
+
+"/pages/teacher/assignment-results.html?assignmentId="
+
++ assignmentId;
+
+},
+
+
+/* ================= STUDENT ================= */
+
+goStudentDashboard() {
+
+location.href =
+"/pages/student/dashboard.html";
 
 },
 
@@ -77,10 +103,57 @@ location.href =
 
 },
 
+goStudentAssignments(classId) {
+
+location.href =
+
+"/pages/student/assignments.html?classId="
+
++ classId;
+
+},
+
+goExam(assignmentId) {
+
+location.href =
+
+"/pages/student/exam.html?assignmentId="
+
++ assignmentId;
+
+},
+
+goHistory() {
+
+location.href =
+"/pages/student/history.html";
+
+},
+
+goResult(assignmentId) {
+
+location.href =
+
+"/pages/student/result.html?assignmentId="
+
++ assignmentId;
+
+},
+
+
+/* ================= SHARED ================= */
+
 goProfile() {
 
 location.href =
 "/pages/shared/profile.html";
+
+},
+
+goChangePassword() {
+
+location.href =
+"/pages/shared/change-password.html";
 
 }
 
