@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Questions</title>
+
+
+<link rel="stylesheet"
+href="../../assets/css/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/dashboard.css">
+
+<link rel="stylesheet"
+href="../../assets/css/skeleton.css">
+
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+
+<script defer
+src="../../assets/js/modules/teacher/questions.js">
+</script>
+
+
+<script>
+
+Guard.requireLogin();
+Guard.requireTeacher();
+
+</script>
+
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+
+<div class="page-container">
+
+
+<h2>Create Question</h2>
+
+<div id="assignmentTypeLabel"></div>
+
+<br>
+
+
+<input
+id="content"
+placeholder="Question content"
+/>
+
+
+<br><br>
+
+
+<div id="optionsBox">
+
+<input id="A" placeholder="Option A">
+
+<input id="B" placeholder="Option B">
+
+<input id="C" placeholder="Option C">
+
+<input id="D" placeholder="Option D">
+
+
+<br><br>
+
+
+<select id="correctAnswer">
+
+<option>A</option>
+
+<option>B</option>
+
+<option>C</option>
+
+<option>D</option>
+
+</select>
+
+</div>
+
+
+<div
+id="fillAnswerBox"
+style="display:none">
+
+<input
+id="fillCorrectAnswer"
+placeholder="Correct answer"
+/>
+
+</div>
+
+
+<br><br>
+
+
+<input
+id="explanation"
+placeholder="Explanation"
+/>
+
+
+<br><br>
+
+
+<button onclick="createQuestion()">
+
+Create Question
+
+</button>
+
+
+<hr>
+
+
+<h2>Question List</h2>
+
+<div id="questionList"></div>
+
+
+</div>
+
+</body>
+
+</html>

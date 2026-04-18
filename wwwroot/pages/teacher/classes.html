@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Classes</title>
+
+<link rel="stylesheet"
+href="../../assets/css/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/dashboard.css">
+
+<link rel="stylesheet"
+href="../../assets/css/skeleton.css">
+
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+
+<script defer
+src="../../assets/js/modules/teacher/classes.js">
+</script>
+
+
+<script>
+
+Guard.requireLogin();
+Guard.requireTeacher();
+
+</script>
+
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+<div class="page-container">
+
+<h2>My Classes</h2>
+
+
+<input
+id="keyword"
+placeholder="Search class"
+/>
+
+<button onclick="loadClasses()">
+
+Search
+
+</button>
+
+<br><br>
+
+
+<input
+id="className"
+placeholder="New class name"
+/>
+
+<button onclick="createClass()">
+
+Create class
+
+</button>
+
+<hr>
+
+
+<div id="classList"></div>
+
+</div>
+
+</body>
+
+</html>

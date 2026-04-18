@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Assignments</title>
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script defer
+src="../../assets/js/modules/student/assignments.js">
+</script>
+
+<script>
+
+Guard.requireLogin();
+Guard.requireStudent();
+
+</script>
+
+</head>
+
+<body>
+
+<h2>Assignments</h2>
+
+<div id="assignmentList"></div>
+
+</body>
+
+</html>

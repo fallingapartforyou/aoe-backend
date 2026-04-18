@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Assignment Results</title>
+
+
+<link rel="stylesheet"
+href="../../assets/css/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/dashboard.css">
+
+<link rel="stylesheet"
+href="../../assets/css/skeleton.css">
+
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+
+<script defer
+src="../../assets/js/modules/teacher/results.js">
+</script>
+
+
+<script>
+
+Guard.requireLogin();
+Guard.requireTeacher();
+
+</script>
+
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+
+<div class="page-container">
+
+<h2>Assignment Results</h2>
+
+
+<button onclick="exportCSV()">
+Export CSV
+</button>
+
+
+<button onclick="backExam()">
+Back
+</button>
+
+
+<hr>
+
+
+<div id="resultList"></div>
+
+
+</div>
+
+</body>
+
+</html>

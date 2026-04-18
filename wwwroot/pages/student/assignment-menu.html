@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Assignment Menu</title>
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script defer
+src="../../assets/js/modules/student/menu.js">
+</script>
+
+<script>
+
+Guard.requireLogin();
+Guard.requireStudent();
+
+</script>
+
+</head>
+
+<body>
+
+<h2>Assignment</h2>
+
+<button onclick="startAttempt()">
+
+Start
+
+</button>
+
+<br><br>
+
+<button onclick="viewHistory()">
+
+History
+
+</button>
+
+<br><br>
+
+<button onclick="exitMenu()">
+
+Exit
+
+</button>
+
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Assignments</title>
+
+
+<link rel="stylesheet"
+href="../../assets/css/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/dashboard.css">
+
+<link rel="stylesheet"
+href="../../assets/css/skeleton.css">
+
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script src="../../assets/js/modules/utils/validator.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+
+<script defer
+src="../../assets/js/modules/teacher/assignments.js">
+</script>
+
+
+<script>
+
+Guard.requireLogin();
+Guard.requireTeacher();
+
+</script>
+
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+
+<div class="page-container">
+
+<h2>Assignments</h2>
+
+
+<input
+id="keyword"
+placeholder="Search assignment"
+/>
+
+<button onclick="loadAssignments()">
+Search
+</button>
+
+
+<hr>
+
+
+<h3>Create Assignment</h3>
+
+
+<input
+id="assignmentName"
+placeholder="Assignment name"
+/>
+
+<br><br>
+
+
+<label>Question type</label>
+
+<select id="questionType">
+
+<option value="single_choice">
+Single choice
+</option>
+
+<option value="fill_blank">
+Fill blank
+</option>
+
+</select>
+
+
+<br><br>
+
+
+<label>Question count</label>
+
+<input
+id="questionCount"
+type="number"
+min="1"
+/>
+
+
+<br><br>
+
+
+<label>Open time</label>
+
+<input
+id="openTime"
+type="datetime-local"
+/>
+
+
+<br><br>
+
+
+<label>Close time</label>
+
+<input
+id="closeTime"
+type="datetime-local"
+/>
+
+
+<br><br>
+
+
+<label>Show result</label>
+
+<input
+id="showResult"
+type="checkbox"
+/>
+
+
+<br><br>
+
+
+<label>Show explanation</label>
+
+<input
+id="showExplanation"
+type="checkbox"
+/>
+
+
+<br><br>
+
+
+<button onclick="createAssignment()">
+Create
+</button>
+
+
+<hr>
+
+
+<div id="assignmentList"></div>
+
+
+</div>
+
+</body>
+
+</html>

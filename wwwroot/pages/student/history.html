@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>History</title>
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script defer
+src="../../assets/js/modules/student/history.js">
+</script>
+
+<script>
+
+Guard.requireLogin();
+Guard.requireStudent();
+
+</script>
+
+</head>
+
+<body>
+
+<h2>Submission History</h2>
+
+<div id="historyList"></div>
+
+</body>
+
+</html>

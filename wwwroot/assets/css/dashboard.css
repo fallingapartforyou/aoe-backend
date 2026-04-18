@@ -1,0 +1,61 @@
+.content {
+
+margin-left: 240px;
+
+padding: 30px;
+
+}
+
+.dashboard-grid {
+
+display: grid;
+
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+gap: 20px;
+
+margin-top: 20px;
+
+}
+
+.card {
+
+background: white;
+
+padding: 25px;
+
+border-radius: 14px;
+
+transition: 0.2s ease;
+
+font-weight: 500;
+
+box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+
+}
+
+.card h2 {
+
+margin-top: 10px;
+
+font-size: 30px;
+
+color: #2563eb;
+
+}
+
+.card:hover {
+
+transform: translateY(-6px);
+
+box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+}
+
+.page-container
+{
+margin-left:240px;
+padding:30px;
+background:#f8fafc;
+min-height:100vh;
+}

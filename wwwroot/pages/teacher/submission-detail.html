@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Submission Detail</title>
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script defer
+src="../../assets/js/modules/teacher/submission-detail.js">
+</script>
+
+<script>
+
+Guard.requireLogin();
+Guard.requireTeacher();
+
+</script>
+
+</head>
+
+<body>
+
+<h2>Submission Detail</h2>
+
+<div id="detailList"></div>
+
+</body>
+
+</html>

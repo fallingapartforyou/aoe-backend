@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Teacher Dashboard</title>
+
+<link rel="stylesheet"
+href="../../assets/css/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/dashboard.css">
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+<script src="../../assets/js/core/logout.js"></script>
+
+<script>
+
+Guard.requireLogin();
+Guard.requireTeacher();
+
+</script>
+<script src="../../assets/js/modules/teacher/dashboard.js"></script>
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+<div class="content">
+
+<h2>Teacher Dashboard</h2>
+
+<div class="dashboard-grid">
+
+<div class="card">
+Total Classes
+<h2 id="totalClasses">0</h2>
+</div>
+
+<div class="card">
+Assignments
+<h2 id="totalAssignments">0</h2>
+</div>
+
+<div class="card">
+Students
+<h2 id="totalStudents">0</h2>
+</div>
+
+<div class="card">
+Submissions
+<h2 id="totalSubmissions">0</h2>
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

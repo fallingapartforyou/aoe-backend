@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Exam</title>
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script defer
+src="../../assets/js/modules/student/exam.js">
+</script>
+
+<script>
+
+Guard.requireLogin();
+Guard.requireStudent();
+
+</script>
+
+</head>
+
+<body>
+
+<h2>Exam</h2>
+
+<div id="timer"></div>
+
+<hr>
+
+<div id="questionList"></div>
+
+<button onclick="submitExam()">
+
+Submit
+
+</button>
+
+</body>
+
+</html>
