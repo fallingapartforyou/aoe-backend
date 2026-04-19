@@ -7,21 +7,26 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================
-// DEBUG LOG (RẤT QUAN TRỌNG)
+// 🔥 FIX ENV CONNECTION STRING (QUAN TRỌNG NHẤT)
 // ======================
-var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
+var connStr =
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["ConnectionStrings__DefaultConnection"];
 
-Console.WriteLine("CONN: " + connStr);
-Console.WriteLine("JWT KEY: " + builder.Configuration["Jwt:Key"]);
+Console.WriteLine("🔥 CONN RAW: " + connStr);
+Console.WriteLine("🔥 JWT KEY: " + builder.Configuration["Jwt:Key"]);
 
+if (string.IsNullOrEmpty(connStr))
+{
+    throw new Exception("❌ CONNECTION STRING IS NULL");
+}
 
 // ======================
-// DATABASE (FIX TRANSIENT + SSL)
+// DATABASE (POSTGRESQL)
 // ======================
 builder.Services.AddDbContext<AoeDbContext>(options =>
     options.UseNpgsql(connStr, npgsqlOptions =>
     {
-        // 🔥 FIX lỗi transient failure
         npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(10),
@@ -29,7 +34,6 @@ builder.Services.AddDbContext<AoeDbContext>(options =>
         );
     })
 );
-
 
 // ======================
 // CONTROLLERS
@@ -40,20 +44,18 @@ builder.Services.AddControllers()
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
     );
 
-
 // ======================
-// JWT AUTH (CHUẨN)
+// JWT AUTH
 // ======================
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = jwt["Key"];
 
 if (string.IsNullOrEmpty(key))
 {
-    throw new Exception("JWT KEY IS NULL ❌");
+    throw new Exception("❌ JWT KEY IS NULL");
 }
 
-builder.Services.AddAuthentication(
-    JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters =
@@ -74,12 +76,8 @@ builder.Services.AddAuthentication(
         };
 });
 
-
-// ======================
-// AUTHORIZATION
 // ======================
 builder.Services.AddAuthorization();
-
 
 // ======================
 // CORS
@@ -101,22 +99,15 @@ builder.Services.AddCors(options =>
         });
 });
 
-
-// ======================
-// SWAGGER
 // ======================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-// ======================
-// BUILD APP
 // ======================
 var app = builder.Build();
 
-
 // ======================
-// GLOBAL ERROR LOG (RẤT NÊN CÓ)
+// GLOBAL ERROR
 // ======================
 app.UseExceptionHandler(errorApp =>
 {
@@ -125,7 +116,7 @@ app.UseExceptionHandler(errorApp =>
         var error = context.Features.Get<
             Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
 
-        Console.WriteLine("🔥 ERROR: " + error?.Error?.Message);
+        Console.WriteLine("🔥 ERROR: " + error?.Error?.ToString());
 
         context.Response.StatusCode = 500;
         await context.Response.WriteAsJsonAsync(new
@@ -135,9 +126,6 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-
-// ======================
-// MIDDLEWARE
 // ======================
 app.UseCors("AllowFrontend");
 
@@ -157,9 +145,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
 // ======================
-// AUTO MIGRATE DATABASE (SAFE)
+// 🔥 MIGRATION DEBUG (QUAN TRỌNG)
 // ======================
 using (var scope = app.Services.CreateScope())
 {
@@ -180,7 +167,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("❌ MIGRATION ERROR: " + ex.ToString());
     }
 }
-
 
 // ======================
 app.Run();
