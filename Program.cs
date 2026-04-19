@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 var connStr =
     builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? builder.Configuration["ConnectionStrings__DefaultConnection"];
+    ?? builder.Configuration["ConnectionStrings__DefaultConnection"]
     ?? builder.Configuration["CUSTOM_CONNECTION"];
 
 Console.WriteLine("🔥 CONN RAW: " + connStr);
