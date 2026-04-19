@@ -1,24 +1,28 @@
-using aoe.Models;
+﻿using aoe.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// DATABASE
 builder.Services.AddDbContext<AoeDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    )
+);
+
+// CONTROLLERS
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.ReferenceHandler =
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
     );
+
+// JWT AUTH
 builder.Services.AddAuthentication(
-JwtBearerDefaults.AuthenticationScheme)
+    JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
     var key = builder.Configuration["Jwt:Key"];
@@ -31,8 +35,11 @@ JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
 
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer =
+                builder.Configuration["Jwt:Issuer"],
+
+            ValidAudience =
+                builder.Configuration["Jwt:Audience"],
 
             IssuerSigningKey =
                 new SymmetricSecurityKey(
@@ -40,12 +47,11 @@ JwtBearerDefaults.AuthenticationScheme)
                 )
         };
 });
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// AUTHORIZATION
 builder.Services.AddAuthorization();
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -54,19 +60,23 @@ builder.Services.AddCors(options =>
             policy
             .WithOrigins(
                 "http://127.0.0.1:5500",
-                "http://127.0.0.1:51517",
                 "http://localhost:5500"
+            "https://aoe-frontend.onrender.com"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
         });
 });
+
+// SWAGGER
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -83,5 +93,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+// AUTO MIGRATE DATABASE (QUAN TRỌNG)
+using (var scope = app.Services.CreateScope())
+{
+    var db =
+        scope.ServiceProvider
+        .GetRequiredService<AoeDbContext>();
+
+    db.Database.Migrate();
+}
 
 app.Run();
