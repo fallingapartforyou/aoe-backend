@@ -167,13 +167,17 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        Console.WriteLine("Migrating database...");
+        Console.WriteLine("🔥 START MIGRATION");
+
+        db.Database.OpenConnection();
+        Console.WriteLine("✅ DB CONNECTED");
+
         db.Database.Migrate();
-        Console.WriteLine("Database migrated successfully");
+        Console.WriteLine("✅ MIGRATION DONE");
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Migration error: " + ex.Message);
+        Console.WriteLine("❌ MIGRATION ERROR: " + ex.ToString());
     }
 }
 
