@@ -9,20 +9,25 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 // DEBUG LOG (RẤT QUAN TRỌNG)
 // ======================
-Console.WriteLine("CONN: " +
-    builder.Configuration.GetConnectionString("DefaultConnection"));
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 
-Console.WriteLine("JWT KEY: " +
-    builder.Configuration["Jwt:Key"]);
+Console.WriteLine("CONN: " + connStr);
+Console.WriteLine("JWT KEY: " + builder.Configuration["Jwt:Key"]);
 
 
 // ======================
-// DATABASE (PostgreSQL)
+// DATABASE (FIX TRANSIENT + SSL)
 // ======================
 builder.Services.AddDbContext<AoeDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
+    options.UseNpgsql(connStr, npgsqlOptions =>
+    {
+        // 🔥 FIX lỗi transient failure
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorCodesToAdd: null
+        );
+    })
 );
 
 
@@ -37,10 +42,15 @@ builder.Services.AddControllers()
 
 
 // ======================
-// JWT AUTH (FIX CHUẨN)
+// JWT AUTH (CHUẨN)
 // ======================
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = jwt["Key"];
+
+if (string.IsNullOrEmpty(key))
+{
+    throw new Exception("JWT KEY IS NULL ❌");
+}
 
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme)
@@ -59,7 +69,7 @@ builder.Services.AddAuthentication(
 
             IssuerSigningKey =
                 new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(key!)
+                    Encoding.UTF8.GetBytes(key)
                 )
         };
 });
@@ -106,6 +116,27 @@ var app = builder.Build();
 
 
 // ======================
+// GLOBAL ERROR LOG (RẤT NÊN CÓ)
+// ======================
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var error = context.Features.Get<
+            Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+
+        Console.WriteLine("🔥 ERROR: " + error?.Error?.Message);
+
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsJsonAsync(new
+        {
+            error = error?.Error?.Message
+        });
+    });
+});
+
+
+// ======================
 // MIDDLEWARE
 // ======================
 app.UseCors("AllowFrontend");
@@ -136,6 +167,7 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
+        Console.WriteLine("Migrating database...");
         db.Database.Migrate();
         Console.WriteLine("Database migrated successfully");
     }
