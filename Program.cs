@@ -25,7 +25,7 @@ builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
-    var key = builder.Configuration["Jwt:Key"];
+    var key = builder.Configuration["Jwt_Key"];
 
     options.TokenValidationParameters =
         new TokenValidationParameters
@@ -102,7 +102,14 @@ using (var scope = app.Services.CreateScope())
         scope.ServiceProvider
         .GetRequiredService<AoeDbContext>();
 
-    db.Database.Migrate();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
 }
 
 app.Run();
