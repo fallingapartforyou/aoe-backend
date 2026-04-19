@@ -27,6 +27,15 @@ namespace aoe.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterDTO dto)
         {
+            if (dto == null)
+                return BadRequest("Invalid request");
+
+            dto.Name = dto.Name?.Trim();
+            dto.Email = dto.Email?.Trim().ToLower();
+            dto.Phone = dto.Phone?.Trim();
+            dto.Password = dto.Password?.Trim();
+            dto.Role = dto.Role?.Trim().ToLower();
+
             if (!ValidationHelper.ValidEmail(dto.Email))
                 return BadRequest("Invalid email");
 
@@ -59,26 +68,42 @@ namespace aoe.Controllers
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            return Ok("Registered");
+            return Ok(new
+            {
+                message = "Registered successfully"
+            });
         }
 
         [HttpPost("login")]
         public IActionResult Login(LoginDTO dto)
         {
-            var user = _context.Users.FirstOrDefault(
-                x => x.Email == dto.Email &&
-                     x.Password == dto.Password
-            );
+            if (dto == null)
+                return BadRequest("Invalid request");
+
+            dto.Email = dto.Email?.Trim().ToLower();
+            dto.Password = dto.Password?.Trim();
+
+            var user = _context.Users
+                .FirstOrDefault(x => x.Email == dto.Email);
 
             if (user == null)
-                return Unauthorized();
+                return Unauthorized(new
+                {
+                    message = "Email not found"
+                });
+
+            if (user.Password != dto.Password)
+                return Unauthorized(new
+                {
+                    message = "Wrong password"
+                });
 
             var token = GenerateToken(user);
 
             return Ok(new
             {
                 token,
-                user.Role
+                role = user.Role
             });
         }
 
@@ -86,12 +111,16 @@ namespace aoe.Controllers
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier,
-                user.Id.ToString()),
+                new Claim(
+                    ClaimTypes.NameIdentifier,
+                    user.Id.ToString()
+                ),
 
-            new Claim(ClaimTypes.Role,
-                user.Role)
-        };
+                new Claim(
+                    ClaimTypes.Role,
+                    user.Role
+                )
+            };
 
             var key =
                 new SymmetricSecurityKey(
