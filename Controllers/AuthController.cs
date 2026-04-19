@@ -27,51 +27,56 @@ namespace aoe.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterDTO dto)
         {
-            if (dto == null)
-                return BadRequest("Invalid request");
-
-            dto.Name = dto.Name?.Trim();
-            dto.Email = dto.Email?.Trim().ToLower();
-            dto.Phone = dto.Phone?.Trim();
-            dto.Password = dto.Password?.Trim();
-            dto.Role = dto.Role?.Trim().ToLower();
-
-            if (!ValidationHelper.ValidEmail(dto.Email))
-                return BadRequest("Invalid email");
-
-            if (!ValidationHelper.ValidPhone(dto.Phone))
-                return BadRequest("Invalid phone");
-
-            if (!ValidationHelper.ValidName(dto.Name))
-                return BadRequest("Invalid name");
-
-            if (!ValidationHelper.ValidPassword(dto.Password))
-                return BadRequest("Invalid password");
-
-            if (!ValidationHelper.ValidRole(dto.Role))
-                return BadRequest("Invalid role");
-
-            if (_context.Users.Any(x =>
-                x.Email == dto.Email ||
-                x.Phone == dto.Phone))
-                return BadRequest("User exists");
-
-            var user = new User
+            try
             {
-                Name = dto.Name,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                Password = dto.Password,
-                Role = dto.Role
-            };
+                if (dto == null)
+                    return BadRequest("Invalid request");
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+                dto.Name = dto.Name?.Trim();
+                dto.Email = dto.Email?.Trim().ToLower();
+                dto.Phone = dto.Phone?.Trim();
+                dto.Password = dto.Password?.Trim();
+                dto.Role = dto.Role?.Trim().ToLower();
 
-            return Ok(new
+                if (!ValidationHelper.ValidEmail(dto.Email))
+                    return BadRequest("Invalid email");
+
+                if (!ValidationHelper.ValidPhone(dto.Phone))
+                    return BadRequest("Invalid phone");
+
+                if (!ValidationHelper.ValidName(dto.Name))
+                    return BadRequest("Invalid name");
+
+                if (!ValidationHelper.ValidPassword(dto.Password))
+                    return BadRequest("Invalid password");
+
+                if (!ValidationHelper.ValidRole(dto.Role))
+                    return BadRequest("Invalid role");
+
+                if (_context.Users.Any(x =>
+                    x.Email == dto.Email ||
+                    x.Phone == dto.Phone))
+                    return BadRequest("User exists");
+
+                var user = new User
+                {
+                    Name = dto.Name,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    Password = dto.Password,
+                    Role = dto.Role
+                };
+
+                _context.Users.Add(user);
+                _context.SaveChanges();
+
+                return Ok(new { message = "Registered successfully" });
+            }
+            catch (Exception ex)
             {
-                message = "Registered successfully"
-            });
+                Console.WriteLine("REGISTER ERROR: " + ex.Message);
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
         [HttpPost("login")]
