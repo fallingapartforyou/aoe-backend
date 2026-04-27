@@ -1,9 +1,10 @@
-﻿namespace aoe.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace aoe.Models
 {
+    [Table("student_answers")] 
     public partial class StudentAnswer
     {
-        public int Id { get; set; }
-
         public int StudentId { get; set; }
 
         public int AssignmentId { get; set; }

@@ -48,11 +48,6 @@ My Classes
 </button>
 
 <button class="sidebar-item"
-onclick="Router.goJoinClass()">
-Join Class
-</button>
-
-<button class="sidebar-item"
 onclick="Router.goProfile()">
 Profile
 </button>

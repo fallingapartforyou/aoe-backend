@@ -1,96 +1,106 @@
-async function loadClasses()
-{
+// ===== LOAD CLASSES =====
+async function loadClasses() {
+    try {
+        showSkeleton();
 
-try
-{
+        const classes = await API.request("/student/my");
 
-const classes =
-await API.request(
-"/student/my"
-);
-
-render(classes);
-
+        render(classes);
+    }
+    catch (err) {
+        console.error(err);
+        alert(err.message || "Load classes failed");
+    }
 }
 
-catch(err)
-{
+// ===== SKELETON =====
+function showSkeleton() {
+    const container = document.getElementById("classList");
+    container.innerHTML = "";
 
-console.error(err);
+    for (let i = 0; i < 6; i++) {
+        const col = document.createElement("div");
+        col.className = "col-md-4";
 
-alert(
-err.message ||
-"Load classes failed"
-);
+        col.innerHTML = `<div class="skeleton-card"></div>`;
 
+        container.appendChild(col);
+    }
 }
 
+// ===== RENDER =====
+function render(classes) {
+    const container = document.getElementById("classList");
+    container.innerHTML = "";
+
+    if (!classes || classes.length === 0) {
+        container.innerHTML = `<p class="text-muted">No classes joined yet</p>`;
+        return;
+    }
+
+    classes.forEach(c => {
+        const col = document.createElement("div");
+        col.className = "col-md-4";
+
+        col.innerHTML = `
+            <div class="card p-3 shadow-sm h-100">
+                <h5>${c.name}</h5>
+
+                <button class="btn btn-primary btn-sm mt-2"
+                        onclick="openAssignments(${c.id})">
+                    Assignments
+                </button>
+            </div>
+        `;
+
+        container.appendChild(col);
+    });
 }
 
-
-
-function render(classes)
-{
-
-const container =
-document.getElementById(
-"classList"
-);
-
-container.innerHTML = "";
-
-
-if(!classes.length)
-{
-
-container.innerHTML =
-"No classes joined yet";
-
-return;
-
+// ===== OPEN ASSIGNMENTS =====
+function openAssignments(classId) {
+    location.href = "/pages/student/assignments.html?classId=" + classId;
 }
 
+// ===== GO BACK =====
+function goBack() {
+    history.back();
+}
 
-classes.forEach(c =>
-{
+// ===== JOIN CLASS (GỘP VÀO) =====
+async function joinClass() {
+    try {
+        const classCode = document
+            .getElementById("classCode")
+            .value
+            .trim();
 
-const div =
-document.createElement("div");
+        if (!classCode)
+            return alert("Enter class code");
 
-div.innerHTML =
+        if (!Validator.classCode(classCode))
+            return alert("Class code max 8 characters (letters + numbers only)");
 
-`
-${c.name}
+        await API.request(
+            "/student/join-class",
+            "POST",
+            { classCode }
+        );
 
-<button
-onclick="openAssignments(${c.id})">
+        alert("Joined successfully");
 
-Assignments
+        // 🔥 KHÔNG redirect nữa → reload list luôn
+        document.getElementById("classCode").value = "";
+        loadClasses();
 
-</button>
+    }
+    catch (err) {
+        console.error(err);
+        alert(err.message || "Join failed");
+    }
+}
 
-<hr>
-`;
-
-container.appendChild(div);
-
+// ===== INIT =====
+document.addEventListener("DOMContentLoaded", () => {
+    loadClasses();
 });
-
-}
-
-
-
-function openAssignments(classId)
-{
-
-location.href =
-
-"/pages/student/assignments.html?classId="
-
-+ classId;
-
-}
-
-
-
-loadClasses();

@@ -49,9 +49,8 @@ namespace aoe.Controllers
         public IActionResult StartExam(int assignmentId)
         {
             var assignment =
-                _context.Assignments.Find(
-                    assignmentId
-                );
+                _context.Assignments
+                .FirstOrDefault(a => a.Id == assignmentId);
 
             if (assignment == null)
                 return NotFound();
@@ -66,19 +65,20 @@ namespace aoe.Controllers
 
             var questions =
                 _context.Questions
-                .Where(x =>
-                    x.AssignmentId ==
-                    assignmentId)
+                .Where(q => q.AssignmentId == assignmentId)
                 .Select(q => new
                 {
-                    q.Id,
-                    q.Type,
-                    q.Content,
+                    id = q.Id,
+                    type = q.Type,
+                    content = q.Content,
+
                     options =
                         _context.QuestionOptions
-                        .Where(o =>
-                            o.QuestionId == q.Id)
-                });
+                        .Where(o => o.QuestionId == q.Id)
+                        .Select(o => o.Content)
+                        .ToList()
+                })
+                .ToList();
 
             return Ok(questions);
         }
@@ -86,45 +86,61 @@ namespace aoe.Controllers
 
         // SUBMIT EXAM
         [HttpPost("submit")]
-        public IActionResult SubmitExam(
-            SubmitExamDTO dto)
+        public IActionResult SubmitExam(SubmitExamDTO dto)
         {
-            var studentId =
-                GetStudentId();
+            var studentId = GetStudentId();
 
             int score = 0;
 
             foreach (var ans in dto.Answers)
             {
                 var question =
-                    _context.Questions.Find(
-                        ans.QuestionId
-                    );
+                    _context.Questions.Find(ans.QuestionId);
+
+                if (question == null)
+                    continue;
 
                 bool correct =
-                    question.CorrectAnswer ==
-                    ans.Answer;
+                    question.CorrectAnswer == ans.Answer;
 
                 if (correct)
                     score++;
 
-                _context.StudentAnswers.Add(
-                    new StudentAnswer
-                    {
-                        StudentId = studentId,
-                        QuestionId = ans.QuestionId,
-                        Answer = ans.Answer,
-                        IsCorrect = correct
-                    }
-                );
+                // ✅ CHECK EXIST
+                var existing =
+                    _context.StudentAnswers.FirstOrDefault(x =>
+                        x.StudentId == studentId &&
+                        x.AssignmentId == dto.AssignmentId &&
+                        x.QuestionId == ans.QuestionId
+                    );
+
+                if (existing != null)
+                {
+                    // ✅ UPDATE
+                    existing.Answer = ans.Answer;
+                    existing.IsCorrect = correct;
+                }
+                else
+                {
+                    // ✅ INSERT
+                    _context.StudentAnswers.Add(
+                        new StudentAnswer
+                        {
+                            StudentId = studentId,
+                            AssignmentId = dto.AssignmentId,
+                            QuestionId = ans.QuestionId,
+                            Answer = ans.Answer,
+                            IsCorrect = correct
+                        }
+                    );
+                }
             }
 
             _context.Results.Add(
                 new Result
                 {
                     StudentId = studentId,
-                    AssignmentId =
-                        dto.AssignmentId,
+                    AssignmentId = dto.AssignmentId,
                     Score = score
                 }
             );
@@ -163,38 +179,26 @@ namespace aoe.Controllers
 
 
         // HISTORY
-        [HttpGet("history")]
-        public IActionResult History()
+        [HttpGet("history/{assignmentId}")]
+        public IActionResult History(int assignmentId)
         {
-            var studentId =
-                GetStudentId();
+            var studentId = GetStudentId();
 
             var history =
                 _context.Results
                 .Where(x =>
-                    x.StudentId ==
-                    studentId);
+                    x.StudentId == studentId &&
+                    x.AssignmentId == assignmentId
+                )
+                .OrderByDescending(x => x.SubmittedAt ?? DateTime.MinValue) // mới nhất lên đầu
+                .Select(x => new
+                {
+                    score = x.Score,
+                    time = x.SubmittedAt
+                })
+                .ToList();
 
             return Ok(history);
-        }
-
-        [HttpGet("review/{assignmentId}")]
-        public IActionResult Review(int assignmentId)
-        {
-            var studentId = GetStudentId();
-
-            var data =
-                from q in _context.Questions
-                where q.AssignmentId == assignmentId
-                select new
-                {
-                    q.Id,
-                    q.Content,
-                    q.CorrectAnswer,
-                    q.Explanation
-                };
-
-            return Ok(data.ToList());
         }
     }
 }

@@ -1,57 +1,87 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <meta charset="UTF-8">
-
 <title>Assignment Menu</title>
+
+<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
 <script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
 
-<script defer
-src="../../assets/js/modules/student/menu.js">
-</script>
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+<script defer src="../../assets/js/modules/student/menu.js"></script>
 
 <script>
-
 Guard.requireLogin();
 Guard.requireStudent();
-
 </script>
 
 </head>
 
 <body>
 
-<h2>Assignment</h2>
+<div id="layout"></div>
 
-<button onclick="startAttempt()">
+<div class="main-content">
 
-Start
+<!-- HEADER -->
+<div class="page-header">
+    <div>
+        <h2>Assignment</h2>
+        <p class="text-muted">Choose what you want to do</p>
+    </div>
 
-</button>
+    <button class="btn-back" onclick="history.back()">
+        ← Back
+    </button>
+</div>
 
-<br><br>
+<!-- ACTIONS -->
+<div class="menu-grid">
 
-<button onclick="viewHistory()">
+    <div class="menu-card" onclick="startExam()">
+        <h3>Start Exam</h3>
+        <p>Begin your assignment attempt</p>
+    </div>
 
-History
+    <div class="menu-card" onclick="viewResult()">
+        <h3>View Result</h3>
+        <p>Check your score and performance</p>
+    </div>
 
-</button>
+    <div class="menu-card" onclick="reviewExam()">
+        <h3>Review</h3>
+        <p>See correct answers and explanation</p>
+    </div>
 
-<br><br>
+    <div class="menu-card exit" onclick="history.back()">
+        <h3>Exit</h3>
+        <p>Go back to assignments</p>
+    </div>
 
-<button onclick="exitMenu()">
+</div>
 
-Exit
+</div>
+<!-- START EXAM MODAL -->
+<div id="startModal" class="modal">
+  <div class="modal-box">
+    <h3>Start Exam?</h3>
+    <p>Once you start, the timer will begin immediately.</p>
 
-</button>
-
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmStart()">Start</button>
+    </div>
+  </div>
+</div>
 </body>
-
 </html>

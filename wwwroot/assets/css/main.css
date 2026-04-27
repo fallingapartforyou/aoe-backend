@@ -1,59 +1,37 @@
 body {
-
-font-family: system-ui;
-
-background: #ffffff;
-
-color: #111;
-
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
+/* Scroll đẹp hơn */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5f5;
+  border-radius: 10px;
+}
 
-
+/* Button đẹp hơn */
 button {
-
-background: #000;
-
-color: white;
-
-border: none;
-
-padding: 8px 14px;
-
-margin: 4px;
-
-border-radius: 6px;
-
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin: 4px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+button:hover {
+  background: #1d4ed8;
 }
 
-
-
+/* Input */
 input {
-
-padding: 6px;
-
-border-radius: 6px;
-
-border: 1px solid #ccc;
-
-}
-
-
-
-.sidebar {
-
-width: 180px;
-
-position: fixed;
-
-left: 0;
-
-top: 0;
-
-bottom: 0;
-
-background: #f5f5f5;
-
-padding: 12px;
-
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
 }

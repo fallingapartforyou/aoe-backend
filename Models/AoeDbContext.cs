@@ -148,6 +148,34 @@ public partial class AoeDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
+        modelBuilder.Entity<StudentAnswer>(entity =>
+        {
+            entity.ToTable("student_answers");
+
+            // ✅ KEY THẬT TRONG DB (composite key)
+            entity.HasKey(e => new
+            {
+                e.StudentId,
+                e.AssignmentId,
+                e.QuestionId
+            });
+
+            entity.Property(e => e.StudentId)
+                .HasColumnName("student_id");
+
+            entity.Property(e => e.AssignmentId)
+                .HasColumnName("assignment_id");
+
+            entity.Property(e => e.QuestionId)
+                .HasColumnName("question_id");
+
+            entity.Property(e => e.Answer)
+                .HasColumnName("answer");
+
+            entity.Property(e => e.IsCorrect)
+                .HasColumnName("is_correct");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -1,38 +1,39 @@
-const params =
-new URLSearchParams(location.search);
+// ===== GET PARAM =====
+const params = new URLSearchParams(location.search);
+const assignmentId = params.get("assignmentId");
 
-const assignmentId =
-params.get("assignmentId");
-
-
-function startAttempt() {
-
-if(confirm("Start assignment?"))
-
-location.href =
-
-"/pages/student/exam.html?assignmentId="
-
-+ assignmentId;
-
+if (!assignmentId) {
+    alert("Missing assignmentId");
 }
 
-
-
-function viewHistory() {
-
-location.href =
-
-"/pages/student/history.html?assignmentId="
-
-+ assignmentId;
-
+// ===== START EXAM (MỞ MODAL) =====
+function startExam() {
+    openModal();
 }
 
+// ===== MODAL =====
+function openModal() {
+    document.getElementById("startModal").style.display = "flex";
+}
 
+function closeModal() {
+    document.getElementById("startModal").style.display = "none";
+}
 
-function exitMenu() {
+// ===== CONFIRM START =====
+function confirmStart() {
+    location.href =
+        "/pages/student/exam.html?assignmentId=" + assignmentId;
+}
 
-history.back();
+// ===== VIEW RESULT =====
+function viewResult() {
+    location.href =
+        "/pages/student/result.html?assignmentId=" + assignmentId;
+}
 
+// ===== REVIEW =====
+function reviewExam() {
+    location.href =
+        "/pages/student/review.html?assignmentId=" + assignmentId;
 }

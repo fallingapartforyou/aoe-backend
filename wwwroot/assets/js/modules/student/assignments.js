@@ -1,82 +1,89 @@
-const params =
-new URLSearchParams(location.search);
+console.log("ASSIGNMENTS READY");
 
-const classId =
-params.get("classId");
+const params = new URLSearchParams(location.search);
+const classId = params.get("classId");
 
-
+// ===== LOAD =====
 async function loadAssignments() {
+    const container = document.getElementById("assignmentList");
 
-try {
+    try {
+        if (!classId) {
+            container.innerHTML = `<p class="text-danger">Missing classId</p>`;
+            return;
+        }
 
-const assignments =
-await API.request(
+        showSkeleton();
 
-"/assignment/by-class/"
+        const assignments = await API.request(
+            "/exam/assignments/" + classId
+        );
 
-+ classId
+        render(assignments);
 
-);
-
-render(assignments);
-
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = `<p class="text-danger">Cannot load assignments</p>`;
+    }
 }
 
-catch(err) {
+// ===== SKELETON =====
+function showSkeleton() {
+    const container = document.getElementById("assignmentList");
+    container.innerHTML = "";
 
-console.error(err);
+    for (let i = 0; i < 6; i++) {
+        const div = document.createElement("div");
 
+        div.innerHTML = `
+            <div class="skeleton-card"></div>
+        `;
+
+        container.appendChild(div);
+    }
 }
 
-}
-
-
-
+// ===== RENDER =====
 function render(assignments) {
+    const container = document.getElementById("assignmentList");
+    container.innerHTML = "";
 
-const container =
-document.getElementById("assignmentList");
+    if (!assignments || assignments.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h4>No assignments yet</h4>
+                <p class="text-muted">You're all caught up 🎉</p>
+            </div>
+        `;
+        return;
+    }
 
-container.innerHTML = "";
+    assignments.forEach(a => {
+        const div = document.createElement("div");
 
-assignments.forEach(a => {
+        div.className = "assignment-card";
 
-const div =
-document.createElement("div");
+        div.innerHTML = `
+            <div>
+                <div class="assignment-title">${a.name}</div>
+                <p class="text-muted">Click to view details</p>
+            </div>
 
-div.innerHTML =
+            <button onclick="openMenu(${a.id})">
+                Open
+            </button>
+        `;
 
-`
-${a.name}
-
-<button
-onclick="openMenu(${a.assignmentId})">
-
-Open
-
-</button>
-
-<hr>
-`;
-
-container.appendChild(div);
-
-});
-
+        container.appendChild(div);
+    });
 }
 
-
-
+// ===== NAV =====
 function openMenu(assignmentId) {
-
-location.href =
-
-"/pages/student/assignment-menu.html?assignmentId="
-
-+ assignmentId;
-
+    location.href =
+        "/pages/student/assignment-menu.html?assignmentId=" +
+        assignmentId;
 }
 
-
-
-loadAssignments();
+// ===== INIT =====
+document.addEventListener("DOMContentLoaded", loadAssignments);

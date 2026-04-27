@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <meta charset="UTF-8">
-
 <title>Student Dashboard</title>
 
-<link rel="stylesheet"
-href="../../assets/css/sidebar.css">
-
-<link rel="stylesheet"
-href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/skeleton.css">
+<link rel="stylesheet" href="../../assets/css/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
 <script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
 
@@ -25,43 +22,48 @@ href="../../assets/css/dashboard.css">
 <script src="../../assets/js/core/logout.js"></script>
 
 <script>
-
 Guard.requireLogin();
 Guard.requireStudent();
-
 </script>
-<script src="../../assets/js/modules/student/dashboard.js"></script>
+
+<script defer src="../../assets/js/modules/student/dashboard.js"></script>
 </head>
 
 <body>
 
 <div id="layout"></div>
 
-<div class="content">
+<div class="main-content">
 
-<h2>Student Dashboard</h2>
+<h2 class="mb-4">Student Dashboard</h2>
 
+<!-- STATS -->
 <div class="dashboard-grid">
 
-<div class="card">
-My Classes
-<h2 id="myClasses">0</h2>
+    <div class="card">
+        <p>My Classes</p>
+        <h2 id="myClasses">0</h2>
+    </div>
+
+    <div class="card">
+        <p>Assignments</p>
+        <h2 id="myAssignments">0</h2>
+    </div>
+
+    <div class="card">
+        <p>Attempts</p>
+        <h2 id="myAttempts">0</h2>
+    </div>
+
 </div>
 
-<div class="card">
-Assignments
-<h2 id="myAssignments">0</h2>
-</div>
-
-<div class="card">
-Attempts
-<h2 id="myAttempts">0</h2>
-</div>
-
+<!-- 🔥 NOTIFICATIONS -->
+<div class="card mt-4">
+    <h5>Notifications</h5>
+    <div id="notifications" class="mt-2"></div>
 </div>
 
 </div>
 
 </body>
-
 </html>
