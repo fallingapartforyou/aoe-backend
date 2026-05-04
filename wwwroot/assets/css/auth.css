@@ -10,8 +10,8 @@ body {
 
   background: linear-gradient(
     135deg,
-    #0f172a,  
-    #1e3a8a,   
+    #0f172a,
+    #1e3a8a,
     #3b82f6
   );
 
@@ -19,7 +19,6 @@ body {
 }
 
 /* floating circles */
-
 .bg-circle {
   position: absolute;
   border-radius: 50%;
@@ -45,60 +44,42 @@ body {
 }
 
 /* animation */
-
 @keyframes float {
   0% { transform: translateY(0); }
   50% { transform: translateY(-30px); }
   100% { transform: translateY(0); }
 }
 
-/* glass card */
-
+/* form card */
 .glass-card {
-
   backdrop-filter: blur(18px);
-
   background: rgba(255,255,255,0.1);
 
   padding: 40px;
-
   border-radius: 16px;
 
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 
   display: flex;
   flex-direction: column;
-
   gap: 15px;
 
+  width: 320px;
 }
 
-/* input style */
-
+/* input */
 .glass-card input {
-
   padding: 12px;
-
   border-radius: 8px;
-
   border: none;
-
 }
 
 /* button */
-
 .glass-card button {
-
   padding: 12px;
-
   background: white;
-
   border: none;
-
   border-radius: 8px;
-
   cursor: pointer;
-
   font-weight: bold;
-
 }

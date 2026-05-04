@@ -1,200 +1,117 @@
-const params =
-new URLSearchParams(location.search);
+const params = new URLSearchParams(location.search);
 
+const assignmentId = params.get("assignmentId");
 
-const assignmentId =
-params.get("assignmentId");
-
+let rawResults = [];
 
 if(!assignmentId)
 {
-
-alert("Missing assignmentId");
-
-location.href =
-"/pages/teacher/assignments.html";
-
+    alert("Missing assignmentId");
+    location.href = "/pages/teacher/assignments.html";
 }
-
-
 
 window.onload = async () =>
 {
-
-renderLayout("teacher");
-
-showSkeleton();
-
-await loadResults();
-
+    renderLayout("teacher");
+    await loadResults();
 };
 
-
-
-function showSkeleton()
-{
-
-document.getElementById("resultList").innerHTML =
-
-`
-
-<div class="skeleton-card">
-
-<div class="skeleton-line skeleton-title"></div>
-
-<div class="skeleton-line skeleton-small"></div>
-
-</div>
-
-
-<div class="skeleton-card">
-
-<div class="skeleton-line skeleton-title"></div>
-
-<div class="skeleton-line skeleton-small"></div>
-
-</div>
-
-
-<div class="skeleton-card">
-
-<div class="skeleton-line skeleton-title"></div>
-
-<div class="skeleton-line skeleton-small"></div>
-
-</div>
-
-`;
-
-}
-
-
-
+// ================= LOAD =================
 async function loadResults()
 {
+    try
+    {
+        const results =
+            await API.request(
+                "/result/assignment/" + assignmentId
+            );
 
-try
-{
-
-showSkeleton();
-
-
-const results =
-await API.request(
-
-"/result/assignment/" +
-assignmentId
-
-);
-
-
-render(results);
-
-}
-catch(err)
-{
-
-console.error(err);
-
-alert("Load results failed");
-
+        render(results);
+    }
+    catch(err)
+    {
+        console.error(err);
+        alert("Load results failed");
+    }
 }
 
-}
-
-
-
+// ================= RENDER =================
 function render(results)
 {
+    rawResults = results;
 
-const container =
-document.getElementById("resultList");
+    const container =
+        document.getElementById("resultList");
 
+    container.innerHTML = "";
 
-container.innerHTML = "";
+    if(!results.length)
+    {
+        container.innerHTML =
+            `<tr><td colspan="4">No submissions</td></tr>`;
+        return;
+    }
 
+    results.forEach(r =>
+    {
+        const tr = document.createElement("tr");
 
-if(results.length === 0)
-{
+        tr.innerHTML = `
+            <td>${r.name}</td>
+            <td>${r.email}</td>
+            <td><b>${r.score}</b></td>
+            <td>${formatDate(r.submittedAt)}</td>
+        `;
 
-container.innerHTML =
+        // 🔥 CLICK → REVIEW
+        tr.style.cursor = "pointer";
 
-`
-<div class="card">
+        tr.onclick = () =>
+        {
+            location.href =
+            `/pages/teacher/review.html?assignmentId=${assignmentId}&studentId=${r.studentId}`;
+        };
 
-No students submitted yet
-
-</div>
-`;
-
-return;
-
+        container.appendChild(tr);
+    });
 }
 
-
-
-results.forEach(r =>
+// ================= FILTER =================
+function filterResults()
 {
+    const keyword =
+        document.getElementById("search")
+        .value
+        .toLowerCase();
 
-const card =
-document.createElement("div");
+    const filtered =
+        rawResults.filter(r =>
+            r.name.toLowerCase().includes(keyword) ||
+            r.email.toLowerCase().includes(keyword)
+        );
 
-
-card.className = "card";
-
-
-card.innerHTML =
-
-`
-
-<h3>${r.name}</h3>
-
-<p>Email: ${r.email}</p>
-
-<p>Phone: ${r.phone ?? ""}</p>
-
-<p>Score: ${r.score}</p>
-
-<p>Submitted at:
-
-${new Date(
-r.submittedAt
-).toLocaleString()}
-
-</p>
-
-`;
-
-
-container.appendChild(card);
-
-});
-
+    render(filtered);
 }
 
-
-
+// ================= EXPORT =================
 function exportCSV()
 {
-
-window.open(
-
-CONFIG.API_BASE
-+
-"/result/export/"
-+
-assignmentId
-
-);
-
+    window.open(
+        CONFIG.API_BASE +
+        "/result/export/" +
+        assignmentId
+    );
 }
 
-
+// ================= UTIL =================
+function formatDate(date)
+{
+    return new Date(date)
+        .toLocaleString();
+}
 
 function backExam()
 {
-
-location.href =
-"/pages/teacher/assignments.html";
-
+    location.href =
+        "/pages/teacher/assignments.html";
 }

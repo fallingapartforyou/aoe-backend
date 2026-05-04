@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Result</title>
+<title>Review</title>
 
 <link rel="stylesheet" href="../../assets/css/base.css">
 <link rel="stylesheet" href="../../assets/css/layout.css">
@@ -12,37 +12,42 @@
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
-<script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
 
-<script defer src="../../assets/js/modules/student/result.js"></script>
+<script defer src="../../assets/js/modules/student/review.js"></script>
 
 </head>
 
 <body>
 
-<div class="result-container">
+<div class="exam-container">
 
     <!-- HEADER -->
-    <div class="result-header">
-        <h2>Result</h2>
+    <div class="exam-header">
+        <h2>Review</h2>
 
-        <button class="btn-back" onclick="backExam()">
+        <button class="btn-back" onclick="history.back()">
             ← Back
         </button>
     </div>
 
-    <!-- SCORE -->
-    <div id="scoreBox" class="result-score"></div>
+    <!-- BODY -->
+    <div class="exam-body">
 
-    <!-- HISTORY -->
-    <div class="result-history">
-        <h3>Attempts</h3>
-        <div id="history"></div>
+        <!-- LEFT -->
+        <div class="exam-left">
+            <div id="reviewBox"></div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="exam-right">
+            <h4>Questions</h4>
+            <div id="reviewNav"></div>
+        </div>
+
     </div>
 
 </div>
 
 </body>
-
 </html>

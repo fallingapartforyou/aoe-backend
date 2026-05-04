@@ -1,19 +1,15 @@
 function renderLayout(role) {
 
-const container =
-document.getElementById("layout");
+    const container = document.getElementById("layout");
 
-if(!container)
-return;
+    if (!container) return;
 
-if(role === "teacher")
+    const sidebar =
+        role === "teacher"
+        ? Sidebar.renderTeacher()
+        : Sidebar.renderStudent();
 
-container.innerHTML =
-Sidebar.renderTeacher();
-
-else
-
-container.innerHTML =
-Sidebar.renderStudent();
-
+    container.innerHTML = `
+        ${sidebar}
+    `;
 }

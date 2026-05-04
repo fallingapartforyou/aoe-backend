@@ -5,9 +5,10 @@
 <meta charset="UTF-8">
 <title>Student Dashboard</title>
 
-<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
 <link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/sidebar.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
@@ -33,7 +34,7 @@ Guard.requireStudent();
 
 <div id="layout"></div>
 
-<div class="main-content">
+<div class="content">
 
 <h2 class="mb-4">Student Dashboard</h2>
 
@@ -57,10 +58,10 @@ Guard.requireStudent();
 
 </div>
 
-<!-- 🔥 NOTIFICATIONS -->
+<!-- ASSIGNMENTS LIST -->
 <div class="card mt-4">
-    <h5>Notifications</h5>
-    <div id="notifications" class="mt-2"></div>
+    <h5>Assignments</h5>
+    <div id="assignmentList"></div>
 </div>
 
 </div>

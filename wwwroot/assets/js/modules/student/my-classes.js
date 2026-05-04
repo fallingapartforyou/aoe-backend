@@ -1,31 +1,31 @@
-// ===== LOAD CLASSES =====
+window.onload = async () => {
+    renderLayout("student");
+
+    showSkeleton();
+    await loadClasses();
+};
+
+// ===== LOAD =====
 async function loadClasses() {
     try {
-        showSkeleton();
-
         const classes = await API.request("/student/my");
-
         render(classes);
     }
     catch (err) {
         console.error(err);
-        alert(err.message || "Load classes failed");
+        alert("Load classes failed");
     }
 }
 
 // ===== SKELETON =====
 function showSkeleton() {
     const container = document.getElementById("classList");
-    container.innerHTML = "";
 
-    for (let i = 0; i < 6; i++) {
-        const col = document.createElement("div");
-        col.className = "col-md-4";
-
-        col.innerHTML = `<div class="skeleton-card"></div>`;
-
-        container.appendChild(col);
-    }
+    container.innerHTML = `
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+    `;
 }
 
 // ===== RENDER =====
@@ -34,52 +34,42 @@ function render(classes) {
     container.innerHTML = "";
 
     if (!classes || classes.length === 0) {
-        container.innerHTML = `<p class="text-muted">No classes joined yet</p>`;
+        container.innerHTML = `
+            <div class="empty-state">
+                No classes joined yet
+            </div>
+        `;
         return;
     }
 
     classes.forEach(c => {
-        const col = document.createElement("div");
-        col.className = "col-md-4";
+        const card = document.createElement("div");
 
-        col.innerHTML = `
-            <div class="card p-3 shadow-sm h-100">
-                <h5>${c.name}</h5>
+        card.className = "card";
 
-                <button class="btn btn-primary btn-sm mt-2"
-                        onclick="openAssignments(${c.id})">
-                    Assignments
-                </button>
-            </div>
+        // 🔥 CLICK NGUYÊN CARD
+        card.onclick = () => openAssignments(c.id);
+
+        card.innerHTML = `
+            <h3>${c.name}</h3>
+            <p>Click to view assignments</p>
         `;
 
-        container.appendChild(col);
+        container.appendChild(card);
     });
 }
 
-// ===== OPEN ASSIGNMENTS =====
-function openAssignments(classId) {
-    location.href = "/pages/student/assignments.html?classId=" + classId;
-}
-
-// ===== GO BACK =====
-function goBack() {
-    history.back();
-}
-
-// ===== JOIN CLASS (GỘP VÀO) =====
+// ===== JOIN =====
 async function joinClass() {
     try {
-        const classCode = document
-            .getElementById("classCode")
-            .value
-            .trim();
+        const input = document.getElementById("classCode");
+        const classCode = input.value.trim();
 
         if (!classCode)
             return alert("Enter class code");
 
         if (!Validator.classCode(classCode))
-            return alert("Class code max 8 characters (letters + numbers only)");
+            return alert("Invalid class code");
 
         await API.request(
             "/student/join-class",
@@ -87,20 +77,19 @@ async function joinClass() {
             { classCode }
         );
 
-        alert("Joined successfully");
+        input.value = "";
 
-        // 🔥 KHÔNG redirect nữa → reload list luôn
-        document.getElementById("classCode").value = "";
+        // reload list
         loadClasses();
 
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
-        alert(err.message || "Join failed");
+        alert("Join failed");
     }
 }
 
-// ===== INIT =====
-document.addEventListener("DOMContentLoaded", () => {
-    loadClasses();
-});
+// ===== NAVIGATION =====
+function openAssignments(classId) {
+    location.href =
+        "/pages/student/assignments.html?classId=" + classId;
+}

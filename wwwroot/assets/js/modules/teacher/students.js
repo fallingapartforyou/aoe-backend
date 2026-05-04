@@ -89,61 +89,31 @@ console.error(err);
 
 }
 
-
-
 function renderStudents(students)
 {
+    const container = document.getElementById("studentList");
+    container.innerHTML = "";
 
-const container =
-document.getElementById(
-"studentList"
-);
+    students.forEach(s =>
+    {
+        const tr = document.createElement("tr");
 
+        tr.innerHTML = `
+            <td class="select-cell" style="display:none;">
+                <input type="checkbox" value="${s.studentId}">
+            </td>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td>
+                <button onclick="removeStudent(${s.studentId})">
+                    Remove
+                </button>
+            </td>
+        `;
 
-container.innerHTML = "";
-
-
-students.forEach(s =>
-{
-
-const card =
-document.createElement("div");
-
-
-card.className = "card";
-
-
-card.innerHTML =
-
-`
-
-<h3>${s.name}</h3>
-
-<p>${s.email}</p>
-
-`;
-
-
-card.innerHTML +=
-
-`
-
-<button onclick="removeStudent(${s.studentId})">
-
-Remove
-
-</button>
-
-`;
-
-
-container.appendChild(card);
-
-});
-
+        container.appendChild(tr);
+    });
 }
-
-
 
 async function addStudent()
 {
@@ -177,24 +147,42 @@ loadStudents();
 
 }
 
-
-
-async function removeStudent(studentId)
+async function removeSelected()
 {
+    const checked =
+        document.querySelectorAll(
+            ".select-cell input:checked"
+        );
 
-if(!confirm("Remove student?"))
-return;
+    if (checked.length === 0) return;
 
+    if (!confirm("Remove selected students?")) return;
 
-await API.request(
+    for (let cb of checked)
+    {
+        const studentId = cb.value;
 
-`/class/remove-student/${studentId}/${classId}`,
+        await API.request(
+            `/class/remove-student/${studentId}/${classId}`,
+            "DELETE"
+        );
+    }
 
-"DELETE"
+    loadStudents();
+}
 
-);
+let bulkMode = false;
 
+function toggleBulkRemove()
+{
+    bulkMode = !bulkMode;
 
-loadStudents();
+    document.getElementById("bulkBtn").style.display =
+        bulkMode ? "inline-block" : "none";
 
+    document.querySelectorAll(".select-cell")
+        .forEach(td => td.style.display = bulkMode ? "" : "none");
+
+    document.getElementById("selectCol").style.display =
+        bulkMode ? "" : "none";
 }

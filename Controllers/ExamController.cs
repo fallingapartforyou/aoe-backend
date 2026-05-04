@@ -43,6 +43,62 @@ namespace aoe.Controllers
             return Ok(assignments);
         }
 
+        [HttpGet("state/{assignmentId}")]
+        [Authorize(Roles = "student")]
+        public IActionResult GetExamState(int assignmentId)
+        {
+            // ===== LẤY STUDENT ID =====
+            var studentId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+            );
+
+            // ===== CHECK STUDENT THUỘC CLASS CÓ ASSIGNMENT =====
+            bool hasAccess =
+            (
+                from ac in _context.AssignmentClasses
+                join cs in _context.ClassStudents
+                    on ac.ClassId equals cs.ClassId
+                where ac.AssignmentId == assignmentId
+                && cs.StudentId == studentId
+                select ac
+            ).Any();
+
+            if (!hasAccess)
+                return Unauthorized();
+
+            // ===== LẤY ASSIGNMENT =====
+            var assignment =
+                _context.Assignments
+                .Where(a => a.Id == assignmentId)
+                .Select(a => new
+                {
+                    a.OpenTime,
+                    a.CloseTime,
+                    a.ShowResult,
+                    a.ShowExplanation
+                })
+                .FirstOrDefault();
+
+            if (assignment == null)
+                return NotFound();
+
+            // ===== CHECK SUBMITTED =====
+            bool submitted =
+                _context.Results.Any(r =>
+                    r.AssignmentId == assignmentId &&
+                    r.StudentId == studentId
+                );
+
+            // ===== RETURN =====
+            return Ok(new
+            {
+                openTime = assignment.OpenTime,
+                closeTime = assignment.CloseTime,
+                submitted,
+                showResult = assignment.ShowResult,
+                showExplanation = assignment.ShowExplanation
+            });
+        }
 
         // START EXAM
         [HttpGet("start/{assignmentId}")]

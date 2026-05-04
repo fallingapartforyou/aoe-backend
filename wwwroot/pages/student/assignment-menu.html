@@ -5,8 +5,10 @@
 <meta charset="UTF-8">
 <title>Assignment Menu</title>
 
-<link rel="stylesheet" href="../../assets/css/main.css">
-<link rel="stylesheet" href="../../assets/css/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/skeleton.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
@@ -31,7 +33,7 @@ Guard.requireStudent();
 
 <div id="layout"></div>
 
-<div class="main-content">
+<div class="content">
 
 <!-- HEADER -->
 <div class="page-header">
@@ -48,19 +50,19 @@ Guard.requireStudent();
 <!-- ACTIONS -->
 <div class="menu-grid">
 
-    <div class="menu-card" onclick="startExam()">
+    <div id="startCard" class="menu-card start" onclick="startExam()">
         <h3>Start Exam</h3>
-        <p>Begin your assignment attempt</p>
+        <p id="startDesc">Loading...</p>
     </div>
 
-    <div class="menu-card" onclick="viewResult()">
+    <div id="resultCard" class="menu-card result" onclick="viewResult()">
         <h3>View Result</h3>
-        <p>Check your score and performance</p>
+        <p id="resultDesc">Loading...</p>
     </div>
 
-    <div class="menu-card" onclick="reviewExam()">
+    <div id="reviewCard" class="menu-card review" onclick="reviewExam()">
         <h3>Review</h3>
-        <p>See correct answers and explanation</p>
+        <p id="reviewDesc">Loading...</p>
     </div>
 
     <div class="menu-card exit" onclick="history.back()">
@@ -71,11 +73,12 @@ Guard.requireStudent();
 </div>
 
 </div>
-<!-- START EXAM MODAL -->
+
+<!-- START MODAL -->
 <div id="startModal" class="modal">
   <div class="modal-box">
     <h3>Start Exam?</h3>
-    <p>Once you start, the timer will begin immediately.</p>
+    <p>Timer will start immediately.</p>
 
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
@@ -83,5 +86,6 @@ Guard.requireStudent();
     </div>
   </div>
 </div>
+
 </body>
 </html>

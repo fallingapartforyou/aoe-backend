@@ -1,38 +1,27 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <meta charset="UTF-8">
-
 <title>Assignment Results</title>
 
-<link rel="stylesheet" href="../../assets/css/main.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/sidebar.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
-<script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
 
-
-<script defer
-src="../../assets/js/modules/teacher/results.js">
-</script>
-
+<script defer src="../../assets/js/modules/teacher/results.js"></script>
 
 <script>
-
 Guard.requireLogin();
 Guard.requireTeacher();
-
 </script>
 
 </head>
@@ -41,30 +30,46 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
+<div class="content">
+<div class="container">
 
-<div class="main-content">
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="topbar-title">Assignment Results</div>
 
-<h2>Assignment Results</h2>
+        <div class="topbar-actions">
+            <button onclick="backExam()">Back</button>
+            <button onclick="exportCSV()">Export CSV</button>
+        </div>
+    </div>
 
+    <!-- SEARCH -->
+    <div class="card mb-4">
+        <input
+            id="search"
+            placeholder="Search student..."
+            oninput="filterResults()"
+        >
+    </div>
 
-<button onclick="exportCSV()">
-Export CSV
-</button>
+    <!-- TABLE -->
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Score</th>
+                    <th>Submitted</th>
+                </tr>
+            </thead>
 
+            <tbody id="resultList"></tbody>
+        </table>
+    </div>
 
-<button onclick="backExam()">
-Back
-</button>
-
-
-<hr>
-
-
-<div id="resultList"></div>
-
-
+</div>
 </div>
 
 </body>
-
 </html>

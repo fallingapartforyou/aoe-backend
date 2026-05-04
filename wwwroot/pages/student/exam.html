@@ -1,48 +1,66 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <meta charset="UTF-8">
-
 <title>Exam</title>
+
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/skeleton.css">
+<link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
-<script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
 
-<script defer
-src="../../assets/js/modules/student/exam.js">
-</script>
+<script defer src="../../assets/js/modules/student/exam.js"></script>
 
 <script>
-
 Guard.requireLogin();
 Guard.requireStudent();
-
 </script>
 
 </head>
 
 <body>
 
-<h2>Exam</h2>
+<div class="exam-container">
 
-<div id="timer"></div>
+    <!-- HEADER -->
+    <div class="exam-header">
+        <h2>Exam</h2>
+        <div id="timer">00:00</div>
+    </div>
 
-<hr>
+    <!-- BODY -->
+    <div class="exam-body">
 
-<div id="questionList"></div>
+        <!-- LEFT: QUESTION -->
+        <div class="exam-left">
+            <div id="questionBox"></div>
 
-<button onclick="submitExam()">
+            <div class="exam-actions">
+                <button onclick="prevQuestion()">Prev</button>
+                <button onclick="nextQuestion()">Next</button>
+            </div>
+        </div>
 
-Submit
+        <!-- RIGHT: NAV -->
+        <div class="exam-right">
+            <h4>Questions</h4>
+            <div id="questionNav"></div>
 
-</button>
+            <button class="submit-btn" onclick="submitExam()">
+                Submit
+            </button>
+        </div>
+
+    </div>
+
+</div>
 
 </body>
-
 </html>

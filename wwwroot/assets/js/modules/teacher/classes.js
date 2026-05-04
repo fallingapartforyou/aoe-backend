@@ -61,67 +61,44 @@ console.error(err);
 }
 }
 
-
-
 function renderClasses(classes)
 {
+    const container = document.getElementById("classList");
+    container.innerHTML = "";
 
-const container =
-document.getElementById("classList");
+    if (!classes || classes.length === 0) {
+        container.innerHTML = `<p>No classes found</p>`;
+        return;
+    }
 
-container.innerHTML = "";
+    classes.forEach(cls =>
+    {
+        const div = document.createElement("div");
+        div.className = "class-card";
 
+        div.innerHTML = `
+            <h3>${cls.name}</h3>
+            <p>Code: ${cls.classCode}</p>
+        `;
 
-classes.forEach(cls =>
-{
+        const actions = document.createElement("div");
+        actions.className = "class-actions";
 
-const div =
-document.createElement("div");
+        const btnStudents = document.createElement("button");
+        btnStudents.innerText = "Students";
+        btnStudents.onclick = () => goStudents(cls.id);
 
-div.className = "card";
+        const btnDelete = document.createElement("button");
+        btnDelete.innerText = "Delete";
+        btnDelete.onclick = () => deleteClass(cls.id);
 
+        actions.appendChild(btnStudents);
+        actions.appendChild(btnDelete);
 
-div.innerHTML =
-
-`
-<h3>${cls.name}</h3>
-
-<p>Code: ${cls.classCode}</p>
-`;
-
-
-const btnStudents =
-document.createElement("button");
-
-btnStudents.innerText = "Students";
-
-btnStudents.onclick =
-() => goStudents(cls.id);
-
-
-div.appendChild(btnStudents);
-
-
-
-const btnDelete =
-document.createElement("button");
-
-btnDelete.innerText = "Delete";
-
-btnDelete.onclick =
-() => deleteClass(cls.id);
-
-
-div.appendChild(btnDelete);
-
-
-container.appendChild(div);
-
-});
-
+        div.appendChild(actions);
+        container.appendChild(div);
+    });
 }
-
-
 
 async function createClass()
 {

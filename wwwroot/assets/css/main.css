@@ -1,37 +1,16 @@
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #f1f5f9;
-  color: #0f172a;
+/* Page spacing tweak */
+.page-title {
+  font-size: 22px;
+  margin-bottom: 16px;
 }
 
-/* Scroll đẹp hơn */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5f5;
-  border-radius: 10px;
+/* Small button */
+.btn-small {
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
-/* Button đẹp hơn */
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  margin: 4px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-button:hover {
-  background: #1d4ed8;
-}
-
-/* Input */
-input {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
+.main-content {
+    margin-left: 100px;  
+    padding: 20px 30px;
 }

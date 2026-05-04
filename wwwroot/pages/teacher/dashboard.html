@@ -5,9 +5,10 @@
 <meta charset="UTF-8">
 <title>Teacher Dashboard</title>
 
-<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
 <link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/sidebar.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
@@ -33,41 +34,76 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="main-content">
+<div class="content">
+<div class="container">
 
-<h2 class="mb-4">Teacher Dashboard</h2>
+    <!-- 🔷 TOP BAR -->
+    <div class="topbar">
+        <div class="topbar-title">Màn hình chính</div>
 
-<!-- STATS -->
-<div class="dashboard-grid">
-
-    <div class="card">
-        <p>Total Classes</p>
-        <h2 id="totalClasses">0</h2>
+        <div class="topbar-actions">
+            <button>🔔</button>
+            <button onclick="logout()">Logout</button>
+        </div>
     </div>
 
-    <div class="card">
-        <p>Assignments</p>
-        <h2 id="totalAssignments">0</h2>
+    <!-- 🔥 DASHBOARD MENU (MAIN UI) -->
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card" onclick="Router.goTeacherClasses()">
+            <div class="icon">📚</div>
+            <span>Lớp học</span>
+        </div>
+
+        <div class="dashboard-card" onclick="Router.goAssignments()">
+            <div class="icon">📄</div>
+            <span>Bài tập</span>
+        </div>
+
+        <div class="dashboard-card" onclick="Router.goStudents()">
+            <div class="icon">👨‍🎓</div>
+            <span>Học sinh</span>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="icon">📊</div>
+            <span>Kết quả</span>
+        </div>
+
     </div>
 
-    <div class="card">
-        <p>Students</p>
-        <h2 id="totalStudents">0</h2>
+    <!-- 🔢 STATS -->
+    <div class="stats-grid">
+
+        <div class="card">
+            <p>Total Classes</p>
+            <h2 id="totalClasses">0</h2>
+        </div>
+
+        <div class="card">
+            <p>Assignments</p>
+            <h2 id="totalAssignments">0</h2>
+        </div>
+
+        <div class="card">
+            <p>Students</p>
+            <h2 id="totalStudents">0</h2>
+        </div>
+
+        <div class="card">
+            <p>Submissions</p>
+            <h2 id="totalSubmissions">0</h2>
+        </div>
+
     </div>
 
-    <div class="card">
-        <p>Submissions</p>
-        <h2 id="totalSubmissions">0</h2>
+    <!-- 🔔 NOTIFICATIONS -->
+    <div class="card" style="margin-top:20px;">
+        <h4>Recent Activity</h4>
+        <div id="notifications"></div>
     </div>
 
 </div>
-
-<!-- 🔥 NOTIFICATIONS -->
-<div class="card mt-4">
-    <h5>Recent Activity</h5>
-    <div id="notifications" class="mt-2"></div>
-</div>
-
 </div>
 
 </body>

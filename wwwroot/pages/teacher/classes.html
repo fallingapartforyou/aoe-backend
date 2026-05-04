@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <meta charset="UTF-8">
-
 <title>Classes</title>
 
-<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
 <link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/sidebar.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
-
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -23,17 +20,11 @@
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
 
-
-<script defer
-src="../../assets/js/modules/teacher/classes.js">
-</script>
-
+<script defer src="../../assets/js/modules/teacher/classes.js"></script>
 
 <script>
-
 Guard.requireLogin();
 Guard.requireTeacher();
-
 </script>
 
 </head>
@@ -42,43 +33,35 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="main-content">
+<div class="content">
+<div class="container">
 
-<h2>My Classes</h2>
+    <!-- 🔷 TOPBAR -->
+    <div class="topbar">
+        <div class="topbar-title">Lớp học</div>
 
+        <div class="topbar-actions">
+            <button onclick="history.back()">Back</button>
+        </div>
+    </div>
 
-<input
-id="keyword"
-placeholder="Search class"
-/>
+    <!-- 🔍 SEARCH -->
+    <div class="card" style="margin-bottom: 20px;">
+        <input id="keyword" placeholder="Search class">
+        <button onclick="loadClasses()">Search</button>
+    </div>
 
-<button onclick="loadClasses()">
+    <!-- ➕ CREATE -->
+    <div class="card" style="margin-bottom: 20px;">
+        <input id="className" placeholder="New class name">
+        <button onclick="createClass()">Create class</button>
+    </div>
 
-Search
+    <!-- 📦 CLASS GRID -->
+    <div id="classList" class="class-grid"></div>
 
-</button>
-
-<br><br>
-
-
-<input
-id="className"
-placeholder="New class name"
-/>
-
-<button onclick="createClass()">
-
-Create class
-
-</button>
-
-<hr>
-
-
-<div id="classList"></div>
-
+</div>
 </div>
 
 </body>
-
 </html>

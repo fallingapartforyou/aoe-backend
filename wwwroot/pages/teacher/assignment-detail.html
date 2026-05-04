@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Assignment Detail</title>
+
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/skeleton.css">
+<link rel="stylesheet" href="../../assets/css/dashboard.css">
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+
+<script defer src="../../assets/js/modules/teacher/assignment-detail.js"></script>
+
+<script>
+Guard.requireLogin();
+Guard.requireTeacher();
+</script>
+
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+<div class="content">
+<div class="container">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <button onclick="history.back()">Back</button>
+
+        <div>
+            <button onclick="openCreateModal()">+ Create Question</button>
+            <button onclick="toggleAssignMode()">Assign Class</button>
+        </div>
+    </div>
+
+    <!-- QUESTION -->
+    <div id="questionSection"></div>
+
+    <!-- ASSIGN -->
+    <div id="assignSection" style="display:none;"></div>
+
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="createModal">
+<div class="modal-box">
+
+<h3 id="modalTitle">Create Question</h3>
+
+<input id="content" placeholder="Question content">
+
+<div id="optionsBox">
+<input id="A" placeholder="Option A">
+<input id="B" placeholder="Option B">
+<input id="C" placeholder="Option C">
+<input id="D" placeholder="Option D">
+
+<select id="correctAnswer">
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+</select>
+</div>
+
+<div id="fillAnswerBox" style="display:none;">
+<input id="fillCorrectAnswer" placeholder="Correct answer">
+</div>
+
+<input id="explanation" placeholder="Explanation">
+
+<div class="modal-actions">
+<button onclick="submitQuestion()">Save</button>
+<button onclick="closeModal()">Cancel</button>
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

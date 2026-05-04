@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <meta charset="UTF-8">
-
 <title>Questions</title>
 
 <link rel="stylesheet" href="../../assets/css/main.css">
 <link rel="stylesheet" href="../../assets/css/skeleton.css">
 <link rel="stylesheet" href="../../assets/css/sidebar.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
-
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -23,17 +19,11 @@
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
 
-
-<script defer
-src="../../assets/js/modules/teacher/questions.js">
-</script>
-
+<script defer src="../../assets/js/modules/teacher/questions.js"></script>
 
 <script>
-
 Guard.requireLogin();
 Guard.requireTeacher();
-
 </script>
 
 </head>
@@ -42,96 +32,74 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-
 <div class="main-content">
 
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h2>Questions</h2>
+            <p class="text-muted">Create and manage questions</p>
+        </div>
 
-<h2>Create Question</h2>
+        <div class="header-actions">
+            <button class="btn-back" onclick="history.back()">← Back</button>
+            <button class="btn-primary" onclick="toggleCreate()">+ Create</button>
+            <button class="btn-secondary" onclick="toggleAssign()">Assign</button>
+        </div>
+    </div>
 
-<div id="assignmentTypeLabel"></div>
+    <!-- CREATE -->
+    <div id="createBox" class="card form-card" style="display:none;">
 
-<br>
+        <h4>Create Question</h4>
+        <p id="assignmentTypeLabel" class="text-muted"></p>
 
+        <div class="form-group">
+            <label>Question</label>
+            <input id="content" class="form-input">
+        </div>
 
-<input
-id="content"
-placeholder="Question content"
-/>
+        <!-- SINGLE -->
+        <div id="optionsBox" class="form-group">
+            <label>Options</label>
 
+            <input id="A" class="form-input" placeholder="Option A">
+            <input id="B" class="form-input" placeholder="Option B">
+            <input id="C" class="form-input" placeholder="Option C">
+            <input id="D" class="form-input" placeholder="Option D">
 
-<br><br>
+            <select id="correctAnswer" class="form-input">
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+            </select>
+        </div>
 
+        <!-- FILL -->
+        <div id="fillAnswerBox" class="form-group" style="display:none">
+            <label>Correct Answer</label>
+            <input id="fillCorrectAnswer" class="form-input">
+        </div>
 
-<div id="optionsBox">
+        <div class="form-group">
+            <label>Explanation</label>
+            <input id="explanation" class="form-input">
+        </div>
 
-<input id="A" placeholder="Option A">
+        <button class="btn-primary" onclick="createQuestion()">Create</button>
+    </div>
 
-<input id="B" placeholder="Option B">
+    <!-- ASSIGN -->
+    <div id="assignBox" class="card" style="display:none;">
+        <h4>Assign to class</h4>
+        <div id="classList"></div>
+    </div>
 
-<input id="C" placeholder="Option C">
-
-<input id="D" placeholder="Option D">
-
-
-<br><br>
-
-
-<select id="correctAnswer">
-
-<option>A</option>
-
-<option>B</option>
-
-<option>C</option>
-
-<option>D</option>
-
-</select>
-
-</div>
-
-
-<div
-id="fillAnswerBox"
-style="display:none">
-
-<input
-id="fillCorrectAnswer"
-placeholder="Correct answer"
-/>
-
-</div>
-
-
-<br><br>
-
-
-<input
-id="explanation"
-placeholder="Explanation"
-/>
-
-
-<br><br>
-
-
-<button onclick="createQuestion()">
-
-Create Question
-
-</button>
-
-
-<hr>
-
-
-<h2>Question List</h2>
-
-<div id="questionList"></div>
-
+    <!-- LIST -->
+    <div id="questionList" class="question-list"></div>
 
 </div>
 
 </body>
-
 </html>

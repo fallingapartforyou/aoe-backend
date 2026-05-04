@@ -35,12 +35,24 @@ function showSkeleton() {
     for (let i = 0; i < 6; i++) {
         const div = document.createElement("div");
 
-        div.innerHTML = `
-            <div class="skeleton-card"></div>
-        `;
+        div.innerHTML = `<div class="skeleton-card"></div>`;
 
         container.appendChild(div);
     }
+}
+
+// ===== CHECK STATUS =====
+function getStatus(a) {
+    const now = new Date();
+
+    const open = a.openTime ? new Date(a.openTime) : null;
+    const close = a.closeTime ? new Date(a.closeTime) : null;
+
+    if (open && now < open) return "not_open";
+    if (close && now > close) return "closed";
+    if (a.submitted) return "done";
+
+    return "available";
 }
 
 // ===== RENDER =====
@@ -59,23 +71,59 @@ function render(assignments) {
     }
 
     assignments.forEach(a => {
-        const div = document.createElement("div");
+        const status = getStatus(a);
 
+        let statusText = "";
+        let btnText = "Start";
+        let disabled = false;
+
+        if (status === "not_open") {
+            statusText = "Not opened yet";
+            btnText = "Locked";
+            disabled = true;
+        }
+
+        if (status === "closed") {
+            statusText = "Closed";
+            btnText = "Closed";
+            disabled = true;
+        }
+
+        if (status === "done") {
+            statusText = "Submitted";
+            btnText = "View";
+        }
+
+        const div = document.createElement("div");
         div.className = "assignment-card";
 
         div.innerHTML = `
             <div>
                 <div class="assignment-title">${a.name}</div>
-                <p class="text-muted">Click to view details</p>
+
+                <p class="text-muted">${statusText}</p>
+
+                <small>
+                    ${a.openTime ? "Open: " + formatDate(a.openTime) : ""}
+                    <br>
+                    ${a.closeTime ? "Close: " + formatDate(a.closeTime) : ""}
+                </small>
             </div>
 
-            <button onclick="openMenu(${a.id})">
-                Open
+            <button 
+                ${disabled ? "disabled" : ""}
+                onclick="openMenu(${a.id})">
+                ${btnText}
             </button>
         `;
 
         container.appendChild(div);
     });
+}
+
+// ===== FORMAT DATE =====
+function formatDate(d) {
+    return new Date(d).toLocaleString();
 }
 
 // ===== NAV =====
