@@ -106,21 +106,17 @@
 /* ===== ASSIGNMENT ===== */
 .assignment-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
 }
 
 .assignment-card {
   background: white;
   border-radius: 14px;
-  padding: 18px;
+  padding: 16px;
   border: 1px solid #e2e8f0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
   transition: 0.2s;
+  position: relative;
 }
 
 .assignment-card:hover {
@@ -129,13 +125,26 @@
 }
 
 .assignment-title {
-  font-size: 16px;
   font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.assignment-meta {
+  font-size: 13px;
+  color: #64748b;
   margin-bottom: 10px;
 }
 
-.assignment-card button {
-  margin-top: auto;
+.assignment-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.assignment-checkbox {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 /* ===== EMPTY ===== */

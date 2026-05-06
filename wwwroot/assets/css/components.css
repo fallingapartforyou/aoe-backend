@@ -297,3 +297,25 @@ body {
     transform: translateY(0);
   }
 }
+
+.form-input {
+  padding: 10px;
+  border-radius: 8px;
+
+  border: 2px solid #1e293b; /* 🔥 viền đậm hơn */
+  background: #f8fafc;
+
+  transition: 0.2s;
+}
+
+/* focus */
+.form-input:focus {
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+}
+
+/* spacing giữa các input option */
+#optionsBox input {
+  margin-bottom: 8px;
+}

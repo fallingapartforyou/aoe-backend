@@ -1,40 +1,24 @@
-window.onload = async () =>
-{
+let deleteMode = false;
+let selectedIds = new Set();
+
+window.onload = async () => {
     renderLayout("teacher");
-
     showSkeleton();
-
     await loadAssignments();
 };
 
-
 // ===== SKELETON =====
-function showSkeleton()
-{
+function showSkeleton() {
     document.getElementById("assignmentList").innerHTML = `
-        <div class="skeleton-card">
-            <div class="skeleton-line skeleton-title"></div>
-            <div class="skeleton-line skeleton-small"></div>
-        </div>
-
-        <div class="skeleton-card">
-            <div class="skeleton-line skeleton-title"></div>
-            <div class="skeleton-line skeleton-small"></div>
-        </div>
-
-        <div class="skeleton-card">
-            <div class="skeleton-line skeleton-title"></div>
-            <div class="skeleton-line skeleton-small"></div>
-        </div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
     `;
 }
 
-
 // ===== LOAD =====
-async function loadAssignments()
-{
-    try
-    {
+async function loadAssignments() {
+    try {
         showSkeleton();
 
         const keyword =
@@ -47,12 +31,10 @@ async function loadAssignments()
 
         render(assignments);
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err);
     }
 }
-
 
 // ===== RENDER =====
 function render(assignments) {
@@ -60,57 +42,102 @@ function render(assignments) {
     container.innerHTML = "";
 
     if (!assignments || assignments.length === 0) {
-        container.innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center text-muted">
-                    No assignments
-                </td>
-            </tr>
-        `;
+        container.innerHTML = `<div class="card">No assignments</div>`;
         return;
     }
 
     assignments.forEach(a => {
 
-        const count =
-            a.questionCount ??
-            a.totalQuestions ??
-            (a.questions ? a.questions.length : 0);
+    const count =
+        a.questionCount ??
+        a.totalQuestions ??
+        (a.questions ? a.questions.length : 0);
 
-        const row = document.createElement("tr");
+    const type =
+        a.type ??
+        a.questionType ??
+        a.assignmentType ??
+        "unknown";
 
-        row.innerHTML = `
-            <td>${a.name}</td>
-            <td>${count}</td>
-            <td>${a.type}</td>
-            <td>
-                <button onclick="openQuestions(${a.id}, '${a.type}')">Q</button>
-                <button onclick="assignClass(${a.id})">Assign</button>
-                <button onclick="viewResult(${a.id})">Result</button>
-                <button onclick="deleteAssignment(${a.id})">Delete</button>
-            </td>
-        `;
+    const card = document.createElement("div");
+    card.className = "assignment-card";
 
-        container.appendChild(row);
-    });
+    card.innerHTML = `
+        ${deleteMode ? `
+            <input type="checkbox"
+                   class="assignment-checkbox"
+                   onchange="toggleSelect(${a.id}, this.checked)">
+        ` : ""}
+
+        <div class="assignment-title">
+            ${a.name}
+        </div>
+
+        <div class="assignment-meta">
+            Type: ${type}
+        </div>
+
+        <div class="assignment-meta">
+            Questions: ${count}
+        </div>
+
+        <div class="assignment-actions">
+            <button onclick="openQuestions(${a.id}, '${type}')">Q</button>
+            <button onclick="assignClass(${a.id})">Assign</button>
+            <button onclick="viewResult(${a.id})">Result</button>
+        </div>
+    `;
+
+    container.appendChild(card);
+});
 }
-// ===== CREATE MODAL =====
-function openCreateModal()
-{
+
+// ===== DELETE MODE =====
+function toggleDeleteMode() {
+    deleteMode = !deleteMode;
+
+    document.getElementById("confirmDeleteBtn").style.display =
+        deleteMode ? "inline-block" : "none";
+
+    selectedIds.clear();
+    loadAssignments();
+}
+
+function toggleSelect(id, checked) {
+    if (checked) selectedIds.add(id);
+    else selectedIds.delete(id);
+}
+
+// ===== DELETE MULTI =====
+async function deleteSelected() {
+    if (selectedIds.size === 0)
+        return alert("No selected");
+
+    if (!confirm("Delete selected assignments?"))
+        return;
+
+    for (const id of selectedIds) {
+        await API.request("/assignment/delete/" + id, "DELETE");
+    }
+
+    deleteMode = false;
+    selectedIds.clear();
+
+    loadAssignments();
+}
+
+// ===== MODAL =====
+function openCreateModal() {
     document.getElementById("createModal").style.display = "flex";
 }
 
-function closeModal()
-{
+function closeModal() {
     document.getElementById("createModal").style.display = "none";
 }
 
-
 // ===== CREATE =====
-async function createAssignment()
-{
-    try
-    {
+async function createAssignment() {
+    try {
         const name =
             document.getElementById("assignmentName").value.trim();
 
@@ -151,32 +178,14 @@ async function createAssignment()
         closeModal();
         loadAssignments();
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err);
         alert("Create failed");
     }
 }
 
-
-// ===== DELETE =====
-async function deleteAssignment(id)
-{
-    if (!confirm("Delete assignment?"))
-        return;
-
-    await API.request(
-        "/assignment/delete/" + id,
-        "DELETE"
-    );
-
-    loadAssignments();
-}
-
-
 // ===== NAVIGATION =====
-function openQuestions(id, type)
-{
+function openQuestions(id, type) {
     location.href =
         "/pages/teacher/questions.html?assignmentId="
         + id
@@ -184,14 +193,12 @@ function openQuestions(id, type)
         + type;
 }
 
-function viewResult(id)
-{
+function viewResult(id) {
     location.href =
         "/pages/teacher/results.html?assignmentId=" + id;
 }
 
-function assignClass(id)
-{
+function assignClass(id) {
     location.href =
         "/pages/teacher/assign-class.html?assignmentId=" + id;
 }

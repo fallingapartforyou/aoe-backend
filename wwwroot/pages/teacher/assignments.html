@@ -37,42 +37,40 @@ Guard.requireTeacher();
 <div class="content">
 <div class="container">
 
-    <!-- 🔷 TOPBAR -->
+    <!-- TOPBAR -->
     <div class="topbar">
         <div class="topbar-title">Assignments</div>
 
         <div class="topbar-actions">
             <button onclick="history.back()">Back</button>
-            <button onclick="openCreateModal()">+ Create</button>
         </div>
     </div>
 
-    <!-- 🔍 SEARCH -->
-    <div class="card" style="margin-bottom:20px;">
+    <!-- ACTION BAR -->
+    <div class="card" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
         <input id="keyword" placeholder="Search assignment">
         <button onclick="loadAssignments()">Search</button>
+
+        <button onclick="openCreateModal()">+ Create</button>
+
+        <button id="deleteModeBtn" onclick="toggleDeleteMode()">
+            Delete Mode
+        </button>
+
+        <button id="confirmDeleteBtn"
+                style="display:none;"
+                onclick="deleteSelected()">
+            Confirm Delete
+        </button>
     </div>
 
-    <!-- 📊 TABLE -->
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Questions</th>
-                    <th>Type</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-
-            <tbody id="assignmentList"></tbody>
-        </table>
-    </div>    
+    <!-- GRID -->
+    <div id="assignmentList" class="assignment-grid"></div>
 
 </div>
 </div>
 
-<!-- ===== MODAL CREATE ===== -->
+<!-- MODAL -->
 <div class="modal" id="createModal">
     <div class="modal-box">
 

@@ -49,46 +49,51 @@ Guard.requireTeacher();
     </div>
 
     <!-- CREATE -->
-    <div id="createBox" class="card form-card" style="display:none;">
+    <div id="createBox" class="card form-card">
 
-        <h4>Create Question</h4>
-        <p id="assignmentTypeLabel" class="text-muted"></p>
+    <h4>Create Question</h4>
+    <p id="assignmentTypeLabel" class="text-muted"></p>
 
-        <div class="form-group">
-            <label>Question</label>
-            <input id="content" class="form-input">
-        </div>
-
-        <!-- SINGLE -->
-        <div id="optionsBox" class="form-group">
-            <label>Options</label>
-
-            <input id="A" class="form-input" placeholder="Option A">
-            <input id="B" class="form-input" placeholder="Option B">
-            <input id="C" class="form-input" placeholder="Option C">
-            <input id="D" class="form-input" placeholder="Option D">
-
-            <select id="correctAnswer" class="form-input">
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
-            </select>
-        </div>
-
-        <!-- FILL -->
-        <div id="fillAnswerBox" class="form-group" style="display:none">
-            <label>Correct Answer</label>
-            <input id="fillCorrectAnswer" class="form-input">
-        </div>
-
-        <div class="form-group">
-            <label>Explanation</label>
-            <input id="explanation" class="form-input">
-        </div>
-
-        <button class="btn-primary" onclick="createQuestion()">Create</button>
+    <!-- QUESTION -->
+    <div class="form-group">
+        <label>Question</label>
+        <input id="content" class="form-input">
     </div>
+
+    <!-- SINGLE CHOICE -->
+    <div id="optionsBox" class="form-group" style="display:none">
+        <label>Options</label>
+
+        <input id="A" class="form-input" placeholder="Option A">
+        <input id="B" class="form-input" placeholder="Option B">
+        <input id="C" class="form-input" placeholder="Option C">
+        <input id="D" class="form-input" placeholder="Option D">
+
+        <label>Correct Answer</label>
+        <select id="correctAnswer" class="form-input">
+            <option value="">-- Select --</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+            <option>D</option>
+        </select>
+    </div>
+
+    <!-- FILL BLANK -->
+    <div id="fillAnswerBox" class="form-group" style="display:none">
+        <label>Correct Answer</label>
+        <input id="fillCorrectAnswer" class="form-input">
+    </div>
+
+    <!-- EXPLANATION -->
+    <div class="form-group">
+        <label>Explanation</label>
+        <input id="explanation" class="form-input">
+    </div>
+
+    <button class="btn-primary" onclick="createQuestion()">Create</button>
+
+</div>
 
     <!-- ASSIGN -->
     <div id="assignBox" class="card" style="display:none;">

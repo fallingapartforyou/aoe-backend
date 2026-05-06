@@ -3,11 +3,13 @@ const params = new URLSearchParams(location.search);
 const assignmentId = params.get("assignmentId");
 const assignmentType = params.get("type");
 
+// ===== GUARD =====
 if (!assignmentId || !assignmentType) {
     alert("Missing assignment info");
     location.href = "/pages/teacher/assignments.html";
 }
 
+// ===== INIT =====
 window.onload = async () => {
     renderLayout("teacher");
 
@@ -18,7 +20,7 @@ window.onload = async () => {
     await loadClasses();
 };
 
-// ===== TOGGLE =====
+// ===== TOGGLE UI =====
 function toggleCreate() {
     const box = document.getElementById("createBox");
     box.style.display = box.style.display === "none" ? "block" : "none";
@@ -29,10 +31,10 @@ function toggleAssign() {
     box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
-// ===== TYPE UI =====
+// ===== SETUP TYPE =====
 function setupAssignmentTypeUI() {
     document.getElementById("assignmentTypeLabel").innerText =
-        "Question type: " + assignmentType;
+        "Question type: " + assignmentType.replace("_", " ");
 
     if (assignmentType === "single_choice") {
         document.getElementById("optionsBox").style.display = "block";
@@ -52,14 +54,20 @@ function showSkeleton() {
     `;
 }
 
-// ===== CREATE =====
+// ===== CREATE QUESTION =====
 async function createQuestion() {
     try {
         const content = document.getElementById("content").value.trim();
-        if (!content) return alert("Content required");
+        if (!content) return alert("Question content is required");
 
-        let correctAnswer;
+        let correctAnswer = "";
+        let payload = {
+            assignmentId,
+            type: assignmentType,
+            content
+        };
 
+        // ===== SINGLE CHOICE =====
         if (assignmentType === "single_choice") {
             const A = document.getElementById("A").value.trim();
             const B = document.getElementById("B").value.trim();
@@ -67,45 +75,55 @@ async function createQuestion() {
             const D = document.getElementById("D").value.trim();
 
             if (!A || !B || !C || !D)
-                return alert("All options required");
+                return alert("All 4 options are required");
 
             correctAnswer =
                 document.getElementById("correctAnswer").value;
-        } else {
+
+            payload.correctAnswer = correctAnswer;
+
+            // create question first
+            const question = await API.request(
+                "/question/create",
+                "POST",
+                payload
+            );
+
+            // add options
+            await API.request("/question/add-options", "POST", {
+                questionId: question.id,
+                A, B, C, D
+            });
+        }
+
+        // ===== FILL BLANK =====
+        else {
             correctAnswer =
                 document.getElementById("fillCorrectAnswer").value.trim();
 
             if (!correctAnswer)
                 return alert("Correct answer required");
+
+            payload.correctAnswer = correctAnswer;
+
+            await API.request(
+                "/question/create",
+                "POST",
+                payload
+            );
         }
 
         const explanation =
             document.getElementById("explanation").value.trim();
 
-        const question = await API.request(
-            "/question/create",
-            "POST",
-            {
-                assignmentId,
-                type: assignmentType,
-                content,
-                correctAnswer,
-                explanation
-            }
-        );
-
-        if (assignmentType === "single_choice") {
-            await API.request("/question/add-options", "POST", {
-                questionId: question.id,
-                A: document.getElementById("A").value.trim(),
-                B: document.getElementById("B").value.trim(),
-                C: document.getElementById("C").value.trim(),
-                D: document.getElementById("D").value.trim()
-            });
+        // optional update explanation (nếu backend tách)
+        if (explanation) {
+            // nếu backend hỗ trợ update riêng thì gọi thêm API
+            // còn không thì nên gộp vào create
         }
 
         resetForm();
-        alert("Created");
+        alert("Created successfully");
         loadQuestions();
 
     } catch (err) {
@@ -114,27 +132,37 @@ async function createQuestion() {
     }
 }
 
-// ===== RESET =====
+// ===== RESET FORM =====
 function resetForm() {
     document.getElementById("content").value = "";
-    document.getElementById("correctAnswer").value = "";
-    document.getElementById("fillCorrectAnswer").value = "";
     document.getElementById("explanation").value = "";
 
-    ["A","B","C","D"].forEach(id => {
-        if (document.getElementById(id))
+    if (assignmentType === "single_choice") {
+        document.getElementById("correctAnswer").value = "A";
+
+        ["A", "B", "C", "D"].forEach(id => {
             document.getElementById(id).value = "";
-    });
+        });
+    } else {
+        document.getElementById("fillCorrectAnswer").value = "";
+    }
 }
 
 // ===== LOAD QUESTIONS =====
 async function loadQuestions() {
     showSkeleton();
 
-    const data =
-        await API.request("/question/by-assignment/" + assignmentId);
+    try {
+        const data =
+            await API.request("/question/by-assignment/" + assignmentId);
 
-    renderQuestions(data);
+        renderQuestions(data);
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("questionList").innerHTML =
+            `<div class="card">Failed to load questions</div>`;
+    }
 }
 
 // ===== RENDER QUESTIONS =====
@@ -151,10 +179,10 @@ function renderQuestions(list) {
 
     list.forEach((q, index) => {
         const card = document.createElement("div");
-        card.className = "question-card";
+        card.className = "card";
 
         let html = `
-            <div class="question-header">
+            <div class="question-title">
                 Question ${index + 1}
             </div>
 
@@ -169,19 +197,19 @@ function renderQuestions(list) {
 
             html += `<div class="options">`;
 
-            if (q.options && q.options.length > 0) {
+            if (q.options?.length) {
                 q.options.forEach((o, i) => {
                     const isCorrect =
                         letters[i] === q.correctAnswer;
 
                     html += `
                         <div class="option ${isCorrect ? "correct" : ""}">
-                            ${letters[i]}. ${o.content}
+                            <b>${letters[i]}.</b> ${o.content}
                         </div>
                     `;
                 });
             } else {
-                html += `<p style="color:red">No options</p>`;
+                html += `<p style="color:red">No options found</p>`;
             }
 
             html += `</div>`;
@@ -212,7 +240,7 @@ function renderQuestions(list) {
                     Edit
                 </button>
 
-                <button class="danger"
+                <button class="delete"
                         onclick="deleteQuestion(${q.id})">
                     Delete
                 </button>
@@ -226,7 +254,7 @@ function renderQuestions(list) {
 
 // ===== DELETE =====
 async function deleteQuestion(id) {
-    if (!confirm("Delete?")) return;
+    if (!confirm("Delete this question?")) return;
 
     await API.request("/question/delete/" + id, "DELETE");
     loadQuestions();
@@ -234,24 +262,30 @@ async function deleteQuestion(id) {
 
 // ===== LOAD CLASSES =====
 async function loadClasses() {
-    const classes = await API.request("/class/my-classes");
+    try {
+        const classes = await API.request("/class/my-classes");
 
-    const container = document.getElementById("classList");
-    container.innerHTML = "";
+        const container = document.getElementById("classList");
+        container.innerHTML = "";
 
-    classes.forEach(cls => {
-        const div = document.createElement("div");
-        div.className = "assign-item";
+        classes.forEach(cls => {
+            const div = document.createElement("div");
+            div.className = "assign-item";
 
-        div.innerHTML = `
-            <span>${cls.name}</span>
-            <button id="btn-${cls.id}" onclick="assign(${cls.id})">
-                Assign
-            </button>
-        `;
+            div.innerHTML = `
+                <span>${cls.name}</span>
+                <button id="btn-${cls.id}"
+                        onclick="assign(${cls.id})">
+                    Assign
+                </button>
+            `;
 
-        container.appendChild(div);
-    });
+            container.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 // ===== ASSIGN =====
@@ -274,6 +308,6 @@ async function assign(classId) {
     } catch (err) {
         btn.disabled = false;
         btn.innerText = "Assign";
-        alert("Failed");
+        alert("Assign failed");
     }
 }
