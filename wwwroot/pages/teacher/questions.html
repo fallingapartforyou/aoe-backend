@@ -2,12 +2,13 @@
 <html>
 
 <head>
+
 <meta charset="UTF-8">
 <title>Questions</title>
 
-<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
 <link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/sidebar.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
@@ -51,49 +52,47 @@ Guard.requireTeacher();
     <!-- CREATE -->
     <div id="createBox" class="card form-card">
 
-    <h4>Create Question</h4>
-    <p id="assignmentTypeLabel" class="text-muted"></p>
+        <h4>Create Question</h4>
+        <p id="assignmentTypeLabel" class="text-muted"></p>
 
-    <!-- QUESTION -->
-    <div class="form-group">
-        <label>Question</label>
-        <input id="content" class="form-input">
+        <div class="form-group">
+            <label>Question</label>
+            <input id="content" class="form-input">
+        </div>
+
+        <!-- SINGLE -->
+        <div id="optionsBox" class="form-group" style="display:none">
+            <label>Options</label>
+
+            <input id="A" class="form-input" placeholder="Option A">
+            <input id="B" class="form-input" placeholder="Option B">
+            <input id="C" class="form-input" placeholder="Option C">
+            <input id="D" class="form-input" placeholder="Option D">
+
+            <label>Correct Answer</label>
+            <select id="correctAnswer" class="form-input">
+                <option value="">-- Select --</option>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+            </select>
+        </div>
+
+        <!-- FILL -->
+        <div id="fillAnswerBox" class="form-group" style="display:none">
+            <label>Correct Answer</label>
+            <input id="fillCorrectAnswer" class="form-input">
+        </div>
+
+        <div class="form-group">
+            <label>Explanation</label>
+            <input id="explanation" class="form-input">
+        </div>
+
+        <button class="btn-primary" onclick="createQuestion()">Create</button>
+
     </div>
-
-    <!-- SINGLE CHOICE -->
-    <div id="optionsBox" class="form-group" style="display:none">
-        <label>Options</label>
-
-        <input id="A" class="form-input" placeholder="Option A">
-        <input id="B" class="form-input" placeholder="Option B">
-        <input id="C" class="form-input" placeholder="Option C">
-        <input id="D" class="form-input" placeholder="Option D">
-
-        <label>Correct Answer</label>
-        <select id="correctAnswer" class="form-input">
-            <option value="">-- Select --</option>
-            <option>A</option>
-            <option>B</option>
-            <option>C</option>
-            <option>D</option>
-        </select>
-    </div>
-
-    <!-- FILL BLANK -->
-    <div id="fillAnswerBox" class="form-group" style="display:none">
-        <label>Correct Answer</label>
-        <input id="fillCorrectAnswer" class="form-input">
-    </div>
-
-    <!-- EXPLANATION -->
-    <div class="form-group">
-        <label>Explanation</label>
-        <input id="explanation" class="form-input">
-    </div>
-
-    <button class="btn-primary" onclick="createQuestion()">Create</button>
-
-</div>
 
     <!-- ASSIGN -->
     <div id="assignBox" class="card" style="display:none;">
@@ -101,9 +100,75 @@ Guard.requireTeacher();
         <div id="classList"></div>
     </div>
 
-    <!-- LIST -->
-    <div id="questionList" class="question-list"></div>
+    <!-- 🔥 LIST TABLE SCROLL -->
+    <div class="card" style="margin-top:20px;">
+        <h4 style="margin-bottom:10px;">Question List</h4>
 
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:60px">#</th>
+                        <th>Question</th>
+                        <th style="width:120px">Answer</th>
+                        <th style="width:140px">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="questionList">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== EDIT MODAL ===== -->
+<div class="modal" id="editModal">
+    <div class="modal-box">
+
+        <h3>Edit Question</h3>
+
+        <div class="form-group">
+            <label>Question</label>
+            <input id="editContent" class="form-input">
+        </div>
+
+        <!-- SINGLE -->
+        <div id="editOptionsBox" class="form-group">
+            <label>Options</label>
+
+            <input id="editA" class="form-input" placeholder="Option A">
+            <input id="editB" class="form-input" placeholder="Option B">
+            <input id="editC" class="form-input" placeholder="Option C">
+            <input id="editD" class="form-input" placeholder="Option D">
+
+            <label>Correct Answer</label>
+            <select id="editCorrect" class="form-input">
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+            </select>
+        </div>
+
+        <!-- FILL -->
+        <div id="editFillBox" class="form-group">
+            <label>Correct Answer</label>
+            <input id="editFill" class="form-input">
+        </div>
+
+        <div class="form-group">
+            <label>Explanation</label>
+            <input id="editExplanation" class="form-input">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="saveEdit()">Save</button>
+            <button onclick="closeEdit()">Cancel</button>
+        </div>
+
+    </div>
 </div>
 
 </body>

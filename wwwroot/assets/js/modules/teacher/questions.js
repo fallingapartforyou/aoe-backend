@@ -3,6 +3,9 @@ const params = new URLSearchParams(location.search);
 const assignmentId = params.get("assignmentId");
 const assignmentType = params.get("type");
 
+let editingId = null;
+let currentQuestions = [];
+
 // ===== GUARD =====
 if (!assignmentId || !assignmentType) {
     alert("Missing assignment info");
@@ -20,54 +23,47 @@ window.onload = async () => {
     await loadClasses();
 };
 
-// ===== TOGGLE UI =====
-function toggleCreate() {
-    const box = document.getElementById("createBox");
-    box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-function toggleAssign() {
-    const box = document.getElementById("assignBox");
-    box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-// ===== SETUP TYPE =====
+// ===== UI SETUP =====
 function setupAssignmentTypeUI() {
     document.getElementById("assignmentTypeLabel").innerText =
-        "Question type: " + assignmentType.replace("_", " ");
+        "Question type: " + assignmentType;
 
     if (assignmentType === "single_choice") {
         document.getElementById("optionsBox").style.display = "block";
         document.getElementById("fillAnswerBox").style.display = "none";
+
+        document.getElementById("editOptionsBox").style.display = "block";
+        document.getElementById("editFillBox").style.display = "none";
     } else {
         document.getElementById("optionsBox").style.display = "none";
         document.getElementById("fillAnswerBox").style.display = "block";
+
+        document.getElementById("editOptionsBox").style.display = "none";
+        document.getElementById("editFillBox").style.display = "block";
     }
 }
 
 // ===== SKELETON =====
 function showSkeleton() {
     document.getElementById("questionList").innerHTML = `
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
+        <tr><td colspan="4">Loading...</td></tr>
+        <tr><td colspan="4">Loading...</td></tr>
     `;
 }
 
-// ===== CREATE QUESTION =====
+// ===== CREATE =====
 async function createQuestion() {
     try {
         const content = document.getElementById("content").value.trim();
-        if (!content) return alert("Question content is required");
+        if (!content) return alert("Content required");
 
-        let correctAnswer = "";
         let payload = {
             assignmentId,
             type: assignmentType,
-            content
+            content,
+            explanation: document.getElementById("explanation").value.trim()
         };
 
-        // ===== SINGLE CHOICE =====
         if (assignmentType === "single_choice") {
             const A = document.getElementById("A").value.trim();
             const B = document.getElementById("B").value.trim();
@@ -75,55 +71,25 @@ async function createQuestion() {
             const D = document.getElementById("D").value.trim();
 
             if (!A || !B || !C || !D)
-                return alert("All 4 options are required");
+                return alert("All options required");
 
-            correctAnswer =
+            payload.correctAnswer =
                 document.getElementById("correctAnswer").value;
 
-            payload.correctAnswer = correctAnswer;
+            const q = await API.request("/question/create", "POST", payload);
 
-            // create question first
-            const question = await API.request(
-                "/question/create",
-                "POST",
-                payload
-            );
-
-            // add options
             await API.request("/question/add-options", "POST", {
-                questionId: question.id,
+                questionId: q.id,
                 A, B, C, D
             });
-        }
-
-        // ===== FILL BLANK =====
-        else {
-            correctAnswer =
+        } else {
+            payload.correctAnswer =
                 document.getElementById("fillCorrectAnswer").value.trim();
 
-            if (!correctAnswer)
-                return alert("Correct answer required");
-
-            payload.correctAnswer = correctAnswer;
-
-            await API.request(
-                "/question/create",
-                "POST",
-                payload
-            );
-        }
-
-        const explanation =
-            document.getElementById("explanation").value.trim();
-
-        // optional update explanation (nếu backend tách)
-        if (explanation) {
-            // nếu backend hỗ trợ update riêng thì gọi thêm API
-            // còn không thì nên gộp vào create
+            await API.request("/question/create", "POST", payload);
         }
 
         resetForm();
-        alert("Created successfully");
         loadQuestions();
 
     } catch (err) {
@@ -132,23 +98,24 @@ async function createQuestion() {
     }
 }
 
-// ===== RESET FORM =====
+// ===== RESET =====
 function resetForm() {
     document.getElementById("content").value = "";
     document.getElementById("explanation").value = "";
 
-    if (assignmentType === "single_choice") {
-        document.getElementById("correctAnswer").value = "A";
-
-        ["A", "B", "C", "D"].forEach(id => {
+    ["A","B","C","D"].forEach(id => {
+        if (document.getElementById(id))
             document.getElementById(id).value = "";
-        });
-    } else {
+    });
+
+    if (document.getElementById("correctAnswer"))
+        document.getElementById("correctAnswer").value = "";
+
+    if (document.getElementById("fillCorrectAnswer"))
         document.getElementById("fillCorrectAnswer").value = "";
-    }
 }
 
-// ===== LOAD QUESTIONS =====
+// ===== LOAD =====
 async function loadQuestions() {
     showSkeleton();
 
@@ -156,105 +123,130 @@ async function loadQuestions() {
         const data =
             await API.request("/question/by-assignment/" + assignmentId);
 
+        currentQuestions = data;
         renderQuestions(data);
 
     } catch (err) {
         console.error(err);
-        document.getElementById("questionList").innerHTML =
-            `<div class="card">Failed to load questions</div>`;
     }
 }
 
-// ===== RENDER QUESTIONS =====
+// ===== RENDER (TABLE VERSION) =====
 function renderQuestions(list) {
     const container = document.getElementById("questionList");
     container.innerHTML = "";
 
     if (!list || list.length === 0) {
         container.innerHTML = `
-            <div class="card">No questions yet</div>
+            <tr>
+                <td colspan="4">No questions</td>
+            </tr>
         `;
         return;
     }
 
     list.forEach((q, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
+        const tr = document.createElement("tr");
 
-        let html = `
-            <div class="question-title">
-                Question ${index + 1}
-            </div>
-
-            <div class="question-content">
-                ${q.content}
-            </div>
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${q.content}</td>
+            <td>${q.correctAnswer}</td>
+            <td>
+                <button onclick="openEdit(${q.id})">Edit</button>
+                <button onclick="deleteQuestion(${q.id})">Delete</button>
+            </td>
         `;
 
-        // ===== SINGLE CHOICE =====
-        if (q.type === "single_choice") {
-            const letters = ["A","B","C","D"];
-
-            html += `<div class="options">`;
-
-            if (q.options?.length) {
-                q.options.forEach((o, i) => {
-                    const isCorrect =
-                        letters[i] === q.correctAnswer;
-
-                    html += `
-                        <div class="option ${isCorrect ? "correct" : ""}">
-                            <b>${letters[i]}.</b> ${o.content}
-                        </div>
-                    `;
-                });
-            } else {
-                html += `<p style="color:red">No options found</p>`;
-            }
-
-            html += `</div>`;
-        }
-
-        // ===== FILL BLANK =====
-        else {
-            html += `
-                <div class="option correct">
-                    Answer: ${q.correctAnswer}
-                </div>
-            `;
-        }
-
-        // ===== EXPLANATION =====
-        if (q.explanation) {
-            html += `
-                <div class="explanation">
-                    ${q.explanation}
-                </div>
-            `;
-        }
-
-        // ===== ACTION =====
-        html += `
-            <div class="question-actions">
-                <button onclick="editQuestion(${q.id})">
-                    Edit
-                </button>
-
-                <button class="delete"
-                        onclick="deleteQuestion(${q.id})">
-                    Delete
-                </button>
-            </div>
-        `;
-
-        card.innerHTML = html;
-        container.appendChild(card);
+        container.appendChild(tr);
     });
+}
+
+// ===== OPEN EDIT =====
+function openEdit(id) {
+    const q = currentQuestions.find(x => x.id === id);
+    if (!q) return;
+
+    editingId = id;
+
+    document.getElementById("editContent").value = q.content;
+    document.getElementById("editExplanation").value = q.explanation || "";
+
+    if (q.type === "single_choice") {
+        document.getElementById("editCorrect").value = q.correctAnswer;
+
+        q.options?.forEach(o => {
+            const el = document.getElementById("edit" + o.label);
+            if (el) el.value = o.content;
+        });
+    } else {
+        document.getElementById("editFill").value = q.correctAnswer;
+    }
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+// ===== CLOSE =====
+function closeEdit() {
+    document.getElementById("editModal").style.display = "none";
+    editingId = null;
+}
+
+// ===== SAVE EDIT =====
+async function saveEdit() {
+    try {
+        const content =
+            document.getElementById("editContent").value.trim();
+
+        if (!content) return alert("Content required");
+
+        let correctAnswer;
+
+        if (assignmentType === "single_choice") {
+            correctAnswer =
+                document.getElementById("editCorrect").value;
+        } else {
+            correctAnswer =
+                document.getElementById("editFill").value.trim();
+        }
+
+        await API.request(
+            "/question/update/" + editingId,
+            "PUT",
+            {
+                content,
+                correctAnswer,
+                explanation:
+                    document.getElementById("editExplanation").value
+            }
+        );
+
+        // update options nếu là single_choice
+        if (assignmentType === "single_choice") {
+            const A = document.getElementById("editA").value.trim();
+            const B = document.getElementById("editB").value.trim();
+            const C = document.getElementById("editC").value.trim();
+            const D = document.getElementById("editD").value.trim();
+
+            await API.request(
+                "/question/update-options/" + editingId,
+                "PUT",
+                { A, B, C, D }
+            );
+        }
+
+        closeEdit();
+        loadQuestions();
+
+    } catch (err) {
+        console.error(err);
+        alert("Update failed");
+    }
 }
 
 // ===== DELETE =====
 async function deleteQuestion(id) {
-    if (!confirm("Delete this question?")) return;
+    if (!confirm("Delete?")) return;
 
     await API.request("/question/delete/" + id, "DELETE");
     loadQuestions();
@@ -274,10 +266,7 @@ async function loadClasses() {
 
             div.innerHTML = `
                 <span>${cls.name}</span>
-                <button id="btn-${cls.id}"
-                        onclick="assign(${cls.id})">
-                    Assign
-                </button>
+                <button onclick="assign(${cls.id})">Assign</button>
             `;
 
             container.appendChild(div);
@@ -290,11 +279,6 @@ async function loadClasses() {
 
 // ===== ASSIGN =====
 async function assign(classId) {
-    const btn = document.getElementById(`btn-${classId}`);
-
-    btn.disabled = true;
-    btn.innerText = "Assigning...";
-
     try {
         await API.request(
             "/assignment/assign-to-class",
@@ -302,12 +286,10 @@ async function assign(classId) {
             { assignmentId, classId }
         );
 
-        btn.innerText = "Assigned";
-        btn.classList.add("assigned");
+        alert("Assigned");
 
     } catch (err) {
-        btn.disabled = false;
-        btn.innerText = "Assign";
+        console.error(err);
         alert("Assign failed");
     }
 }

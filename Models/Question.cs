@@ -28,6 +28,9 @@ public partial class Question
     [StringLength(255)]
     public string CorrectAnswer { get; set; } = null!;
 
+    [Column("score")]
+    public double Score { get; set; }
+
     [Column("explanation")]
     public string? Explanation { get; set; }
 
