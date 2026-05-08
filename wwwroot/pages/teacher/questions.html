@@ -54,6 +54,7 @@ Guard.requireTeacher();
 
         <h4>Create Question</h4>
         <p id="assignmentTypeLabel" class="text-muted"></p>
+        <p id="questionCounter" class="text-muted"> </p>
 
         <div class="form-group">
             <label>Question</label>
@@ -90,15 +91,31 @@ Guard.requireTeacher();
             <input id="explanation" class="form-input">
         </div>
 
-        <button class="btn-primary" onclick="createQuestion()">Create</button>
+        <button id="createBtn" class="btn-primary" onclick="createQuestion()"> Create Question </button>
 
     </div>
 
     <!-- ASSIGN -->
-    <div id="assignBox" class="card" style="display:none;">
-        <h4>Assign to class</h4>
-        <div id="classList"></div>
+    <!-- ===== ASSIGN MODAL ===== -->
+<div id="assignModal" class="custom-modal">
+
+    <div class="custom-modal-content">
+
+        <div class="modal-header">
+            <h3>Assign To Class</h3>
+
+            <button
+                class="close-btn"
+                onclick="closeAssignModal()">
+                ✕
+            </button>
+        </div>
+
+        <div id="classList" class="class-list"></div>
+
     </div>
+
+</div>
 
     <!-- 🔥 LIST TABLE SCROLL -->
     <div class="card" style="margin-top:20px;">

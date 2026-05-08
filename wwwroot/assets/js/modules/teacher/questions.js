@@ -5,6 +5,7 @@ const assignmentType = params.get("type");
 
 let editingId = null;
 let currentQuestions = [];
+let assignmentInfo = null;
 
 // ===== GUARD =====
 if (!assignmentId || !assignmentType) {
@@ -19,6 +20,7 @@ window.onload = async () => {
     setupAssignmentTypeUI();
     showSkeleton();
 
+    await loadAssignmentInfo();
     await loadQuestions();
     await loadClasses();
 };
@@ -53,6 +55,13 @@ function showSkeleton() {
 
 // ===== CREATE =====
 async function createQuestion() {
+    if (currentQuestions.length >= assignmentInfo.questionCount) {
+    alert(
+        "Maximum question count reached"
+    );
+    return;
+    }
+
     try {
         const content = document.getElementById("content").value.trim();
         if (!content) return alert("Content required");
@@ -125,6 +134,7 @@ async function loadQuestions() {
 
         currentQuestions = data;
         renderQuestions(data);
+        updateQuestionCounter();
 
     } catch (err) {
         console.error(err);
@@ -254,42 +264,157 @@ async function deleteQuestion(id) {
 
 // ===== LOAD CLASSES =====
 async function loadClasses() {
-    try {
-        const classes = await API.request("/class/my-classes");
 
-        const container = document.getElementById("classList");
+    try {
+
+        const classes =
+            await API.request("/class/my-classes");
+
+        const container =
+            document.getElementById("classList");
+
         container.innerHTML = "";
 
         classes.forEach(cls => {
-            const div = document.createElement("div");
+
+            const div =
+                document.createElement("div");
+
             div.className = "assign-item";
 
             div.innerHTML = `
                 <span>${cls.name}</span>
-                <button onclick="assign(${cls.id})">Assign</button>
+
+                <button
+                    id="assignBtn-${cls.id}"
+                    onclick="assign(${cls.id})">
+                    Assign
+                </button>
             `;
 
             container.appendChild(div);
         });
 
     } catch (err) {
+
         console.error(err);
+
     }
 }
 
 // ===== ASSIGN =====
 async function assign(classId) {
+
+    const btn =
+        document.getElementById(
+            "assignBtn-" + classId
+        );
+
+    const confirmed =
+        confirm("Assign this assignment to class?");
+
+    if (!confirmed)
+        return;
+
     try {
+
+        btn.disabled = true;
+        btn.innerText = "Assigning...";
+
         await API.request(
             "/assignment/assign-to-class",
             "POST",
-            { assignmentId, classId }
+            {
+                assignmentId,
+                classId
+            }
         );
 
-        alert("Assigned");
+        btn.innerText = "Assigned";
+
+        btn.classList.add("assigned");
+
+    } catch (err) {
+
+        console.error(err);
+
+        btn.disabled = false;
+        btn.innerText = "Assign";
+
+        alert("Assign failed");
+    }
+}
+
+function toggleAssign() {
+    document
+        .getElementById("assignModal")
+        .classList
+        .add("show");
+}
+
+function closeAssignModal() {
+    document
+        .getElementById("assignModal")
+        .classList
+        .remove("show");
+}
+
+async function loadAssignmentInfo() {
+    try {
+
+        assignmentInfo =
+            await API.request(
+                "/assignment/" + assignmentId
+            );
+
+        updateQuestionCounter();
 
     } catch (err) {
         console.error(err);
-        alert("Assign failed");
+    }
+}
+
+function updateQuestionCounter() {
+
+    if (!assignmentInfo)
+        return;
+
+    const current =
+        currentQuestions.length;
+
+    const max =
+        assignmentInfo.questionCount;
+
+    const counter =
+        document.getElementById("questionCounter");
+
+    const createBtn =
+        document.getElementById("createBtn");
+
+    counter.innerText =
+        `${current} / ${max} questions`;
+
+    // ===== FULL =====
+    if (current >= max) {
+
+        counter.classList.add("danger-text");
+
+        createBtn.disabled = true;
+
+        createBtn.innerText =
+            "Question limit reached";
+    }
+
+    // ===== AVAILABLE =====
+    else {
+
+        counter.classList.remove("danger-text");
+
+        createBtn.disabled = false;
+
+        createBtn.innerText =
+            editingId
+            ? "Update Question"
+            : "Create Question";
     }
 }

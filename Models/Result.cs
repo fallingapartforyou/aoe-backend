@@ -16,7 +16,7 @@ namespace aoe.Models
         public int AssignmentId { get; set; }
 
         [Column("score")]
-        public int Score { get; set; }
+        public double Score { get; set; }
 
         [Column("submitted_at")]
         public DateTime? SubmittedAt { get; set; }

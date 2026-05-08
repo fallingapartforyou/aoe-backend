@@ -55,21 +55,19 @@ namespace aoe.Controllers
 
             if (assignment == null)
                 return NotFound("Assignment not found");
+            var currentQuestionCount = _context.Questions.Count(q => q.AssignmentId == dto.AssignmentId);
+
+            if (currentQuestionCount >= assignment.QuestionCount)
+            {
+                return BadRequest(
+                    $"Maximum {assignment.QuestionCount} questions reached"
+                );
+            };
 
             var teacherId =
                 int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            bool ownsAssignment =
-            (
-                from ac in _context.AssignmentClasses
-                join c in _context.Classes
-                on ac.ClassId equals c.Id
-                where ac.AssignmentId == dto.AssignmentId
-                && c.TeacherId == teacherId
-                select ac
-            ).Any();
-
-            if (!ownsAssignment)
+            if (assignment.TeacherId != teacherId)
                 return Unauthorized("Not your assignment");
 
             if (string.IsNullOrWhiteSpace(dto.Content))

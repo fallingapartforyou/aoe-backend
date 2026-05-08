@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using aoe.Models;
@@ -11,9 +12,11 @@ using aoe.Models;
 namespace aoe.Migrations
 {
     [DbContext(typeof(AoeDbContext))]
-    partial class AoeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260507154224_ChangeResultScoreToDouble")]
+    partial class ChangeResultScoreToDouble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

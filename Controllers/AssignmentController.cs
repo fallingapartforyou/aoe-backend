@@ -21,28 +21,66 @@ namespace aoe.Controllers
             _context = context;
         }
 
+        [HttpGet("{id}")]
+        [Authorize]
+        public IActionResult GetById(int id)
+        {
+            var assignment = _context.Assignments.FirstOrDefault(x => x.Id == id);
+
+            if (assignment == null)
+                return NotFound("Assignment not found");
+
+            return Ok(new
+            {
+                assignment.Id,
+                assignment.Name,
+                assignment.QuestionType,
+                assignment.QuestionCount,
+                assignment.OpenTime,
+                assignment.CloseTime,
+                assignment.ShowResult,
+                assignment.ShowExplanation,
+                assignment.TeacherId
+            });
+        }
+
         // CREATE
         [HttpPost("create")]
-        public IActionResult Create(
-            CreateAssignmentDTO dto)
+        [Authorize(Roles = "teacher")]
+        public IActionResult Create(CreateAssignmentDTO dto)
         {
+            if (dto == null)
+                return BadRequest("Invalid payload");
+
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest("Assignment name required");
+
             if (dto.Name.Length > 20)
-                return BadRequest();
+                return BadRequest("Assignment name max 20 characters");
 
             if (dto.QuestionType != "single_choice"
                 && dto.QuestionType != "fill_blank")
-                return BadRequest();
+                return BadRequest("Invalid question type");
+
+            if (dto.QuestionCount <= 0)
+                return BadRequest("Question count must be > 0");
+
+            // 🔥 FIX
+            var teacherId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
 
             var assignment =
                 new Assignment
                 {
-                    Name = dto.Name,
+                    Name = dto.Name.Trim(),
                     QuestionType = dto.QuestionType,
                     QuestionCount = dto.QuestionCount,
                     OpenTime = dto.OpenTime,
                     CloseTime = dto.CloseTime,
                     ShowResult = dto.ShowResult,
-                    ShowExplanation = dto.ShowExplanation
+                    ShowExplanation = dto.ShowExplanation,
+                    TeacherId = teacherId
                 };
 
             _context.Assignments.Add(assignment);

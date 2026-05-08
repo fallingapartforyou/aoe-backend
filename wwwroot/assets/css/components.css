@@ -325,3 +325,17 @@ body {
   color: #64748b;
   margin-bottom: 8px;
 }
+
+#assignBox {
+    display: none;
+}
+
+#assignBox.show {
+    display: block;
+}
+
+.danger-text {
+    color: #dc2626;
+    font-weight: 600;
+}
+

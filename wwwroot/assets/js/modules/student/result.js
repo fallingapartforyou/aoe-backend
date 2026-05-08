@@ -102,6 +102,13 @@ function renderHistory(list) {
     });
 }
 
+function goMenu() {
+
+    location.href =
+        "/pages/student/exam-menu.html?assignmentId="
+        + assignmentId;
+}
+
 // ===== FORMAT =====
 function formatTime(t) {
     if (!t) return "N/A";

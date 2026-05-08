@@ -1,128 +1,192 @@
-const params = new URLSearchParams(location.search);
-const assignmentId = params.get("assignmentId");
+const params =
+    new URLSearchParams(location.search);
 
-let data = [];
-let currentIndex = 0;
+const assignmentId =
+    params.get("assignmentId");
 
 // ===== INIT =====
 window.onload = async () => {
-    await loadReview();
+
+    try {
+
+        renderLayout("student");
+
+        await loadReview();
+
+    } catch (err) {
+
+        console.error(err);
+
+        document.getElementById(
+            "reviewContainer"
+        ).innerHTML = `
+            <div class="card">
+                Failed to load review
+            </div>
+        `;
+    }
 };
 
 // ===== LOAD =====
 async function loadReview() {
+
     try {
-        if (!assignmentId) {
-            alert("Missing assignmentId");
-            return;
-        }
 
-        data = await API.request(
-            "/result/review/" + assignmentId
-        );
+        const data =
+            await API.request(
+                "/exam/review/" + assignmentId
+            );
 
-        renderNav();
-        renderQuestion();
+        renderReview(data);
 
     } catch (err) {
+
         console.error(err);
-        alert("Load review failed");
-    }
-}
 
-// ===== NAV =====
-function renderNav() {
-    const nav = document.getElementById("reviewNav");
-    nav.innerHTML = "";
-
-    data.forEach((q, i) => {
-        const btn = document.createElement("button");
-
-        btn.innerText = i + 1;
-        btn.className = "nav-btn";
-
-        if (q.isCorrect) {
-            btn.classList.add("answered");
-        } else {
-            btn.classList.add("wrong");
-        }
-
-        if (i === currentIndex) {
-            btn.classList.add("active");
-        }
-
-        btn.onclick = () => {
-            currentIndex = i;
-            renderQuestion();
-        };
-
-        nav.appendChild(btn);
-    });
-}
-
-// ===== RENDER =====
-function renderQuestion() {
-    const q = data[currentIndex];
-    const box = document.getElementById("reviewBox");
-
-    let html = `
-        <h3>Question ${currentIndex + 1}</h3>
-        <p>${q.content}</p>
-    `;
-
-    // ===== OPTIONS =====
-    if (q.options && q.options.length > 0) {
-
-        const letters = ["A","B","C","D"];
-
-        q.options.forEach((opt, i) => {
-
-            let cls = "";
-
-            if (opt === q.correctAnswer) {
-                cls = "correct";
-            }
-
-            if (opt === q.studentAnswer && !q.isCorrect) {
-                cls = "wrong";
-            }
-
-            html += `
-                <div class="option ${cls}">
-                    ${letters[i]}. ${opt}
-                </div>
-            `;
-        });
-    }
-
-    // ===== FILL =====
-    else {
-        html += `
-            <p>Your answer:
-                <b class="${q.isCorrect ? 'correct' : 'wrong'}">
-                    ${q.studentAnswer || "(empty)"}
-                </b>
-            </p>
-
-            <p>Correct:
-                <b class="correct">
-                    ${q.correctAnswer}
-                </b>
-            </p>
-        `;
-    }
-
-    // ===== EXPLANATION =====
-    if (q.explanation) {
-        html += `
-            <div class="explanation">
-                <b>Explanation:</b>
-                <p>${q.explanation}</p>
+        document.getElementById(
+            "reviewContainer"
+        ).innerHTML = `
+            <div class="card">
+                Review load failed
             </div>
         `;
     }
+}
 
-    box.innerHTML = html;
+// ===== RENDER =====
+function renderReview(list) {
 
-    renderNav();
+    const container =
+        document.getElementById(
+            "reviewContainer"
+        );
+
+    container.innerHTML = "";
+
+    if (!list || list.length === 0) {
+
+        container.innerHTML = `
+            <div class="card">
+                No review data
+            </div>
+        `;
+
+        return;
+    }
+
+    list.forEach((q, index) => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "card";
+
+        let html = `
+            <div class="question-title">
+                Question ${index + 1}
+            </div>
+
+            <div class="question-content">
+                ${q.content}
+            </div>
+        `;
+
+        // ===== SINGLE CHOICE =====
+        if (q.type === "single_choice") {
+
+            html += `<div class="options">`;
+
+            q.options.forEach(o => {
+
+                const isCorrect =
+                    o.label === q.correctAnswer;
+
+                const isChosen =
+                    o.label === q.studentAnswer;
+
+                html += `
+                    <div class="
+                        option
+                        ${isCorrect ? "correct" : ""}
+                        ${isChosen ? "selected" : ""}
+                    ">
+
+                        <b>${o.label}.</b>
+                        ${o.content}
+
+                        ${isChosen
+                            ? "(Your answer)"
+                            : ""}
+
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+        }
+
+        // ===== FILL BLANK =====
+        else {
+
+            html += `
+                <div class="option">
+
+                    <b>Your answer:</b>
+                    ${q.studentAnswer || "-"}
+
+                </div>
+
+                <div class="option correct">
+
+                    <b>Correct answer:</b>
+                    ${q.correctAnswer}
+
+                </div>
+            `;
+        }
+
+        // ===== STATUS =====
+        html += `
+            <div class="
+                review-status
+                ${q.isCorrect
+                    ? "success"
+                    : "fail"}
+            ">
+
+                ${q.isCorrect
+                    ? "Correct"
+                    : "Wrong"}
+
+            </div>
+        `;
+
+        // ===== EXPLANATION =====
+        if (q.explanation) {
+
+            html += `
+                <div class="explanation">
+
+                    <b>Explanation:</b>
+
+                    <br><br>
+
+                    ${q.explanation}
+
+                </div>
+            `;
+        }
+
+        card.innerHTML = html;
+
+        container.appendChild(card);
+    });
+}
+
+// ===== BACK =====
+function goBack() {
+
+    location.href =
+        "/pages/student/exam-menu.html?assignmentId="
+        + assignmentId;
 }

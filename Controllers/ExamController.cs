@@ -120,21 +120,28 @@ namespace aoe.Controllers
                 return BadRequest("Closed");
 
             var questions =
-                _context.Questions
-                .Where(q => q.AssignmentId == assignmentId)
-                .Select(q => new
-                {
-                    id = q.Id,
-                    type = q.Type,
-                    content = q.Content,
+        _context.Questions
+        .Where(q => q.AssignmentId == assignmentId)
+        .Select(q => new
+        {
+            q.Id,
+            q.Type,
+            q.Content,
 
-                    options =
-                        _context.QuestionOptions
-                        .Where(o => o.QuestionId == q.Id)
-                        .Select(o => o.Content)
-                        .ToList()
-                })
-                .ToList();
+            Options =
+                q.Type == "single_choice"
+                ? _context.QuestionOptions
+                    .Where(o => o.QuestionId == q.Id)
+                    .OrderBy(o => o.Label)
+                    .Select(o => new
+                    {
+                        label = o.Label.ToString(),
+                        content = o.Content
+                    })
+                    .ToList()
+                : null
+        })
+        .ToList();
 
             return Ok(questions);
         }
@@ -146,7 +153,9 @@ namespace aoe.Controllers
         {
             var studentId = GetStudentId();
 
-            int score = 0;
+            double totalScore = 0;
+
+            var debug = new List<object>();
 
             foreach (var ans in dto.Answers)
             {
@@ -156,13 +165,35 @@ namespace aoe.Controllers
                 if (question == null)
                     continue;
 
+                string dbAnswer =
+                    question.CorrectAnswer?
+                        .Trim()
+                        .ToUpper() ?? "";
+
+                string studentAnswer =
+                    ans.Answer?
+                        .Trim()
+                        .ToUpper() ?? "";
+
                 bool correct =
-                    question.CorrectAnswer == ans.Answer;
+                    dbAnswer == studentAnswer;
 
                 if (correct)
-                    score++;
+                    totalScore += question.Score;
 
-                // ✅ CHECK EXIST
+                debug.Add(new
+                {
+                    questionId = question.Id,
+
+                    dbAnswer,
+
+                    studentAnswer,
+
+                    correct,
+
+                    score = question.Score
+                });
+
                 var existing =
                     _context.StudentAnswers.FirstOrDefault(x =>
                         x.StudentId == studentId &&
@@ -172,13 +203,11 @@ namespace aoe.Controllers
 
                 if (existing != null)
                 {
-                    // ✅ UPDATE
                     existing.Answer = ans.Answer;
                     existing.IsCorrect = correct;
                 }
                 else
                 {
-                    // ✅ INSERT
                     _context.StudentAnswers.Add(
                         new StudentAnswer
                         {
@@ -197,7 +226,7 @@ namespace aoe.Controllers
                 {
                     StudentId = studentId,
                     AssignmentId = dto.AssignmentId,
-                    Score = score
+                    Score = totalScore
                 }
             );
 
@@ -205,10 +234,10 @@ namespace aoe.Controllers
 
             return Ok(new
             {
-                score
+                score = totalScore,
+                debug
             });
         }
-
 
         // VIEW RESULT
         [HttpGet("result/{assignmentId}")]
@@ -255,6 +284,52 @@ namespace aoe.Controllers
                 .ToList();
 
             return Ok(history);
+        }
+
+        [HttpGet("review/{assignmentId}")]
+        public IActionResult Review(int assignmentId)
+        {
+            var studentId = GetStudentId();
+
+            var questions =
+                _context.Questions
+                .Where(q => q.AssignmentId == assignmentId)
+                .Select(q => new
+                {
+                    q.Id,
+                    q.Content,
+                    q.Type,
+                    q.CorrectAnswer,
+                    q.Explanation,
+
+                    StudentAnswer =
+                        _context.StudentAnswers
+                        .Where(a =>
+                            a.StudentId == studentId &&
+                            a.QuestionId == q.Id)
+                        .Select(a => a.Answer)
+                        .FirstOrDefault(),
+
+                    IsCorrect =
+                        _context.StudentAnswers
+                        .Where(a =>
+                            a.StudentId == studentId &&
+                            a.QuestionId == q.Id)
+                        .Select(a => a.IsCorrect)
+                        .FirstOrDefault(),
+
+                    Options =
+                        q.QuestionOptions
+                        .Select(o => new
+                        {
+                            o.Label,
+                            o.Content
+                        })
+                        .ToList()
+                })
+                .ToList();
+
+            return Ok(questions);
         }
     }
 }

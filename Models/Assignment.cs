@@ -39,6 +39,9 @@ public partial class Assignment
     [Column("created_at", TypeName = "timestamp without time zone")]
     public DateTime? CreatedAt { get; set; }
 
+    [Column("teacher_id")]
+    public int TeacherId { get; set; }
+
     [InverseProperty("Assignment")]
     public virtual ICollection<AssignmentClass> AssignmentClasses { get; set; } = new List<AssignmentClass>();
 

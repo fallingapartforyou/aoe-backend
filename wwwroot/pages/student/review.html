@@ -8,11 +8,14 @@
 <link rel="stylesheet" href="../../assets/css/base.css">
 <link rel="stylesheet" href="../../assets/css/layout.css">
 <link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
 <link rel="stylesheet" href="../../assets/css/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
+
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
 
 <script defer src="../../assets/js/modules/student/review.js"></script>
 
@@ -20,34 +23,33 @@
 
 <body>
 
-<div class="exam-container">
+<div id="layout"></div>
 
-    <!-- HEADER -->
-    <div class="exam-header">
-        <h2>Review</h2>
+<div class="main-content">
 
-        <button class="btn-back" onclick="history.back()">
+    <div class="page-header">
+
+        <div>
+            <h2>Review Exam</h2>
+            <p class="text-muted">
+                Check answers and explanations
+            </p>
+        </div>
+
+        <button
+            class="btn-back"
+            onclick="goBack()">
+
             ← Back
+
         </button>
-    </div>
-
-    <!-- BODY -->
-    <div class="exam-body">
-
-        <!-- LEFT -->
-        <div class="exam-left">
-            <div id="reviewBox"></div>
-        </div>
-
-        <!-- RIGHT -->
-        <div class="exam-right">
-            <h4>Questions</h4>
-            <div id="reviewNav"></div>
-        </div>
 
     </div>
+
+    <div id="reviewContainer"></div>
 
 </div>
 
 </body>
+
 </html>
