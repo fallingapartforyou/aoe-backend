@@ -164,7 +164,10 @@ function renderQuestions(list) {
             <td>${q.content}</td>
             <td>${q.correctAnswer}</td>
             <td>
-                <button onclick="openEdit(${q.id})">Edit</button>
+                <button onclick="openEdit(${q.id})"> Edit </button>
+
+                <button onclick="generateExplanation(${q.id})"> AI Explain </button>
+
                 <button onclick="deleteQuestion(${q.id})">Delete</button>
             </td>
         `;
@@ -680,5 +683,69 @@ function clearAIPreview() {
         .getElementById("aiPreviewBox")
         .style.display = "none";
 }
+
+async function generateExplanation(id) {
+
+    try {
+
+        const q =
+            currentQuestions.find(
+                x => x.id === id
+            );
+
+        if (!q)
+            return;
+
+        let wrongAnswers = "";
+
+        if (q.options?.length) {
+
+            wrongAnswers =
+                q.options
+                .filter(x =>
+                    x.label !== q.correctAnswer
+                )
+                .map(x => x.content)
+                .join(", ");
+        }
+
+        const result =
+            await API.request(
+                "/ai/generate-explanation",
+                "POST",
+                {
+                    question: q.content,
+                    correctAnswer:
+                        q.correctAnswer,
+                    wrongAnswers
+                }
+            );
+
+        await API.request(
+            "/question/update/" + id,
+            "PUT",
+            {
+                content: q.content,
+                correctAnswer:
+                    q.correctAnswer,
+                explanation:
+                    result.explanation
+            }
+        );
+
+        alert("Explanation generated");
+
+        await loadQuestions();
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert(
+            "Generate explanation failed"
+        );
+    }
+}
+
 console.log("QUESTIONS JS LOADED");
 console.log(typeof generateAIQuestions);

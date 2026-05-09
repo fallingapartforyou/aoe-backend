@@ -11,5 +11,7 @@
         public string StudentAnswer { get; set; } = "";
 
         public string Explanation { get; set; } = "";
+
+        public string Ask { get; set; } = "";
     }
 }

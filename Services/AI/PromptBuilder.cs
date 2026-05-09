@@ -69,12 +69,13 @@ namespace aoe.Services.AI
             return sb.ToString();
         }
 
+        // ===== EXPLANATION =====
         public static string BuildExplanationPrompt(
             GenerateAIExplanationDTO dto)
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine($"Question:");
+            sb.AppendLine("Question:");
             sb.AppendLine(dto.Question);
 
             sb.AppendLine();
@@ -101,6 +102,7 @@ namespace aoe.Services.AI
 Explain:
 - why the answer is correct
 - why the others are incorrect
+- concise and educational
 
 Return plain text only.
 """);
@@ -108,6 +110,7 @@ Return plain text only.
             return sb.ToString();
         }
 
+        // ===== REVIEW AI =====
         public static string BuildReviewPrompt(
             ReviewAIAnswerDTO dto)
         {
@@ -144,8 +147,17 @@ Return plain text only.
 
             sb.AppendLine();
 
+            sb.AppendLine(
+                $"Student Question: {dto.Ask}");
+
+            sb.AppendLine();
+
             sb.AppendLine("""
-Explain why the student's answer is incorrect.
+Explain:
+- answer the student's question
+- explain why the answer is correct or incorrect
+- teach the related concept
+- concise and educational
 
 Do not invent information outside the provided context.
 

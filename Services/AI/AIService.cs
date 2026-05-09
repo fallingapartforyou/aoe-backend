@@ -10,53 +10,33 @@ namespace aoe.Services.AI
 
         private readonly IConfiguration _configuration;
 
-        public AIService(
-            HttpClient httpClient,
-            IConfiguration configuration)
+        public AIService(HttpClient httpClient,IConfiguration configuration)
         {
             _httpClient = httpClient;
             _configuration = configuration;
         }
 
-        public async Task<List<AIQuestionDTO>>
-            GenerateQuestions(
-                GenerateAIQuestionsDTO dto)
+        public async Task<List<AIQuestionDTO>> GenerateQuestions(GenerateAIQuestionsDTO dto)
         {
-            var prompt =
-                PromptBuilder
-                .BuildGenerateQuestionsPrompt(dto);
+            var prompt = PromptBuilder.BuildGenerateQuestionsPrompt(dto);
 
-            var raw =
-                await SendPrompt(prompt);
+            var raw = await SendPrompt(prompt);
 
             raw = CleanJson(raw);
 
-            var result =
-                JsonSerializer.Deserialize<
-                    List<AIQuestionDTO>>(
-                        raw,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
+            var result = JsonSerializer.Deserialize<List<AIQuestionDTO>>(raw,new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
 
-            if (!AIResponseValidator
-                .IsValidQuestionList(result, dto.Type))
+            if (!AIResponseValidator.IsValidQuestionList(result, dto.Type))
             {
-                throw new Exception(
-                    "AI returned invalid question format");
+                throw new Exception("AI returned invalid question format");
             }
 
             return result!;
         }
 
-        public async Task<string>
-            GenerateExplanation(
-                GenerateAIExplanationDTO dto)
+        public async Task<string> GenerateExplanation(GenerateAIExplanationDTO dto)
         {
-            var prompt =
-                PromptBuilder
-                .BuildExplanationPrompt(dto);
+            var prompt = PromptBuilder.BuildExplanationPrompt(dto);
 
             return await SendPrompt(prompt);
         }

@@ -4,6 +4,8 @@ const params =
 const assignmentId =
     params.get("assignmentId");
 
+let reviewData = [];
+
 // ===== INIT =====
 window.onload = async () => {
 
@@ -55,6 +57,8 @@ async function loadReview() {
 
 // ===== RENDER =====
 function renderReview(list) {
+
+    reviewData = list;
 
     const container =
         document.getElementById(
@@ -177,10 +181,134 @@ function renderReview(list) {
             `;
         }
 
+        // ===== AI REVIEW =====
+        html += `
+
+            <div class="ai-review-box">
+
+                <button
+                    class="btn-secondary"
+                    onclick="toggleAIBox(${index})">
+
+                    Ask AI
+
+                </button>
+
+                <div
+                    id="aiBox-${index}"
+                    style="
+                        display:none;
+                        margin-top:15px;
+                    ">
+
+                    <input
+                        id="aiQuestion-${index}"
+                        class="form-input"
+                        placeholder="Ask AI about this question">
+
+                    <button
+                        class="btn-primary"
+                        style="margin-top:10px"
+                        onclick="askAI(${index})">
+
+                        Send
+
+                    </button>
+
+                    <div
+                        id="aiResponse-${index}"
+                        class="explanation"
+                        style="margin-top:15px">
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
         card.innerHTML = html;
 
         container.appendChild(card);
     });
+}
+
+// ===== TOGGLE AI =====
+function toggleAIBox(index) {
+
+    const box =
+        document.getElementById(
+            "aiBox-" + index
+        );
+
+    if (box.style.display === "none") {
+
+        box.style.display = "block";
+
+    } else {
+
+        box.style.display = "none";
+    }
+}
+
+// ===== ASK AI =====
+async function askAI(index) {
+
+    try {
+
+        const q =
+            reviewData[index];
+
+        const ask =
+            document
+            .getElementById(
+                "aiQuestion-" + index
+            )
+            .value
+            .trim();
+
+        if (!ask)
+            return alert("Enter question");
+
+        const responseBox =
+            document.getElementById(
+                "aiResponse-" + index
+            );
+
+        responseBox.innerHTML =
+            "AI is thinking...";
+
+        const result =
+            await API.request(
+                "/ai/review-answer",
+                "POST",
+                {
+                    question: q.content,
+
+                    correctAnswer:
+                        q.correctAnswer,
+
+                    studentAnswer:
+                        q.studentAnswer,
+
+                    explanation:
+                        q.explanation || "",
+
+                    ask
+                }
+            );
+
+        responseBox.innerHTML = `
+            <b>AI Response:</b>
+            <br><br>
+            ${result.response}
+        `;
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("AI review failed");
+    }
 }
 
 // ===== BACK =====
