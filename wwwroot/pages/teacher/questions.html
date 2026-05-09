@@ -37,155 +37,432 @@ Guard.requireTeacher();
 
     <!-- HEADER -->
     <div class="page-header">
+
         <div>
             <h2>Questions</h2>
-            <p class="text-muted">Create and manage questions</p>
+            <p class="text-muted">
+                Create and manage questions
+            </p>
         </div>
 
         <div class="header-actions">
-            <button class="btn-back" onclick="history.back()">← Back</button>
-            <button class="btn-primary" onclick="toggleCreate()">+ Create</button>
-            <button class="btn-secondary" onclick="toggleAssign()">Assign</button>
+
+            <button
+                class="btn-back"
+                onclick="history.back()">
+
+                ← Back
+
+            </button>
+
+            <button
+                class="btn-primary"
+                onclick="toggleCreate()">
+
+                + Create
+
+            </button>
+
+            <button
+                class="btn-secondary"
+                onclick="toggleAssign()">
+
+                Assign
+
+            </button>
+
         </div>
+
     </div>
 
     <!-- CREATE -->
     <div id="createBox" class="card form-card">
 
         <h4>Create Question</h4>
-        <p id="assignmentTypeLabel" class="text-muted"></p>
-        <p id="questionCounter" class="text-muted"> </p>
 
+        <p
+            id="assignmentTypeLabel"
+            class="text-muted">
+        </p>
+
+        <p
+            id="questionCounter"
+            class="text-muted">
+        </p>
+
+        <!-- AI GENERATE -->
+        <div class="card" style="margin-bottom:20px;">
+
+            <h4>Generate With AI</h4>
+
+            <div class="form-group">
+
+                <label>Topic</label>
+
+                <input
+                    id="aiTopic"
+                    class="form-input"
+                    placeholder="Example: Object Oriented Programming">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Difficulty</label>
+
+                <select
+                    id="aiDifficulty"
+                    class="form-input">
+
+                    <option value="easy">
+                        Easy
+                    </option>
+
+                    <option value="medium">
+                        Medium
+                    </option>
+
+                    <option value="hard">
+                        Hard
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Question Count</label>
+
+                <input
+                    id="aiCount"
+                    type="number"
+                    class="form-input"
+                    value="3"
+                    min="1"
+                    max="10">
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-secondary"
+                onclick="generateAIQuestions()">
+
+                Generate AI Questions
+
+            </button>
+
+        </div>
+
+        <!-- AI PREVIEW -->
+        <div
+            id="aiPreviewBox"
+            class="card"
+            style="margin-bottom:20px; display:none;">
+
+            <h4>AI Generated Questions</h4>
+
+            <div id="aiPreviewList"></div>
+
+            <div style="margin-top:20px;">
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    onclick="saveAIQuestions()">
+
+                    Save All
+
+                </button>
+
+                <button
+                    type="button"
+                    onclick="clearAIPreview()">
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- MANUAL CREATE -->
         <div class="form-group">
+
             <label>Question</label>
-            <input id="content" class="form-input">
+
+            <input
+                id="content"
+                class="form-input">
+
         </div>
 
         <!-- SINGLE -->
-        <div id="optionsBox" class="form-group" style="display:none">
+        <div
+            id="optionsBox"
+            class="form-group"
+            style="display:none">
+
             <label>Options</label>
 
-            <input id="A" class="form-input" placeholder="Option A">
-            <input id="B" class="form-input" placeholder="Option B">
-            <input id="C" class="form-input" placeholder="Option C">
-            <input id="D" class="form-input" placeholder="Option D">
+            <input
+                id="A"
+                class="form-input"
+                placeholder="Option A">
+
+            <input
+                id="B"
+                class="form-input"
+                placeholder="Option B">
+
+            <input
+                id="C"
+                class="form-input"
+                placeholder="Option C">
+
+            <input
+                id="D"
+                class="form-input"
+                placeholder="Option D">
 
             <label>Correct Answer</label>
-            <select id="correctAnswer" class="form-input">
-                <option value="">-- Select --</option>
+
+            <select
+                id="correctAnswer"
+                class="form-input">
+
+                <option value="">
+                    -- Select --
+                </option>
+
                 <option>A</option>
                 <option>B</option>
                 <option>C</option>
                 <option>D</option>
+
             </select>
+
         </div>
 
         <!-- FILL -->
-        <div id="fillAnswerBox" class="form-group" style="display:none">
+        <div
+            id="fillAnswerBox"
+            class="form-group"
+            style="display:none">
+
             <label>Correct Answer</label>
-            <input id="fillCorrectAnswer" class="form-input">
+
+            <input
+                id="fillCorrectAnswer"
+                class="form-input">
+
         </div>
 
         <div class="form-group">
+
             <label>Explanation</label>
-            <input id="explanation" class="form-input">
+
+            <input
+                id="explanation"
+                class="form-input">
+
         </div>
 
-        <button id="createBtn" class="btn-primary" onclick="createQuestion()"> Create Question </button>
+        <hr style="margin:20px 0">
+
+        <button
+            id="createBtn"
+            type="button"
+            class="btn-primary"
+            onclick="createQuestion()">
+
+            Create Question
+
+        </button>
 
     </div>
 
     <!-- ASSIGN -->
-    <!-- ===== ASSIGN MODAL ===== -->
-<div id="assignModal" class="custom-modal">
+    <div id="assignModal" class="custom-modal">
 
-    <div class="custom-modal-content">
+        <div class="custom-modal-content">
 
-        <div class="modal-header">
-            <h3>Assign To Class</h3>
+            <div class="modal-header">
 
-            <button
-                class="close-btn"
-                onclick="closeAssignModal()">
-                ✕
-            </button>
+                <h3>Assign To Class</h3>
+
+                <button
+                    class="close-btn"
+                    onclick="closeAssignModal()">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+            <div
+                id="classList"
+                class="class-list">
+            </div>
+
         </div>
-
-        <div id="classList" class="class-list"></div>
 
     </div>
 
-</div>
+    <!-- QUESTION LIST -->
+    <div
+        class="card"
+        style="margin-top:20px;">
 
-    <!-- 🔥 LIST TABLE SCROLL -->
-    <div class="card" style="margin-top:20px;">
-        <h4 style="margin-bottom:10px;">Question List</h4>
+        <h4 style="margin-bottom:10px;">
+            Question List
+        </h4>
 
         <div class="table-container">
+
             <table class="table">
+
                 <thead>
+
                     <tr>
-                        <th style="width:60px">#</th>
-                        <th>Question</th>
-                        <th style="width:120px">Answer</th>
-                        <th style="width:140px">Action</th>
+
+                        <th style="width:60px">
+                            #
+                        </th>
+
+                        <th>
+                            Question
+                        </th>
+
+                        <th style="width:120px">
+                            Answer
+                        </th>
+
+                        <th style="width:140px">
+                            Action
+                        </th>
+
                     </tr>
+
                 </thead>
 
                 <tbody id="questionList">
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
 
 </div>
 
 <!-- ===== EDIT MODAL ===== -->
+
 <div class="modal" id="editModal">
+
     <div class="modal-box">
 
         <h3>Edit Question</h3>
 
         <div class="form-group">
+
             <label>Question</label>
-            <input id="editContent" class="form-input">
+
+            <input
+                id="editContent"
+                class="form-input">
+
         </div>
 
         <!-- SINGLE -->
-        <div id="editOptionsBox" class="form-group">
+        <div
+            id="editOptionsBox"
+            class="form-group">
+
             <label>Options</label>
 
-            <input id="editA" class="form-input" placeholder="Option A">
-            <input id="editB" class="form-input" placeholder="Option B">
-            <input id="editC" class="form-input" placeholder="Option C">
-            <input id="editD" class="form-input" placeholder="Option D">
+            <input
+                id="editA"
+                class="form-input"
+                placeholder="Option A">
+
+            <input
+                id="editB"
+                class="form-input"
+                placeholder="Option B">
+
+            <input
+                id="editC"
+                class="form-input"
+                placeholder="Option C">
+
+            <input
+                id="editD"
+                class="form-input"
+                placeholder="Option D">
 
             <label>Correct Answer</label>
-            <select id="editCorrect" class="form-input">
+
+            <select
+                id="editCorrect"
+                class="form-input">
+
                 <option>A</option>
                 <option>B</option>
                 <option>C</option>
                 <option>D</option>
+
             </select>
+
         </div>
 
         <!-- FILL -->
-        <div id="editFillBox" class="form-group">
+        <div
+            id="editFillBox"
+            class="form-group">
+
             <label>Correct Answer</label>
-            <input id="editFill" class="form-input">
+
+            <input
+                id="editFill"
+                class="form-input">
+
         </div>
 
         <div class="form-group">
+
             <label>Explanation</label>
-            <input id="editExplanation" class="form-input">
+
+            <input
+                id="editExplanation"
+                class="form-input">
+
         </div>
 
         <div class="modal-actions">
-            <button class="btn-primary" onclick="saveEdit()">Save</button>
-            <button onclick="closeEdit()">Cancel</button>
+
+            <button
+                class="btn-primary"
+                onclick="saveEdit()">
+
+                Save
+
+            </button>
+
+            <button onclick="closeEdit()">
+
+                Cancel
+
+            </button>
+
         </div>
 
     </div>
+
 </div>
 
 </body>

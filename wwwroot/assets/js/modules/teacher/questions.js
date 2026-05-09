@@ -6,6 +6,7 @@ const assignmentType = params.get("type");
 let editingId = null;
 let currentQuestions = [];
 let assignmentInfo = null;
+let aiQuestions = [];
 
 // ===== GUARD =====
 if (!assignmentId || !assignmentType) {
@@ -418,3 +419,266 @@ function updateQuestionCounter() {
             : "Create Question";
     }
 }
+
+async function generateAIQuestions() {
+
+    try {
+
+        const topic =
+            document
+            .getElementById("aiTopic")
+            .value
+            .trim();
+
+        if (!topic)
+            return alert("Topic required");
+
+        const difficulty =
+            document
+            .getElementById("aiDifficulty")
+            .value;
+
+        const count =
+            parseInt(
+                document
+                .getElementById("aiCount")
+                .value
+            );
+
+        if (!count || count <= 0)
+            return alert("Invalid count");
+
+        const btn =
+            document.querySelector(
+                '[onclick="generateAIQuestions()"]'
+            );
+
+        btn.disabled = true;
+
+        btn.innerText = "Generating...";
+
+        const result =
+            await API.request(
+                "/ai/generate-questions",
+                "POST",
+                {
+                    topic,
+                    difficulty,
+                    type: assignmentType,
+                    count
+                }
+            );
+
+        aiQuestions = result;
+
+        renderAIPreview();
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert(
+            err?.message ||
+            "AI generation failed"
+        );
+
+    } finally {
+
+        const btn =
+            document.querySelector(
+                '[onclick="generateAIQuestions()"]'
+            );
+
+        btn.disabled = false;
+
+        btn.innerText =
+            "Generate AI Questions";
+    }
+}
+
+function renderAIPreview() {
+
+    const box =
+        document.getElementById(
+            "aiPreviewBox"
+        );
+
+    const list =
+        document.getElementById(
+            "aiPreviewList"
+        );
+
+    list.innerHTML = "";
+
+    if (!aiQuestions.length) {
+
+        box.style.display = "none";
+
+        return;
+    }
+
+    box.style.display = "block";
+
+    aiQuestions.forEach((q, index) => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "card";
+
+        div.style.marginTop = "15px";
+
+        let optionsHtml = "";
+
+        if (q.options) {
+
+            q.options.forEach(o => {
+
+                optionsHtml += `
+                    <div>
+                        <b>${o.label}</b>.
+                        ${o.content}
+                    </div>
+                `;
+            });
+        }
+
+        div.innerHTML = `
+            <div style="margin-bottom:10px;">
+                <b>Question ${index + 1}</b>
+            </div>
+
+            <div>
+                ${q.content}
+            </div>
+
+            <div style="margin-top:10px;">
+                ${optionsHtml}
+            </div>
+
+            <div style="margin-top:10px;">
+                <b>Correct:</b>
+                ${q.correctAnswer}
+            </div>
+
+            <div style="margin-top:10px;">
+                <b>Explanation:</b>
+                ${q.explanation || ""}
+            </div>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+async function saveAIQuestions() {
+
+    try {
+
+        if (!aiQuestions.length)
+            return;
+
+        const btn =
+            document.querySelector(
+                '[onclick="saveAIQuestions()"]'
+            );
+
+        btn.disabled = true;
+
+        btn.innerText = "Saving...";
+
+        for (const q of aiQuestions) {
+
+            const created =
+                await API.request(
+                    "/question/create",
+                    "POST",
+                    {
+                        assignmentId,
+                        type: assignmentType,
+                        content: q.content,
+                        correctAnswer:
+                            q.correctAnswer,
+                        explanation:
+                            q.explanation
+                    }
+                );
+
+            if (
+                assignmentType ===
+                "single_choice"
+            ) {
+
+                const A =
+                    q.options.find(
+                        x => x.label === "A"
+                    )?.content || "";
+
+                const B =
+                    q.options.find(
+                        x => x.label === "B"
+                    )?.content || "";
+
+                const C =
+                    q.options.find(
+                        x => x.label === "C"
+                    )?.content || "";
+
+                const D =
+                    q.options.find(
+                        x => x.label === "D"
+                    )?.content || "";
+
+                await API.request(
+                    "/question/add-options",
+                    "POST",
+                    {
+                        questionId: created.id,
+                        A,
+                        B,
+                        C,
+                        D
+                    }
+                );
+            }
+        }
+
+        alert("AI questions saved");
+
+        clearAIPreview();
+
+        await loadQuestions();
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Save failed");
+
+    } finally {
+
+        const btn =
+            document.querySelector(
+                '[onclick="saveAIQuestions()"]'
+            );
+
+        btn.disabled = false;
+
+        btn.innerText = "Save All";
+    }
+}
+
+function clearAIPreview() {
+
+    aiQuestions = [];
+
+    document
+        .getElementById("aiPreviewList")
+        .innerHTML = "";
+
+    document
+        .getElementById("aiPreviewBox")
+        .style.display = "none";
+}
+console.log("QUESTIONS JS LOADED");
+console.log(typeof generateAIQuestions);
