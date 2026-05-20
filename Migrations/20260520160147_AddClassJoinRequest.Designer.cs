@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using aoe.Models;
@@ -11,9 +12,11 @@ using aoe.Models;
 namespace aoe.Migrations
 {
     [DbContext(typeof(AoeDbContext))]
-    partial class AoeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260520160147_AddClassJoinRequest")]
+    partial class AddClassJoinRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +59,7 @@ namespace aoe.Migrations
 
                     b.HasIndex("SubmissionId");
 
-                    b.ToTable("answers", (string)null);
+                    b.ToTable("answers");
                 });
 
             modelBuilder.Entity("aoe.Models.Assignment", b =>
@@ -117,7 +120,7 @@ namespace aoe.Migrations
                     b.HasKey("Id")
                         .HasName("assignments_pkey");
 
-                    b.ToTable("assignments", (string)null);
+                    b.ToTable("assignments");
                 });
 
             modelBuilder.Entity("aoe.Models.AssignmentClass", b =>
@@ -147,7 +150,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "ClassId" }, "idx_assignment_classes_class");
 
-                    b.ToTable("assignment_classes", (string)null);
+                    b.ToTable("assignment_classes");
                 });
 
             modelBuilder.Entity("aoe.Models.Class", b =>
@@ -189,7 +192,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "TeacherId" }, "idx_classes_teacher");
 
-                    b.ToTable("classes", (string)null);
+                    b.ToTable("classes");
                 });
 
             modelBuilder.Entity("aoe.Models.ClassJoinRequest", b =>
@@ -229,7 +232,7 @@ namespace aoe.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("class_join_requests", (string)null);
+                    b.ToTable("class_join_requests");
                 });
 
             modelBuilder.Entity("aoe.Models.ClassStudent", b =>
@@ -257,7 +260,7 @@ namespace aoe.Migrations
                     b.HasIndex(new[] { "ClassId", "StudentId" }, "class_students_class_id_student_id_key")
                         .IsUnique();
 
-                    b.ToTable("class_students", (string)null);
+                    b.ToTable("class_students");
                 });
 
             modelBuilder.Entity("aoe.Models.Question", b =>
@@ -303,7 +306,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "AssignmentId" }, "idx_questions_assignment");
 
-                    b.ToTable("questions", (string)null);
+                    b.ToTable("questions");
                 });
 
             modelBuilder.Entity("aoe.Models.QuestionOption", b =>
@@ -335,7 +338,7 @@ namespace aoe.Migrations
                     b.HasIndex(new[] { "QuestionId", "Label" }, "question_options_question_id_label_key")
                         .IsUnique();
 
-                    b.ToTable("question_options", (string)null);
+                    b.ToTable("question_options");
                 });
 
             modelBuilder.Entity("aoe.Models.Result", b =>
@@ -373,7 +376,7 @@ namespace aoe.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("results", (string)null);
+                    b.ToTable("results");
                 });
 
             modelBuilder.Entity("aoe.Models.StudentAnswer", b =>
@@ -445,7 +448,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "StudentId" }, "idx_submissions_student");
 
-                    b.ToTable("submissions", (string)null);
+                    b.ToTable("submissions");
                 });
 
             modelBuilder.Entity("aoe.Models.User", b =>
@@ -502,7 +505,7 @@ namespace aoe.Migrations
                     b.HasIndex(new[] { "Phone" }, "users_phone_key")
                         .IsUnique();
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("aoe.Models.Answer", b =>

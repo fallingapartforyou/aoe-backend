@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using aoe.DTOs.AI;
+using System.Text;
 using System.Text.Json;
-using aoe.DTOs.AI;
+using static aoe.Services.AI.PromptBuilder;
 
 namespace aoe.Services.AI
 {
@@ -51,6 +52,17 @@ namespace aoe.Services.AI
 
             return await SendPrompt(prompt);
         }
+
+        public async Task<string>
+    AnalyzeCheating(
+        AnalyzeCheatingDTO dto)
+        {
+            var prompt =
+                PromptBuilder.BuildCheatingAnalyzePrompt(dto);
+
+            return await SendPrompt(prompt);
+        }
+
 
         private async Task<string>
             SendPrompt(string prompt)
@@ -123,6 +135,33 @@ namespace aoe.Services.AI
                 .Replace("```json", "")
                 .Replace("```", "")
                 .Trim();
+        }
+
+        public async Task<double>
+    AnalyzeCheatingRisk(
+        AnalyzeCheatingDTO dto)
+        {
+            var prompt =
+                PromptBuilder
+                .BuildCheatingAnalyzePrompt(dto);
+
+            var raw =
+                await SendPrompt(prompt);
+
+            raw = raw.Trim();
+
+            double risk;
+
+            if (!double.TryParse(raw, out risk))
+                risk = 0;
+
+            if (risk < 0)
+                risk = 0;
+
+            if (risk > 100)
+                risk = 100;
+
+            return risk;
         }
     }
 }

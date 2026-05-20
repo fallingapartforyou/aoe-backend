@@ -9,5 +9,7 @@ namespace aoe.Services.AI
         Task<string> GenerateExplanation(GenerateAIExplanationDTO dto);
 
         Task<string> ReviewAnswer(ReviewAIAnswerDTO dto);
+
+        Task<string> AnalyzeCheating(AnalyzeCheatingDTO dto);
     }
 }

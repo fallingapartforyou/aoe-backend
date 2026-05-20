@@ -37,7 +37,13 @@ public partial class AoeDbContext : DbContext
 
     public virtual DbSet<StudentAnswer> StudentAnswers { get; set; }
 
-    // ❌ ĐÃ XOÁ OnConfiguring (RẤT QUAN TRỌNG)
+    public DbSet<ClassJoinRequest> ClassJoinRequests { get; set; }
+
+    public DbSet<Notification> Notifications { get; set; }
+
+    public DbSet<ActivityLog> ActivityLogs { get; set; }
+
+    public DbSet<SuspiciousReport> SuspiciousReports { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -152,7 +158,6 @@ public partial class AoeDbContext : DbContext
         {
             entity.ToTable("student_answers");
 
-            // ✅ KEY THẬT TRONG DB (composite key)
             entity.HasKey(e => new
             {
                 e.StudentId,
@@ -169,11 +174,47 @@ public partial class AoeDbContext : DbContext
             entity.Property(e => e.QuestionId)
                 .HasColumnName("question_id");
 
+            entity.Property(e => e.ResultId)
+                .HasColumnName("result_id");
+
             entity.Property(e => e.Answer)
                 .HasColumnName("answer");
 
             entity.Property(e => e.IsCorrect)
                 .HasColumnName("is_correct");
+
+            entity.HasOne(e => e.Result)
+                .WithMany(r => r.StudentAnswers)
+                .HasForeignKey(e => e.ResultId)
+                .HasPrincipalKey(r => r.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.IsRead)
+                .HasDefaultValue(false);
+
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<ActivityLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.ActivityLogs)
+                .HasForeignKey(d => d.UserId);
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,5 +1,6 @@
 ﻿using aoe.Models;
 using aoe.Services.AI;
+using aoe.Services.Systems;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -147,6 +148,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAIService, AIService>();
+builder.Services.AddScoped<SystemService>();
+builder.Services.AddScoped<CheatingDetectionService>();
 // ======================
 var app = builder.Build();
 

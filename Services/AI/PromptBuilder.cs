@@ -166,5 +166,50 @@ Return plain text only.
 
             return sb.ToString();
         }
+
+        public static string BuildCheatingAnalyzePrompt(
+    AnalyzeCheatingDTO dto)
+        {
+            var reasons =
+        dto.Reasons.Any()
+        ? string.Join(", ", dto.Reasons)
+        : "No obvious heuristic reason";
+
+            return
+        $"""
+You are an AI exam cheating detector.
+
+Analyze whether this exam attempt is suspicious.
+
+Assignment:
+{dto.AssignmentName}
+
+Score:
+{dto.Score}
+
+Question Count:
+{dto.QuestionCount}
+
+Time Spent:
+{dto.TimeSpentSeconds} seconds
+
+Tab Switch Count:
+{dto.TabSwitchCount}
+
+Attempt Number:
+{dto.AttemptNumber}
+
+Heuristic Flags:
+{reasons}
+
+Tasks:
+1. Determine cheating risk level from 0-100
+2. Explain why this attempt is suspicious or normal
+3. Mention behavioral anomalies
+4. Give short recommendation for teacher review
+
+Return concise plain text only.
+""";
+        }
     }
 }

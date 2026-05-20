@@ -38,4 +38,8 @@ public partial class Class
     [ForeignKey("TeacherId")]
     [InverseProperty("Classes")]
     public virtual User Teacher { get; set; } = null!;
+
+    [InverseProperty(nameof(ClassJoinRequest.Class))]
+    public virtual ICollection<ClassJoinRequest> JoinRequests { get; set; }
+    = new List<ClassJoinRequest>();
 }

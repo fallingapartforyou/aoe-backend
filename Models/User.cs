@@ -46,4 +46,13 @@ public partial class User
 
     [InverseProperty("Student")]
     public virtual ICollection<Submission> Submissions { get; set; } = new List<Submission>();
+
+    [InverseProperty(nameof(ClassJoinRequest.Student))]
+    public virtual ICollection<ClassJoinRequest> JoinRequests { get; set; } = new List<ClassJoinRequest>();
+
+    [InverseProperty(nameof(Notification.User))]
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    [InverseProperty(nameof(ActivityLog.User))]
+    public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
 }

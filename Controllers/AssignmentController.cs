@@ -4,6 +4,7 @@ namespace aoe.Controllers
 {
     using aoe.DTOs.Assignment;
     using aoe.Models;
+    using aoe.Services.Systems;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Security.Claims;
@@ -15,10 +16,14 @@ namespace aoe.Controllers
     public class AssignmentController : ControllerBase
     {
         private readonly AoeDbContext _context;
+        private readonly SystemService _systemService;
 
-        public AssignmentController(AoeDbContext context)
+        public AssignmentController(
+            AoeDbContext context,
+            SystemService systemService)
         {
             _context = context;
+            _systemService = systemService;
         }
 
         [HttpGet("{id}")]
@@ -192,11 +197,37 @@ AssignToClassDTO dto)
 
 
             _context.AssignmentClasses.Add(
-            new AssignmentClass
+    new AssignmentClass
+    {
+        AssignmentId = dto.AssignmentId,
+        ClassId = dto.ClassId
+    });
+
+            var studentIds =
+                _context.ClassStudents
+                .Where(x => x.ClassId == dto.ClassId)
+                .Select(x => x.StudentId)
+                .ToList();
+
+            var assignment =
+                _context.Assignments
+                .FirstOrDefault(x => x.Id == dto.AssignmentId);
+
+            foreach (var studentId in studentIds)
             {
-                AssignmentId = dto.AssignmentId,
-                ClassId = dto.ClassId
-            });
+                _systemService.CreateNotification(
+                    studentId,
+                    "New Assignment",
+                    $"New assignment: {assignment!.Name}",
+                    "assignment");
+
+                _systemService.CreateLog(
+                    studentId,
+                    "new_assignment",
+                    "assignment",
+                    assignment.Id,
+                    $"Received assignment {assignment.Name}");
+            }
 
             _context.SaveChanges();
 
@@ -223,6 +254,32 @@ AssignToClassDTO dto)
                 };
 
             return Ok(classes.ToList());
+        }
+
+        [HttpGet("suspicious-results/{assignmentId}")]
+        public IActionResult SuspiciousResults(
+    int assignmentId)
+        {
+            var data =
+                _context.Results
+                .Where(x =>
+                    x.AssignmentId == assignmentId &&
+                    x.Suspicious)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.StudentId,
+                    x.Score,
+                    x.AttemptNumber,
+                    x.TimeSpentSeconds,
+                    x.TabSwitchCount,
+                    x.SuspiciousReason,
+                    x.SubmittedAt
+                })
+                .OrderByDescending(x => x.SubmittedAt)
+                .ToList();
+
+            return Ok(data);
         }
     }
 }
