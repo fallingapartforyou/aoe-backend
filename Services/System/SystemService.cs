@@ -25,7 +25,7 @@ namespace aoe.Services.Systems
                     Message = message,
                     Type = type,
                     IsRead = false,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 });
         }
 
@@ -45,7 +45,7 @@ namespace aoe.Services.Systems
                     EntityType = entityType,
                     EntityId = entityId,
                     Description = description,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     IpAddress = ip
                 });
         }

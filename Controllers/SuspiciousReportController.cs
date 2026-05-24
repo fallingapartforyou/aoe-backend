@@ -3,7 +3,6 @@ using aoe.Services.Systems;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 
 namespace aoe.Controllers
 {
@@ -25,11 +24,15 @@ namespace aoe.Controllers
 
         private int GetTeacherId()
         {
-            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            return int.Parse(
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier
+                )!
+            );
         }
 
         // =========================
-        // LIST (WITH FILTER)
+        // LIST
         // =========================
 
         [HttpGet("list")]
@@ -39,16 +42,25 @@ namespace aoe.Controllers
 
             var query =
                 from sr in _context.SuspiciousReports
-                join a in _context.Assignments on sr.AssignmentId equals a.Id
-                join u in _context.Users on sr.StudentId equals u.Id
+
+                join a in _context.Assignments
+                on sr.AssignmentId equals a.Id
+
+                join u in _context.Users
+                on sr.StudentId equals u.Id
+
                 where a.TeacherId == teacherId
+
                 select new
                 {
                     sr.Id,
+
                     sr.SuspiciousScore,
                     sr.AiRisk,
+
                     sr.Reason,
                     sr.Status,
+
                     sr.CreatedAt,
 
                     studentId = u.Id,
@@ -61,14 +73,20 @@ namespace aoe.Controllers
 
             if (!string.IsNullOrWhiteSpace(status))
             {
-                query = query.Where(x => x.Status == status);
+                query =
+                    query.Where(x =>
+                        x.Status == status);
             }
 
-            return Ok(query.OrderByDescending(x => x.CreatedAt).ToList());
+            return Ok(
+                query
+                .OrderByDescending(x => x.CreatedAt)
+                .ToList()
+            );
         }
 
         // =========================
-        // DETAIL (WITH ANSWERS)
+        // DETAIL
         // =========================
 
         [HttpGet("{id}")]
@@ -77,57 +95,74 @@ namespace aoe.Controllers
             var teacherId = GetTeacherId();
 
             var report =
-                (from sr in _context.SuspiciousReports
-                 join a in _context.Assignments on sr.AssignmentId equals a.Id
-                 join u in _context.Users on sr.StudentId equals u.Id
-                 join r in _context.Results on sr.ResultId equals r.Id
-                 where sr.Id == id && a.TeacherId == teacherId
-                 select new
-                 {
-                     sr.Id,
-                     sr.SuspiciousScore,
-                     sr.AiRisk,
-                     sr.Reason,
-                     sr.AiAnalysis,
-                     sr.Status,
-                     sr.CreatedAt,
+                (
+                    from sr in _context.SuspiciousReports
 
-                     student = new
-                     {
-                         u.Id,
-                         u.Name,
-                         u.Email
-                     },
+                    join a in _context.Assignments
+                    on sr.AssignmentId equals a.Id
 
-                     assignment = new
-                     {
-                         a.Id,
-                         a.Name
-                     },
+                    join u in _context.Users
+                    on sr.StudentId equals u.Id
 
-                     result = new
-                     {
-                         r.Id,
-                         r.Score,
-                         r.TimeSpentSeconds,
-                         r.AttemptNumber,
-                         r.TabSwitchCount,
-                         r.SubmittedAt,
-                         r.Suspicious,
-                         r.SuspiciousReason
-                     },
+                    join r in _context.Results
+                    on sr.ResultId equals r.Id
 
-                     answers =
-                        _context.StudentAnswers
-                            .Where(x => x.ResultId == r.Id)
-                            .Select(x => new
-                            {
-                                x.QuestionId,
-                                x.Answer,
-                                x.IsCorrect
-                            })
-                            .ToList()
-                 })
+                    where
+                        sr.Id == id
+                        && a.TeacherId == teacherId
+
+                    select new
+                    {
+                        sr.Id,
+
+                        sr.SuspiciousScore,
+                        sr.AiRisk,
+
+                        sr.Reason,
+                        sr.AiAnalysis,
+
+                        sr.Status,
+
+                        sr.CreatedAt,
+
+                        student = new
+                        {
+                            u.Id,
+                            u.Name,
+                            u.Email
+                        },
+
+                        assignment = new
+                        {
+                            a.Id,
+                            a.Name
+                        },
+
+                        result = new
+                        {
+                            r.Id,
+                            r.Score,
+                            r.TimeSpentSeconds,
+                            r.AttemptNumber,
+                            r.TabSwitchCount,
+                            r.SubmittedAt,
+                            r.Suspicious,
+                            r.SuspiciousReason,
+
+                            Answers =
+                                _context.StudentAnswers
+                                .Where(x =>
+                                    x.ResultId == r.Id)
+                                .Select(x => new
+                                {
+                                    x.QuestionId,
+                                    x.Answer,
+                                    x.IsCorrect
+                                })
+                                .ToList()
+                        }
+                    }
+                )
                 .FirstOrDefault();
 
             if (report == null)
@@ -145,22 +180,33 @@ namespace aoe.Controllers
         {
             var teacherId = GetTeacherId();
 
-            var report = _context.SuspiciousReports.FirstOrDefault(x => x.Id == id);
-            if (report == null) return NotFound();
+            var report =
+                _context.SuspiciousReports
+                .FirstOrDefault(x =>
+                    x.Id == id);
 
-            var assignment = _context.Assignments.FirstOrDefault(x => x.Id == report.AssignmentId);
-            if (assignment == null) return NotFound();
+            if (report == null)
+                return NotFound();
+
+            var assignment =
+                _context.Assignments
+                .FirstOrDefault(x =>
+                    x.Id == report.AssignmentId);
+
+            if (assignment == null)
+                return NotFound();
 
             if (assignment.TeacherId != teacherId)
                 return Unauthorized();
 
             report.Status = "confirmed";
+
             _context.SaveChanges();
 
             _systemService.CreateNotification(
                 report.StudentId,
-                "Academic Integrity Review",
-                "Your exam attempt has been flagged for academic review.",
+                "Academic Review",
+                "One of your attempts has been marked for teacher review.",
                 "warning"
             );
 
@@ -184,16 +230,27 @@ namespace aoe.Controllers
         {
             var teacherId = GetTeacherId();
 
-            var report = _context.SuspiciousReports.FirstOrDefault(x => x.Id == id);
-            if (report == null) return NotFound();
+            var report =
+                _context.SuspiciousReports
+                .FirstOrDefault(x =>
+                    x.Id == id);
 
-            var assignment = _context.Assignments.FirstOrDefault(x => x.Id == report.AssignmentId);
-            if (assignment == null) return NotFound();
+            if (report == null)
+                return NotFound();
+
+            var assignment =
+                _context.Assignments
+                .FirstOrDefault(x =>
+                    x.Id == report.AssignmentId);
+
+            if (assignment == null)
+                return NotFound();
 
             if (assignment.TeacherId != teacherId)
                 return Unauthorized();
 
             report.Status = "rejected";
+
             _context.SaveChanges();
 
             _systemService.CreateLog(
@@ -218,19 +275,33 @@ namespace aoe.Controllers
 
             var reports =
                 from sr in _context.SuspiciousReports
-                join a in _context.Assignments on sr.AssignmentId equals a.Id
+
+                join a in _context.Assignments
+                on sr.AssignmentId equals a.Id
+
                 where a.TeacherId == teacherId
+
                 select sr;
 
             return Ok(new
             {
-                total = reports.Count(),
+                total =
+                    reports.Count(),
 
-                pending = reports.Count(x => x.Status == "pending"),
-                confirmed = reports.Count(x => x.Status == "confirmed"),
-                rejected = reports.Count(x => x.Status == "rejected"),
+                pending =
+                    reports.Count(x =>
+                        x.Status == "pending"),
 
-                averageRisk = reports.Any()
+                confirmed =
+                    reports.Count(x =>
+                        x.Status == "confirmed"),
+
+                rejected =
+                    reports.Count(x =>
+                        x.Status == "rejected"),
+
+                averageRisk =
+                    reports.Any()
                     ? reports.Average(x => x.AiRisk)
                     : 0
             });

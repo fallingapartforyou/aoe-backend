@@ -126,11 +126,11 @@ namespace aoe.Controllers
                 return NotFound();
 
             if (assignment.OpenTime != null &&
-                DateTime.Now < assignment.OpenTime)
+                DateTime.UtcNow < assignment.OpenTime)
                 return BadRequest("Not open yet");
 
             if (assignment.CloseTime != null &&
-                DateTime.Now > assignment.CloseTime)
+                DateTime.UtcNow > assignment.CloseTime)
                 return BadRequest("Closed");
 
             var questions =
@@ -214,7 +214,7 @@ namespace aoe.Controllers
                 StudentId = studentId,
                 AssignmentId = dto.AssignmentId,
                 Score = 0,
-                SubmittedAt = DateTime.Now,
+                SubmittedAt = DateTime.UtcNow,
                 AttemptNumber = nextAttempt,
                 TimeSpentSeconds = dto.TimeSpentSeconds,
                 TabSwitchCount = dto.TabSwitchCount,
@@ -358,7 +358,7 @@ namespace aoe.Controllers
                         Status = "pending",
 
                         CreatedAt =
-                            DateTime.Now
+                            DateTime.UtcNow
                     };
 
                 _context

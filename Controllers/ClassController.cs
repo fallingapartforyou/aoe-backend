@@ -15,12 +15,6 @@ namespace aoe.Controllers
     {
         private readonly AoeDbContext _context;
 
-        public ClassController(AoeDbContext context)
-        {
-            _context = context;
-        }
-
-
         private int GetTeacherId()
         {
             return int.Parse(

@@ -73,7 +73,7 @@ namespace aoe.Controllers
                     StudentId = studentId,
                     Type = "student_request",
                     Status = "pending",
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 };
 
             _context.ClassJoinRequests.Add(request);

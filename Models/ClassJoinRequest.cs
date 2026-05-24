@@ -23,7 +23,7 @@ namespace aoe.Models
         public string Type { get; set; } = "student_request";
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey(nameof(ClassId))]
         public Class Class { get; set; } = null!;
