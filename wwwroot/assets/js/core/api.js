@@ -1,92 +1,79 @@
 const API = {
 
-async request(
-endpoint,
-method = "GET",
-body = null
-)
-{
+    get base() {
+        return CONFIG.API_BASE.replace(/\/$/, "");
+    },
 
-const token =
-Storage.getToken();
+    async request(endpoint, method = "GET", body = null) {
 
-const options = {
+        const token = Storage.getToken();
 
-method,
+        const url = endpoint.startsWith("http")
+            ? endpoint
+            : this.base + endpoint;
 
-headers:
-{
-"Content-Type":
-"application/json"
-}
+        const options = {
+            method,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
 
-};
+        if (token) {
+            options.headers.Authorization = "Bearer " + token;
+        }
 
-if(token)
+        if (body !== null) {
+            options.body = JSON.stringify(body);
+        }
 
-options.headers.Authorization =
-"Bearer " + token;
+        const response = await fetch(url, options);
 
+        if (!response.ok) {
 
-if(body)
+            let errorText = "";
 
-options.body =
-JSON.stringify(body);
+            try {
+                errorText = await response.text();
+            } catch {}
 
+            try {
+                throw errorText
+                    ? JSON.parse(errorText)
+                    : {
+                        message: "Request failed",
+                        status: response.status
+                    };
+            } catch {
+                throw {
+                    message: errorText || "Request failed",
+                    status: response.status
+                };
+            }
+        }
 
-const response =
-await fetch(
+        const contentType = response.headers.get("content-type");
 
-CONFIG.API_BASE
-+ endpoint,
+        if (contentType && contentType.includes("application/json")) {
+            return await response.json();
+        }
 
-options
+        return await response.text();
+    },
 
-);
+    async get(endpoint) {
+        return this.request(endpoint, "GET");
+    },
 
+    async post(endpoint, body = null) {
+        return this.request(endpoint, "POST", body);
+    },
 
-if(!response.ok)
-{
+    async put(endpoint, body = null) {
+        return this.request(endpoint, "PUT", body);
+    },
 
-const text =
-await response.text();
-
-try
-{
-throw text
-? JSON.parse(text)
-: { message: "Request failed" };
-}
-
-catch
-{
-throw {
-message:
-text || "Request failed"
-};
-}
-
-}
-
-
-const contentType =
-response.headers.get(
-"content-type"
-);
-
-
-if(
-contentType &&
-contentType.includes(
-"application/json"
-)
-)
-
-return await response.json();
-
-
-return await response.text();
-
-}
-
+    async delete(endpoint) {
+        return this.request(endpoint, "DELETE");
+    }
 };

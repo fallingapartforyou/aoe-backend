@@ -2,26 +2,42 @@
 <html>
 
 <head>
+
 <meta charset="UTF-8">
 <title>Assignments</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/core/variables.css">
+<link rel="stylesheet" href="../../assets/css/core/base.css">
+<link rel="stylesheet" href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet" href="../../assets/css/layout/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet" href="../../assets/css/components/button.css">
+<link rel="stylesheet" href="../../assets/css/components/card.css">
+<link rel="stylesheet" href="../../assets/css/components/form.css">
+<link rel="stylesheet" href="../../assets/css/components/modal.css">
+<link rel="stylesheet" href="../../assets/css/components/table.css">
+
+<link rel="stylesheet" href="../../assets/css/pages/teacher/assignment.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
 <script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
+
 <script src="../../assets/js/modules/utils/validator.js"></script>
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/teacher/assignments.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
+<script defer
+src="../../assets/js/modules/teacher/assignments.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -34,70 +50,298 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
+
 <div class="container">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-        <div class="topbar-title">Assignments</div>
+    <!-- HEADER -->
 
-        <div class="topbar-actions">
-            <button onclick="history.back()">Back</button>
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Assignment Management
+            </h1>
+
+            <p>
+                Create assignments and manage exam flows
+            </p>
+
         </div>
+
+        <div class="header-actions">
+
+            <button
+                class="btn-secondary"
+                onclick="history.back()">
+
+                Back
+
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- ACTION BAR -->
-    <div class="card" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
-        <input id="keyword" placeholder="Search assignment">
-        <button onclick="loadAssignments()">Search</button>
+    <!-- STATS -->
 
-        <button onclick="openCreateModal()">+ Create</button>
+    <div class="stats-grid">
 
-        <button id="deleteModeBtn" onclick="toggleDeleteMode()">
-            Delete Mode
-        </button>
+        <div class="stat-card">
 
-        <button id="confirmDeleteBtn"
+            <span class="stat-label">
+                Total Assignments
+            </span>
+
+            <h2 id="totalAssignments">
+                0
+            </h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Active Assignments
+            </span>
+
+            <h2 id="totalActive">
+                0
+            </h2>
+
+        </div>
+
+    </div>
+
+    <!-- TOOLBAR -->
+
+    <div class="card toolbar-card">
+
+        <div class="toolbar-left">
+
+            <input
+                id="keyword"
+                class="form-input"
+                placeholder="Search assignment">
+
+            <button onclick="loadAssignments()">
+
+                Search
+
+            </button>
+
+        </div>
+
+        <div class="toolbar-right">
+
+            <button
+                class="btn-primary"
+                onclick="openCreateModal()">
+
+                + Create Assignment
+
+            </button>
+
+            <button
+                id="deleteModeBtn"
+                class="btn-secondary"
+                onclick="toggleDeleteMode()">
+
+                Delete Mode
+
+            </button>
+
+            <button
+                id="confirmDeleteBtn"
+                class="btn-danger"
                 style="display:none;"
                 onclick="deleteSelected()">
-            Confirm Delete
-        </button>
-    </div>
 
-    <!-- GRID -->
-    <div id="assignmentList" class="assignment-grid"></div>
+                Confirm Delete
 
-</div>
-</div>
+            </button>
 
-<!-- MODAL -->
-<div class="modal" id="createModal">
-    <div class="modal-box">
-
-        <h3>Create Assignment</h3>
-
-        <input id="assignmentName" placeholder="Assignment name">
-
-        <select id="questionType">
-            <option value="single_choice">Single choice</option>
-            <option value="fill_blank">Fill blank</option>
-        </select>
-
-        <input id="questionCount" type="number" placeholder="Question count">
-
-        <input id="openTime" type="datetime-local">
-        <input id="closeTime" type="datetime-local">
-
-        <label><input type="checkbox" id="showResult"> Show result</label>
-        <label><input type="checkbox" id="showExplanation"> Show explanation</label>
-
-        <div class="modal-actions">
-            <button onclick="createAssignment()">Create</button>
-            <button onclick="closeModal()">Cancel</button>
         </div>
 
     </div>
+
+    <!-- ASSIGNMENT GRID -->
+
+    <div
+        id="assignmentList"
+        class="assignment-grid">
+
+    </div>
+
+</div>
+
+</main>
+
+<!-- ================================================= -->
+<!-- CREATE ASSIGNMENT MODAL -->
+<!-- ================================================= -->
+
+<div
+class="modal"
+id="createModal">
+
+<div class="modal-content modal-lg">
+
+    <div class="modal-header">
+
+        <div>
+
+            <h3>
+                Create Assignment
+            </h3>
+
+            <p>
+                Configure assignment information
+            </p>
+
+        </div>
+
+        <button onclick="closeModal()">
+
+            ✕
+
+        </button>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>
+                Assignment Name
+            </label>
+
+            <input
+                id="assignmentName"
+                placeholder="Enter assignment name">
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                Question Type
+            </label>
+
+            <select id="questionType">
+
+                <option value="single_choice">
+                    Single Choice
+                </option>
+
+                <option value="fill_blank">
+                    Fill Blank
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                Question Count
+            </label>
+
+            <input
+                id="questionCount"
+                type="number"
+                min="1"
+                placeholder="Question count">
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                Open Time
+            </label>
+
+            <input
+                id="openTime"
+                type="datetime-local">
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                Close Time
+            </label>
+
+            <input
+                id="closeTime"
+                type="datetime-local">
+
+        </div>
+
+    </div>
+
+    <div class="checkbox-group">
+
+        <label>
+
+            <input
+                id="showResult"
+                type="checkbox">
+
+            Show Result To Students
+
+        </label>
+
+        <label>
+
+            <input
+                id="showExplanation"
+                type="checkbox">
+
+            Show Explanation
+
+        </label>
+
+    </div>
+
+    <div class="info-banner">
+
+        <span>
+            Question forms inside Question Bank
+            will automatically follow
+            the selected assignment type.
+        </span>
+
+    </div>
+
+    <div class="modal-actions">
+
+        <button
+            class="btn-primary"
+            onclick="createAssignment()">
+
+            Create Assignment
+
+        </button>
+
+        <button
+            class="btn-secondary"
+            onclick="closeModal()">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
+
 </div>
 
 </body>
+
 </html>

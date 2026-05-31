@@ -1,15 +1,42 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
-<meta charset="UTF-8">
-<title>Assignments</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<meta charset="UTF-8">
+
+<title>Class Assignments</title>
+
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/student/assignments.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -19,8 +46,10 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/student/assignments.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
+<script defer
+src="../../assets/js/modules/student/assignments.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -33,24 +62,141 @@ Guard.requireStudent();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
 
-    <!-- HEADER -->
-    <div class="page-header">
+<div class="container">
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
         <div>
-            <h2>Assignments</h2>
-            <p class="text-muted">Your tasks in this class</p>
+
+            <h1>
+                Class Assignments
+            </h1>
+
+            <p>
+                Complete assignments and track your progress
+            </p>
+
         </div>
 
-        <button class="btn-back" onclick="history.back()">
-            ← Back
-        </button>
-    </div>
+        <button
+            class="btn-secondary"
+            onclick="history.back()">
 
-    <!-- LIST -->
-    <div id="assignmentList" class="assignment-grid"></div>
+            Back
+
+        </button>
+
+    </section>
+
+    <!-- CLASS INFO -->
+
+    <section class="class-banner">
+
+        <div>
+
+            <span class="class-code"></span>
+
+            <h2 id="className"></h2>
+
+            <p id="teacherName"></p>
+
+        </div>
+
+        <div class="class-summary">
+
+            <div>
+
+                <span>
+                    Assignments
+                </span>
+
+                <strong id="totalAssignments">
+                    0
+                </strong>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Completed
+                </span>
+
+                <strong id="completedAssignments">
+                    0
+                </strong>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Average
+                </span>
+
+                <strong id="avgScore">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- FILTER -->
+
+    <section class="card toolbar-card">
+
+        <input
+            id="keyword"
+            class="form-input"
+            placeholder="Search assignment">
+
+        <select id="statusFilter">
+
+            <option value="">
+                All Status
+            </option>
+
+            <option value="pending">
+                Pending
+            </option>
+
+            <option value="completed">
+                Completed
+            </option>
+
+            <option value="expired">
+                Expired
+            </option>
+
+        </select>
+
+        <button onclick="loadAssignments()">
+
+            Search
+
+        </button>
+
+    </section>
+
+    <!-- ASSIGNMENT LIST -->
+
+    <section
+        id="assignmentList"
+        class="assignment-grid">
+
+    </section>
 
 </div>
 
+</main>
+
 </body>
+
 </html>

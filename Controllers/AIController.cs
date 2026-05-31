@@ -43,19 +43,6 @@ namespace aoe.Controllers
             return Ok(result);
         }
 
-        [HttpPost("review")]
-        [Authorize]
-        public async Task<IActionResult>
-            Review(
-                ReviewAIAnswerDTO dto)
-        {
-            var result =
-                await _aiService
-                .ReviewAnswer(dto);
-
-            return Ok(result);
-        }
-
         [HttpPost("review-answer")]
         [Authorize]
         public async Task<IActionResult>

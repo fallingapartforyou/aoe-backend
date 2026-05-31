@@ -1,0 +1,18 @@
+.card {
+
+    background: white;
+
+    padding: 18px;
+
+    border-radius:
+        var(--radius-md);
+
+    box-shadow:
+        var(--shadow-sm);
+}
+
+.card:hover {
+
+    box-shadow:
+        var(--shadow-md);
+}

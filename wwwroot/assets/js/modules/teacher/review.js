@@ -1,65 +1,72 @@
 const params = new URLSearchParams(location.search);
 
-const assignmentId = params.get("assignmentId");
-const studentId = params.get("studentId");
+const resultId = params.get("resultId");
 
-window.onload = async () =>
-{
+let reviewData = [];
+let currentIndex = 0;
+
+window.onload = async () => {
     renderLayout("teacher");
-
-    const data =
-        await API.request(
-            `/exam/review/${assignmentId}/${studentId}`
-        );
-
-    render(data);
+    await loadReview();
 };
 
-function render(list)
-{
-    const container =
-        document.getElementById("reviewList");
+async function loadReview() {
+
+    if (!resultId) return;
+
+    const data = await API.request(
+        "/api/exam/review/" + resultId
+    );
+
+    reviewData = data || [];
+
+    render(reviewData);
+}
+
+function render(list) {
+
+    const container = document.getElementById("reviewList");
+
+    if (!container) return;
 
     container.innerHTML = "";
 
-    list.forEach((q, index) =>
-    {
+    if (!list || !list.length) return;
+
+    list.forEach((q, index) => {
+
         const div = document.createElement("div");
         div.className = "question-card";
 
+        div.onclick = () => {
+            currentIndex = index;
+        };
+
         let optionsHtml = "";
 
-        if(q.options && q.options.length)
-        {
-            const letters = ["A","B","C","D"];
+        if (q.options && q.options.length) {
 
-            q.options.forEach((o,i)=>
-            {
-                const letter = letters[i];
+            q.options.forEach(o => {
 
-                const isCorrect =
-                    letter === q.correctAnswer;
-
-                const isSelected =
-                    letter === q.answer;
+                const isCorrect = o.label === q.correctAnswer;
+                const isSelected = o.label === q.studentAnswer;
 
                 optionsHtml += `
-                    <div class="
-                        option
+                    <div class="option
                         ${isCorrect ? "correct" : ""}
-                        ${isSelected ? "selected" : ""}
-                    ">
-                        ${letter}. ${o}
+                        ${isSelected ? "selected" : ""}">
+                        <b>${o.label}.</b> ${o.content}
                     </div>
                 `;
             });
-        }
-        else
-        {
+
+        } else {
+
             optionsHtml = `
                 <div class="option ${q.isCorrect ? "correct" : "wrong"}">
-                    Student: ${q.answer}
+                    Student: ${q.studentAnswer || "-"}
                 </div>
+
                 <div class="option correct">
                     Correct: ${q.correctAnswer}
                 </div>
@@ -68,16 +75,56 @@ function render(list)
 
         div.innerHTML = `
             <div class="question-title">
-                Q${index+1}. ${q.content}
+                Q${index + 1}. ${q.content}
             </div>
 
-            <div>${optionsHtml}</div>
-
-            <div class="question-footer">
-                <span>${q.explanation || ""}</span>
+            <div class="options">
+                ${optionsHtml}
             </div>
+
+            ${q.explanation ? `
+                <div class="question-footer">
+                    ${q.explanation}
+                </div>
+            ` : ""}
         `;
 
         container.appendChild(div);
     });
 }
+
+window.askAI = async function () {
+
+    const input = document.getElementById("aiPrompt");
+    const output = document.getElementById("aiResult");
+
+    const q = reviewData[currentIndex];
+
+    if (!q) {
+        output.innerText = "No question selected";
+        return;
+    }
+
+    try {
+        output.innerText = "Thinking...";
+
+        const res = await API.request(
+            "/api/ai/review-answer",
+            "POST",
+            {
+                question: q.content,
+                options: q.options || [],
+                correctAnswer: q.correctAnswer,
+                studentAnswer: q.studentAnswer || "",
+                explanation: q.explanation || "",
+                ask: input?.value || ""
+            }
+        );
+
+        output.innerText = res?.response || "No response";
+
+    } catch (err) {
+        console.error(err);
+        output.innerText = "AI failed";
+    }
+};

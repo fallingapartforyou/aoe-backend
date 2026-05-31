@@ -1,0 +1,230 @@
+.container{
+    max-width:1400px;
+    margin:0 auto;
+}
+
+/* ======================
+HEADER
+====================== */
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:24px;
+}
+
+.page-header h1{
+    margin:0;
+    font-size:28px;
+}
+
+.page-header p{
+    margin-top:6px;
+    color:#64748b;
+}
+
+/* ======================
+CLASS BANNER
+====================== */
+
+.class-banner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:30px;
+
+    margin-bottom:24px;
+
+    padding:28px;
+
+    border-radius:20px;
+
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+}
+
+.class-code{
+    display:inline-block;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.2);
+
+    margin-bottom:10px;
+
+    font-size:13px;
+}
+
+.class-banner h2{
+    margin:0;
+    font-size:28px;
+}
+
+.class-banner p{
+    margin-top:8px;
+    opacity:.9;
+}
+
+.class-summary{
+    display:flex;
+    gap:30px;
+}
+
+.class-summary div{
+    text-align:center;
+}
+
+.class-summary span{
+    display:block;
+    font-size:13px;
+    opacity:.8;
+}
+
+.class-summary strong{
+    font-size:26px;
+}
+
+/* ======================
+TOOLBAR
+====================== */
+
+.toolbar-card{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+
+    margin-bottom:24px;
+}
+
+.toolbar-card input{
+    min-width:250px;
+}
+
+.toolbar-card select{
+    min-width:180px;
+}
+
+/* ======================
+GRID
+====================== */
+
+.assignment-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(320px,1fr)
+        );
+
+    gap:20px;
+}
+
+/* ======================
+CARD
+====================== */
+
+.assignment-card{
+    background:white;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    box-shadow:
+        0 4px 14px
+        rgba(15,23,42,.06);
+
+    transition:.25s;
+}
+
+.assignment-card:hover{
+    transform:translateY(-4px);
+}
+
+.assignment-status{
+    display:inline-flex;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    font-size:12px;
+    font-weight:600;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-completed{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-expired{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.assignment-card h3{
+    margin:14px 0 10px;
+}
+
+.assignment-meta{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+    color:#64748b;
+    font-size:14px;
+}
+
+.assignment-actions{
+    margin-top:20px;
+
+    display:flex;
+    gap:10px;
+}
+
+/* ======================
+RESPONSIVE
+====================== */
+
+@media(max-width:900px){
+
+    .class-banner{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .class-summary{
+        width:100%;
+        justify-content:space-between;
+    }
+}
+
+@media(max-width:768px){
+
+    .page-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+    .assignment-grid{
+        grid-template-columns:1fr;
+    }
+}

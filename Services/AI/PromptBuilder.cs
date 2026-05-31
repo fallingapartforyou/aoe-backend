@@ -5,22 +5,46 @@ namespace aoe.Services.AI
 {
     public static class PromptBuilder
     {
+        // =========================
+        // GLOBAL RULE (ENGLISH ONLY)
+        // =========================
+        private static string GlobalRule => """
+You are an AI assistant for ENGLISH EDUCATION ONLY.
+
+STRICT DOMAIN RULES:
+- Only generate or explain English language learning content
+- Focus: grammar, vocabulary, reading, writing, speaking
+- Do NOT generate content from unrelated subjects (math, science, IT, programming, engineering, history as academic theory)
+- If a topic is outside English learning, transform it into an English learning context (e.g., reading passage or vocabulary exercise)
+
+OUTPUT RULES:
+- Follow requested format strictly
+- Do NOT add external knowledge outside English learning scope
+- Be concise, educational, and student-friendly
+""";
+
+        // =========================
+        // GENERATE QUESTIONS
+        // =========================
         public static string BuildGenerateQuestionsPrompt(
             GenerateAIQuestionsDTO dto)
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine(
-                $"Generate {dto.Count} {dto.Type} questions about {dto.Topic}.");
+            sb.AppendLine(GlobalRule);
 
-            sb.AppendLine($"Difficulty: {dto.Difficulty}");
+            sb.AppendLine("""
+OUTPUT FORMAT RULES:
+- Return ONLY valid JSON
+- No markdown
+- No explanations outside JSON
+""");
 
             sb.AppendLine();
+            sb.AppendLine(
+                $"Generate {dto.Count} {dto.Type} ENGLISH learning questions about: {dto.Topic}");
+            sb.AppendLine($"Difficulty: {dto.Difficulty}");
 
-            sb.AppendLine("Return ONLY valid JSON.");
-
-            sb.AppendLine("No markdown.");
-            sb.AppendLine("No explanation outside JSON.");
             sb.AppendLine();
 
             if (dto.Type == "single_choice")
@@ -30,22 +54,10 @@ namespace aoe.Services.AI
   {
     "content": "",
     "options": [
-      {
-        "label": "A",
-        "content": ""
-      },
-      {
-        "label": "B",
-        "content": ""
-      },
-      {
-        "label": "C",
-        "content": ""
-      },
-      {
-        "label": "D",
-        "content": ""
-      }
+      { "label": "A", "content": "" },
+      { "label": "B", "content": "" },
+      { "label": "C", "content": "" },
+      { "label": "D", "content": "" }
     ],
     "correctAnswer": "A",
     "explanation": ""
@@ -69,12 +81,28 @@ namespace aoe.Services.AI
             return sb.ToString();
         }
 
-        // ===== EXPLANATION =====
+        // =========================
+        // EXPLANATION
+        // =========================
         public static string BuildExplanationPrompt(
             GenerateAIExplanationDTO dto)
         {
             var sb = new StringBuilder();
 
+            sb.AppendLine(GlobalRule);
+
+            sb.AppendLine("""
+TASK:
+Explain the English question clearly for learners.
+
+RULES:
+- Focus only on English grammar, vocabulary, reading comprehension
+- Do NOT introduce other academic fields
+- Keep explanation simple and educational
+- No markdown
+""");
+
+            sb.AppendLine();
             sb.AppendLine("Question:");
             sb.AppendLine(dto.Question);
 
@@ -83,39 +111,41 @@ namespace aoe.Services.AI
             if (dto.Options != null)
             {
                 sb.AppendLine("Options:");
-
                 foreach (var o in dto.Options)
                 {
-                    sb.AppendLine(
-                        $"{o.Label}. {o.Content}");
+                    sb.AppendLine($"{o.Label}. {o.Content}");
                 }
             }
 
             sb.AppendLine();
-
-            sb.AppendLine(
-                $"Correct Answer: {dto.CorrectAnswer}");
-
-            sb.AppendLine();
-
-            sb.AppendLine("""
-Explain:
-- why the answer is correct
-- why the others are incorrect
-- concise and educational
-
-Return plain text only.
-""");
+            sb.AppendLine($"Correct Answer: {dto.CorrectAnswer}");
 
             return sb.ToString();
         }
 
-        // ===== REVIEW AI =====
+        // =========================
+        // REVIEW AI
+        // =========================
         public static string BuildReviewPrompt(
             ReviewAIAnswerDTO dto)
         {
             var sb = new StringBuilder();
 
+            sb.AppendLine(GlobalRule);
+
+            sb.AppendLine("""
+TASK:
+Evaluate student's English understanding.
+
+RULES:
+- Only analyze English language knowledge
+- Do NOT introduce external subject knowledge
+- Focus on grammar, vocabulary, comprehension
+- Be concise and educational
+""");
+
+            sb.AppendLine();
+
             sb.AppendLine("Question:");
             sb.AppendLine(dto.Question);
 
@@ -124,62 +154,43 @@ Return plain text only.
             if (dto.Options != null)
             {
                 sb.AppendLine("Options:");
-
                 foreach (var o in dto.Options)
                 {
-                    sb.AppendLine(
-                        $"{o.Label}. {o.Content}");
+                    sb.AppendLine($"{o.Label}. {o.Content}");
                 }
             }
 
             sb.AppendLine();
-
-            sb.AppendLine(
-                $"Correct Answer: {dto.CorrectAnswer}");
-
-            sb.AppendLine(
-                $"Student Answer: {dto.StudentAnswer}");
-
-            sb.AppendLine();
-
-            sb.AppendLine(
-                $"Explanation: {dto.Explanation}");
-
-            sb.AppendLine();
-
-            sb.AppendLine(
-                $"Student Question: {dto.Ask}");
-
-            sb.AppendLine();
-
-            sb.AppendLine("""
-Explain:
-- answer the student's question
-- explain why the answer is correct or incorrect
-- teach the related concept
-- concise and educational
-
-Do not invent information outside the provided context.
-
-Return plain text only.
-""");
+            sb.AppendLine($"Correct Answer: {dto.CorrectAnswer}");
+            sb.AppendLine($"Student Answer: {dto.StudentAnswer}");
+            sb.AppendLine($"Explanation: {dto.Explanation}");
+            sb.AppendLine($"Student Question: {dto.Ask}");
 
             return sb.ToString();
         }
 
+        // =========================
+        // CHEATING ANALYSIS
+        // =========================
         public static string BuildCheatingAnalyzePrompt(
-    AnalyzeCheatingDTO dto)
+            AnalyzeCheatingDTO dto)
         {
             var reasons =
-        dto.Reasons.Any()
-        ? string.Join(", ", dto.Reasons)
-        : "No obvious heuristic reason";
+                dto.Reasons.Any()
+                ? string.Join(", ", dto.Reasons)
+                : "No obvious heuristic reason";
 
-            return
-        $"""
-You are an AI exam cheating detector.
+            return $"""
+You are an AI assistant for EDUCATIONAL EXAM MONITORING ONLY.
 
-Analyze whether this exam attempt is suspicious.
+STRICT DOMAIN RULES:
+- Only analyze exam behavior
+- Do NOT generate or explain academic subject content
+- Do NOT include external domain knowledge
+- Focus only on behavioral patterns in online exams
+
+TASK:
+Analyze cheating risk based on exam behavior.
 
 Assignment:
 {dto.AssignmentName}
@@ -202,11 +213,11 @@ Attempt Number:
 Heuristic Flags:
 {reasons}
 
-Tasks:
-1. Determine cheating risk level from 0-100
-2. Explain why this attempt is suspicious or normal
-3. Mention behavioral anomalies
-4. Give short recommendation for teacher review
+OUTPUT:
+1. Risk score (0-100)
+2. Explanation of behavior
+3. Suspicious patterns (if any)
+4. Teacher recommendation
 
 Return concise plain text only.
 """;

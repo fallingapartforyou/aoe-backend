@@ -25,7 +25,7 @@ async function loadState() {
 
         const data =
             await API.request(
-                "/exam/state/" + assignmentId
+                "/api/exam/state/" + assignmentId
             );
 
         assignmentState = data;
@@ -249,4 +249,4 @@ window.onclick = function (e) {
 
         closeModal();
     }
-};
+}; 

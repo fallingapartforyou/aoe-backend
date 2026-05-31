@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+
+<link rel="stylesheet" href="../../assets/css/core/base.css">
+<link rel="stylesheet" href="../../assets/css/layout/layout.css">
+<link rel="stylesheet" href="../../assets/css/components/card.css">
+<link rel="stylesheet" href="../../assets/css/components/button.css">
+<link rel="stylesheet" href="../../assets/css/components/notification.css">
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<script src="../../assets/js/core/config.js"></script>
+<script src="../../assets/js/core/api.js"></script>
+<script src="../../assets/js/core/storage.js"></script>
+<script src="../../assets/js/core/guard.js"></script>
+<script src="../../assets/js/core/router.js"></script>
+<script src="../../assets/js/layout/sidebar.js"></script>
+<script src="../../assets/js/layout/layout.js"></script>
+<script>
+Guard.requireLogin();
+</script>
+
+<script defer src="../../assets/js/modules/shared/notifications-page.js"></script>
+
+</head>
+
+<body>
+
+<div id="layout"></div>
+
+<main class="content">
+
+<div class="container">
+
+    <section class="card">
+
+        <div class="card-header">
+            <h2>Notifications</h2>
+        </div>
+
+        <div id="notificationList"></div>
+
+    </section>
+
+</div>
+
+</main>
+
+</body>
+</html>

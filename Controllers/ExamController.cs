@@ -20,27 +20,20 @@ namespace aoe.Controllers
         private readonly IAIService _aiService;
 
         public ExamController(
-    AoeDbContext context,
-    SystemService systemService,
-    CheatingDetectionService cheatingService,
-    IAIService aiService)
+            AoeDbContext context,
+            SystemService systemService,
+            CheatingDetectionService cheatingService,
+            IAIService aiService)
         {
             _context = context;
-
             _systemService = systemService;
-
             _cheatingService = cheatingService;
-
             _aiService = aiService;
         }
 
         private int GetStudentId()
         {
-            return int.Parse(
-                User.FindFirstValue(
-                    ClaimTypes.NameIdentifier
-                )
-            );
+            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         }
 
         // LIST ASSIGNMENTS OF CLASS
@@ -57,16 +50,12 @@ namespace aoe.Controllers
             return Ok(assignments);
         }
 
+        // GET EXAM STATE
         [HttpGet("state/{assignmentId}")]
-        [Authorize(Roles = "student")]
         public IActionResult GetExamState(int assignmentId)
         {
-            // ===== LẤY STUDENT ID =====
-            var studentId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)
-            );
+            var studentId = GetStudentId();
 
-            // ===== CHECK STUDENT THUỘC CLASS CÓ ASSIGNMENT =====
             bool hasAccess =
             (
                 from ac in _context.AssignmentClasses
@@ -80,7 +69,6 @@ namespace aoe.Controllers
             if (!hasAccess)
                 return Unauthorized();
 
-            // ===== LẤY ASSIGNMENT =====
             var assignment =
                 _context.Assignments
                 .Where(a => a.Id == assignmentId)
@@ -96,14 +84,11 @@ namespace aoe.Controllers
             if (assignment == null)
                 return NotFound();
 
-            // ===== CHECK SUBMITTED =====
             bool submitted =
                 _context.Results.Any(r =>
                     r.AssignmentId == assignmentId &&
-                    r.StudentId == studentId
-                );
+                    r.StudentId == studentId);
 
-            // ===== RETURN =====
             return Ok(new
             {
                 openTime = assignment.OpenTime,
@@ -134,41 +119,41 @@ namespace aoe.Controllers
                 return BadRequest("Closed");
 
             var questions =
-        _context.Questions
-        .Where(q => q.AssignmentId == assignmentId)
-        .Select(q => new
-        {
-            q.Id,
-            q.Type,
-            q.Content,
+                _context.Questions
+                .Where(q => q.AssignmentId == assignmentId)
+                .Select(q => new
+                {
+                    q.Id,
+                    q.Type,
+                    q.Content,
 
-            Options =
-                q.Type == "single_choice"
-                ? _context.QuestionOptions
-                    .Where(o => o.QuestionId == q.Id)
-                    .OrderBy(o => o.Label)
-                    .Select(o => new
-                    {
-                        label = o.Label.ToString(),
-                        content = o.Content
-                    })
-                    .ToList()
-                : null
-        })
-        .ToList();
+                    Options =
+                        q.Type == "single_choice"
+                        ? _context.QuestionOptions
+                            .Where(o => o.QuestionId == q.Id)
+                            .OrderBy(o => o.Label)
+                            .Select(o => new
+                            {
+                                label = o.Label.ToString(),
+                                content = o.Content
+                            })
+                            .ToList()
+                        : null
+                })
+                .ToList();
 
             _systemService.CreateLog(
-    GetStudentId(),
-    "start_exam",
-    "assignment",
-    assignmentId,
-    $"Started assignment {assignment.Name}");
+                GetStudentId(),
+                "start_exam",
+                "assignment",
+                assignmentId,
+                $"Started assignment {assignment.Name}"
+            );
 
             _context.SaveChanges();
 
             return Ok(questions);
         }
-
 
         // SUBMIT EXAM
         [HttpPost("submit")]
@@ -188,26 +173,22 @@ namespace aoe.Controllers
 
             int nextAttempt =
                 lastAttempt == null
-                ? 1
-                : lastAttempt.AttemptNumber + 1;
+                    ? 1
+                    : lastAttempt.AttemptNumber + 1;
 
-            bool suspicious = false;
+            // ===== CHEATING DETECTION (RULE BASED) =====
+            var detect = _cheatingService.Analyze(
+                new Result
+                {
+                    StudentId = studentId,
+                    AssignmentId = dto.AssignmentId,
+                    TimeSpentSeconds = dto.TimeSpentSeconds,
+                    TabSwitchCount = dto.TabSwitchCount
+                },
+                dto.Answers.Count
+            );
 
-            List<string> suspiciousReasons = new();
-
-            if (dto.TabSwitchCount >= 5)
-            {
-                suspicious = true;
-                suspiciousReasons.Add(
-                    "Too many tab switches");
-            }
-
-            if (dto.TimeSpentSeconds <= 15)
-            {
-                suspicious = true;
-                suspiciousReasons.Add(
-                    "Submitted too quickly");
-            }
+            bool suspicious = detect.suspicious;
 
             var result = new Result
             {
@@ -219,16 +200,15 @@ namespace aoe.Controllers
                 TimeSpentSeconds = dto.TimeSpentSeconds,
                 TabSwitchCount = dto.TabSwitchCount,
                 Suspicious = suspicious,
-                SuspiciousReason =
-                    suspiciousReasons.Count > 0
-                    ? string.Join(", ", suspiciousReasons)
+                SuspiciousReason = detect.reasons.Count > 0
+                    ? string.Join(", ", detect.reasons)
                     : null
             };
 
             _context.Results.Add(result);
-
             _context.SaveChanges();
 
+            // ===== CHECK ANSWERS =====
             foreach (var ans in dto.Answers)
             {
                 var question =
@@ -238,163 +218,89 @@ namespace aoe.Controllers
                     continue;
 
                 string dbAnswer =
-                    question.CorrectAnswer?
-                        .Trim()
-                        .ToUpper() ?? "";
+                    question.CorrectAnswer?.Trim().ToUpper() ?? "";
 
                 string studentAnswer =
-                    ans.Answer?
-                        .Trim()
-                        .ToUpper() ?? "";
+                    ans.Answer?.Trim().ToUpper() ?? "";
 
-                bool correct =
-                    dbAnswer == studentAnswer;
+                bool correct = dbAnswer == studentAnswer;
 
                 if (correct)
                     totalScore += question.Score;
 
-                _context.StudentAnswers.Add(
-                    new StudentAnswer
-                    {
-                        StudentId = studentId,
-                        AssignmentId = dto.AssignmentId,
-                        QuestionId = ans.QuestionId,
-                        ResultId = result.Id,
-                        Answer = ans.Answer,
-                        IsCorrect = correct
-                    }
-                );
+                _context.StudentAnswers.Add(new StudentAnswer
+                {
+                    StudentId = studentId,
+                    AssignmentId = dto.AssignmentId,
+                    QuestionId = ans.QuestionId,
+                    ResultId = result.Id,
+                    Answer = ans.Answer,
+                    IsCorrect = correct
+                });
             }
 
             result.Score = totalScore;
 
-            result.TabSwitchCount =
-                dto.TabSwitchCount;
+            _context.SaveChanges();
 
-            int questionCount =
-                dto.Answers.Count;
+            // ===== AI ANALYSIS (NO PERSISTENCE) =====
+            string aiAnalysis = "";
 
-            var detect =
-                _cheatingService.Analyze(
-                    result,
-                    questionCount);
-
-            result.Suspicious =
-                detect.suspicious;
-
-            result.SuspiciousReason =
-                string.Join(
-                    ", ",
-                    detect.reasons);
-
-            if (detect.suspicious)
+            if (suspicious)
             {
                 var assignment =
                     _context.Assignments
-                    .FirstOrDefault(x =>
-                        x.Id == dto.AssignmentId);
-
-                string aiAnalysis = "";
+                    .FirstOrDefault(x => x.Id == dto.AssignmentId);
 
                 try
                 {
-                    aiAnalysis =
-                        await _aiService
-                        .AnalyzeCheating(
-                            new AnalyzeCheatingDTO
-                            {
-                                AssignmentName =
-                                    assignment?.Name ?? "",
-
-                                Score = result.Score,
-
-                                QuestionCount =
-                                    questionCount,
-
-                                TimeSpentSeconds =
-                                    result.TimeSpentSeconds,
-
-                                TabSwitchCount =
-                                    result.TabSwitchCount,
-
-                                AttemptNumber =
-                                    result.AttemptNumber,
-
-                                Reasons =
-                                    detect.reasons
-                            });
+                    aiAnalysis = await _aiService.AnalyzeCheating(
+                        new AnalyzeCheatingDTO
+                        {
+                            AssignmentName = assignment?.Name ?? "",
+                            Score = result.Score,
+                            QuestionCount = dto.Answers.Count,
+                            TimeSpentSeconds = result.TimeSpentSeconds,
+                            TabSwitchCount = result.TabSwitchCount,
+                            AttemptNumber = result.AttemptNumber,
+                            Reasons = detect.reasons
+                        });
                 }
                 catch
                 {
-                    aiAnalysis =
-                        "AI analysis failed";
+                    aiAnalysis = "AI analysis failed";
                 }
 
-                var report =
-                    new SuspiciousReport
-                    {
-                        StudentId = studentId,
-
-                        AssignmentId =
-                            dto.AssignmentId,
-
-                        ResultId =
-                            result.Id,
-
-                        SuspiciousScore =
-                            detect.score,
-
-                        AiRisk =
-                            detect.score,
-
-                        Reason =
-                            string.Join(
-                                ", ",
-                                detect.reasons),
-
-                        AiAnalysis =
-                            aiAnalysis,
-
-                        Status = "pending",
-
-                        CreatedAt =
-                            DateTime.UtcNow
-                    };
-
-                _context
-                    .SuspiciousReports
-                    .Add(report);
-
-                _systemService
-                    .CreateNotification(
-                        studentId,
-                        "Suspicious Activity",
-                        "Your exam attempt was flagged for review",
-                        "warning");
+                _systemService.CreateNotification(
+                    studentId,
+                    "Suspicious Activity",
+                    aiAnalysis,
+                    "warning"
+                );
             }
-
-            await _context.SaveChangesAsync();
 
             _systemService.CreateLog(
                 studentId,
                 "submit_exam",
                 "assignment",
                 dto.AssignmentId,
-                detect.suspicious
-                ? $"Submitted suspicious attempt #{nextAttempt}"
-                : $"Submitted assignment attempt #{nextAttempt}");
+                suspicious
+                    ? $"Suspicious attempt #{nextAttempt}"
+                    : $"Submitted attempt #{nextAttempt}"
+            );
 
             return Ok(new
             {
                 resultId = result.Id,
                 score = totalScore,
                 attempt = nextAttempt,
-                suspicious = detect.suspicious,
-                suspiciousReason = detect.reasons
+                suspicious,
+                suspiciousReason = detect.reasons,
+                aiAnalysis
             });
         }
 
-        // VIEW RESULT
+        // RESULT
         [HttpGet("result/{assignmentId}")]
         public IActionResult Result(int assignmentId)
         {
@@ -415,7 +321,6 @@ namespace aoe.Controllers
             return Ok(best);
         }
 
-
         // HISTORY
         [HttpGet("history/{assignmentId}")]
         public IActionResult History(int assignmentId)
@@ -430,6 +335,21 @@ namespace aoe.Controllers
                 .OrderByDescending(x => x.Score)
                 .Select(x => x.Id)
                 .FirstOrDefault();
+
+            var assignment =
+                _context.Assignments
+                .FirstOrDefault(x => x.Id == assignmentId);
+
+            if (assignment == null)
+                return NotFound();
+
+            if (assignment.ShowResult != true)
+            {
+                return BadRequest(new
+                {
+                    message = "History hidden"
+                });
+            }
 
             var history =
                 _context.Results
@@ -448,22 +368,11 @@ namespace aoe.Controllers
                     IsBest = x.Id == bestId
                 })
                 .ToList();
-            var assignment = _context.Assignments.FirstOrDefault(x => x.Id == assignmentId);
-
-            if (assignment == null)
-                return NotFound();
-
-            if (assignment.ShowResult != true)
-            {
-                return BadRequest(new
-                {
-                    message = "History hidden"
-                });
-            }
 
             return Ok(history);
         }
 
+        // REVIEW
         [HttpGet("review/{resultId}")]
         public IActionResult Review(int resultId)
         {
@@ -477,7 +386,12 @@ namespace aoe.Controllers
 
             if (result == null)
                 return NotFound();
-            bool showExplanation =_context.Assignments.Where(x => x.Id == result.AssignmentId).Select(x => x.ShowExplanation == true).FirstOrDefault();
+
+            bool showExplanation =
+                _context.Assignments
+                .Where(x => x.Id == result.AssignmentId)
+                .Select(x => x.ShowExplanation == true)
+                .FirstOrDefault();
 
             var questions =
                 _context.Questions
@@ -488,7 +402,8 @@ namespace aoe.Controllers
                     q.Content,
                     q.Type,
                     q.CorrectAnswer,
-                    Explanation = showExplanation? q.Explanation: null,
+
+                    Explanation = showExplanation ? q.Explanation : null,
 
                     StudentAnswer =
                         _context.StudentAnswers
@@ -518,6 +433,30 @@ namespace aoe.Controllers
                 .ToList();
 
             return Ok(questions);
+        }
+
+        [HttpGet("attempts/{assignmentId}")]
+        public IActionResult Attempts(int assignmentId)
+        {
+            var studentId = GetStudentId();
+
+            var attempts = _context.Results
+                .Where(x =>
+                    x.StudentId == studentId &&
+                    x.AssignmentId == assignmentId)
+                .OrderByDescending(x => x.AttemptNumber)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.AttemptNumber,
+                    x.Score,
+                    x.SubmittedAt,
+                    x.TimeSpentSeconds,
+                    x.Suspicious
+                })
+                .ToList();
+
+            return Ok(attempts);
         }
     }
 }

@@ -43,8 +43,6 @@ public partial class AoeDbContext : DbContext
 
     public DbSet<ActivityLog> ActivityLogs { get; set; }
 
-    public DbSet<SuspiciousReport> SuspiciousReports { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Answer>(entity =>

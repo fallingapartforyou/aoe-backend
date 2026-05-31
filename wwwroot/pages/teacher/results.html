@@ -1,13 +1,45 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
+
 <meta charset="UTF-8">
+
 <title>Assignment Results</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/table.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/teacher/result.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -16,8 +48,10 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/teacher/results.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
+<script defer
+src="../../assets/js/modules/teacher/results.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -30,46 +64,215 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
+
 <div class="container">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-        <div class="topbar-title">Assignment Results</div>
+    <!-- HEADER -->
 
-        <div class="topbar-actions">
-            <button onclick="backExam()">Back</button>
-            <button onclick="exportCSV()">Export CSV</button>
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Assignment Results
+            </h1>
+
+            <p>
+
+                Monitor submissions,
+                scores and activity
+
+            </p>
+
         </div>
+
+        <div class="header-actions">
+
+            <button
+                class="btn-secondary"
+                onclick="backExam()">
+
+                Back
+
+            </button>
+
+            <button
+                class="btn-primary"
+                onclick="exportCSV()">
+
+                Export CSV
+
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- SEARCH -->
-    <div class="card mb-4">
-        <input
-            id="search"
-            placeholder="Search student..."
-            oninput="filterResults()"
-        >
+    <!-- STATS -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+
+        <span>
+            Total Submissions
+        </span>
+
+        <h2 id="totalStudents">
+            0
+        </h2>
+
     </div>
 
-    <!-- TABLE -->
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Score</th>
-                    <th>Submitted</th>
-                </tr>
-            </thead>
+    <div class="stat-card">
 
-            <tbody id="resultList"></tbody>
-        </table>
+        <span>
+            Submitted
+        </span>
+
+        <h2 id="submittedCount">
+            0
+        </h2>
+
+    </div>
+
+    <div class="stat-card">
+
+        <span>
+            Average Score
+        </span>
+
+        <h2 id="averageScore">
+            0
+        </h2>
+
+    </div>
+
+    <div class="stat-card">
+
+        <span>
+            Highest Score
+        </span>
+
+        <h2 id="highestScore">
+            0
+        </h2>
+
     </div>
 
 </div>
+
+    <!-- FILTER -->
+<div class="card toolbar-card">
+
+    <input
+        id="search"
+        class="form-input"
+        placeholder="Search student..."
+        oninput="filterResults()">
+
+    <select
+        id="sortScore"
+        onchange="filterResults()">
+
+        <option value="">
+            Sort Score
+        </option>
+
+        <option value="score-desc">
+            Highest First
+        </option>
+
+        <option value="score-asc">
+            Lowest First
+        </option>
+
+    </select>
+
+    <select
+        id="sortDate"
+        onchange="filterResults()">
+
+        <option value="">
+            Sort Date
+        </option>
+
+        <option value="date-desc">
+            Newest First
+        </option>
+
+        <option value="date-asc">
+            Oldest First
+        </option>
+
+    </select>
+
 </div>
+    <!-- RESULT TABLE -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h3>
+
+                Student Results
+
+            </h3>
+
+        </div>
+
+        <div class="table-container">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Score
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Submitted
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="resultList">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
 
 </body>
+
 </html>

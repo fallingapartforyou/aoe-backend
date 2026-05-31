@@ -5,10 +5,10 @@ window.onload = async () => {
     await loadClasses();
 };
 
-// ===== LOAD =====
+// ================= LOAD CLASSES =================
 async function loadClasses() {
     try {
-        const classes = await API.request("/student/my");
+        const classes = await API.request("/api/student/my-classes");
         render(classes);
     }
     catch (err) {
@@ -17,7 +17,7 @@ async function loadClasses() {
     }
 }
 
-// ===== SKELETON =====
+// ================= SKELETON =================
 function showSkeleton() {
     const container = document.getElementById("classList");
 
@@ -28,7 +28,7 @@ function showSkeleton() {
     `;
 }
 
-// ===== RENDER =====
+// ================= RENDER =================
 function render(classes) {
     const container = document.getElementById("classList");
     container.innerHTML = "";
@@ -36,7 +36,7 @@ function render(classes) {
     if (!classes || classes.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                No classes joined yet
+                You have not joined any class yet
             </div>
         `;
         return;
@@ -44,51 +44,56 @@ function render(classes) {
 
     classes.forEach(c => {
         const card = document.createElement("div");
-
         card.className = "card";
 
-        // 🔥 CLICK NGUYÊN CARD
         card.onclick = () => openAssignments(c.id);
 
         card.innerHTML = `
             <h3>${c.name}</h3>
-            <p>Click to view assignments</p>
+            <p>Code: ${c.classCode}</p>
+            <p>Teacher: ${c.teacherName || "N/A"}</p>
         `;
 
         container.appendChild(card);
     });
 }
 
-// ===== JOIN =====
+// ================= JOIN CLASS =================
 async function joinClass() {
     try {
         const input = document.getElementById("classCode");
         const classCode = input.value.trim();
 
-        if (!classCode)
-            return alert("Enter class code");
+        if (!classCode) {
+            alert("Enter class code");
+            return;
+        }
 
-        if (!Validator.classCode(classCode))
-            return alert("Invalid class code");
+        if (!Validator.classCode(classCode)) {
+            alert("Invalid class code");
+            return;
+        }
 
         await API.request(
-            "/student/join-class",
+            "/api/student/join-class",
             "POST",
-            { classCode }
+            {
+                classCode: classCode
+            }
         );
 
         input.value = "";
+        alert("Join request sent");
 
-        // reload list
-        loadClasses();
+        await loadClasses();
 
     } catch (err) {
         console.error(err);
-        alert("Join failed");
+        alert(err?.message || "Join failed");
     }
 }
 
-// ===== NAVIGATION =====
+// ================= NAVIGATION =================
 function openAssignments(classId) {
     location.href =
         "/pages/student/assignments.html?classId=" + classId;

@@ -1,27 +1,63 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
+
 <meta charset="UTF-8">
+
 <title>My Classes</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<!-- Core -->
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
 
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<!-- Layout -->
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<!-- Components -->
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/badge.css">
+
+<!-- Student -->
+<link rel="stylesheet"
+href="../../assets/css/pages/student/my-classes.css">
+
+<link rel="stylesheet"
+href="../../assets/css/shared/notification.css">
+
+<!-- JS -->
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
 <script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
-<script src="../../assets/js/modules/utils/validator.js"></script>
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/student/my-classes.js"></script>
+<script src="../../assets/js/modules/shared/notifications-page.js"></script>
+<script defer
+src="../../assets/js/modules/student/my-classes.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -34,38 +70,121 @@ Guard.requireStudent();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
 
-<!-- HEADER -->
-<div class="page-header">
-    <div>
-        <h2>My Classes</h2>
-        <p>Manage and join your classes</p>
+<div class="container">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>My Classes</h1>
+
+            <p>
+                Join classes and manage learning spaces
+            </p>
+
+        </div>
+
     </div>
 
-    <button class="btn-back" onclick="history.back()">Back</button>
-</div>
+    <!-- JOIN SECTION -->
 
-<!-- JOIN CLASS -->
-<div class="card mb-4">
-    <h3>Join Class</h3>
+    <div class="card join-card">
 
-    <div class="join-box">
-        <input
-            id="classCode"
-            placeholder="Enter class code"
-        />
+        <div>
 
-        <button onclick="joinClass()">
-            Join
-        </button>
+            <h3>
+                Join a Class
+            </h3>
+
+            <p>
+                Enter a class code to send a join request
+            </p>
+
+        </div>
+
+        <div class="join-form">
+
+            <input
+                id="classCode"
+                class="form-input"
+                placeholder="Enter class code">
+
+            <button
+                class="btn-primary"
+                onclick="joinClass()">
+
+                Send Request
+
+            </button>
+
+        </div>
+
     </div>
+
+    <!-- PENDING REQUESTS -->
+
+    <div class="section-card">
+
+        <div class="section-header">
+
+            <h3>
+                Pending Requests
+            </h3>
+
+            <span
+                class="badge badge-warning">
+
+                Waiting Approval
+
+            </span>
+
+        </div>
+
+        <div
+            id="pendingClassList"
+            class="class-grid">
+
+            <!-- JS Render -->
+
+        </div>
+
+    </div>
+
+    <!-- MY CLASSES -->
+
+    <div class="section-card">
+
+        <div class="section-header">
+
+            <h3>
+                My Classes
+            </h3>
+
+            <span
+                class="badge badge-success">
+
+                Active
+
+            </span>
+
+        </div>
+
+        <div
+            id="classList"
+            class="class-grid">
+
+        </div>
+
+    </div>
+
 </div>
 
-<!-- CLASS LIST -->
-<div id="classList" class="class-list"></div>
-
-</div>
+</main>
 
 </body>
+
 </html>

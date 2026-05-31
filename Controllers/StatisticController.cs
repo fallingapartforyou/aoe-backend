@@ -1,4 +1,5 @@
-﻿using aoe.Models;
+﻿using aoe.DTOs.Statistic;
+using aoe.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -17,111 +18,96 @@ namespace aoe.Controllers
             _context = context;
         }
 
+        // =========================
+        // UTILS
+        // =========================
         private int GetUserId()
         {
             return int.Parse(
-                User.FindFirstValue(
-                    ClaimTypes.NameIdentifier
-                )!
-            );
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         }
 
         // =========================
         // STUDENT DASHBOARD
         // =========================
-
         [HttpGet("student")]
         [Authorize(Roles = "student")]
         public IActionResult Student()
         {
             var studentId = GetUserId();
 
-            var results =
-                _context.Results
+            var results = _context.Results
                 .Where(x => x.StudentId == studentId);
 
-            return Ok(new
+            var dto = new StudentStatisticDTO
             {
-                totalAttempts =
-                    results.Count(),
+                TotalAttempts = results.Count(),
 
-                averageScore =
-                    results.Any()
+                AverageScore = results.Any()
                     ? results.Average(x => x.Score)
                     : 0,
 
-                bestScore =
-                    results.Any()
+                BestScore = results.Any()
                     ? results.Max(x => x.Score)
                     : 0,
 
-                suspiciousCount =
-                    results.Count(x => x.Suspicious),
+                SuspiciousCount = results.Count(x => x.Suspicious),
 
-                averageTime =
-                    results.Any()
+                AverageTime = results.Any()
                     ? results.Average(x => x.TimeSpentSeconds)
                     : 0
-            });
+            };
+
+            return Ok(dto);
         }
 
         // =========================
         // TEACHER DASHBOARD
         // =========================
-
         [HttpGet("teacher")]
         [Authorize(Roles = "teacher")]
         public IActionResult Teacher()
         {
             var teacherId = GetUserId();
 
-            var assignments =
-                _context.Assignments
+            var assignmentIds = _context.Assignments
                 .Where(x => x.TeacherId == teacherId)
                 .Select(x => x.Id)
                 .ToList();
 
-            var results =
-                _context.Results
-                .Where(x =>
-                    assignments.Contains(
-                        x.AssignmentId));
+            var results = _context.Results
+                .Where(x => assignmentIds.Contains(x.AssignmentId));
 
-            return Ok(new
+            var dto = new TeacherStatisticDTO
             {
-                assignmentCount =
-                    assignments.Count,
+                AssignmentCount = assignmentIds.Count,
 
-                submissionCount =
-                    results.Count(),
+                SubmissionCount = results.Count(),
 
-                averageScore =
-                    results.Any()
+                AverageScore = results.Any()
                     ? results.Average(x => x.Score)
                     : 0,
 
-                suspiciousCount =
-                    results.Count(x => x.Suspicious),
+                SuspiciousCount = results.Count(x => x.Suspicious),
 
-                averageTime =
-                    results.Any()
+                AverageTime = results.Any()
                     ? results.Average(x => x.TimeSpentSeconds)
                     : 0
-            });
+            };
+
+            return Ok(dto);
         }
 
         // =========================
-        // ASSIGNMENT STATS
+        // ASSIGNMENT DETAIL STATS
         // =========================
-
         [HttpGet("assignment/{assignmentId}")]
         [Authorize(Roles = "teacher")]
         public IActionResult Assignment(int assignmentId)
         {
             var teacherId = GetUserId();
 
-            var assignment =
-                _context.Assignments
+            var assignment = _context.Assignments
                 .FirstOrDefault(x =>
                     x.Id == assignmentId &&
                     x.TeacherId == teacherId);
@@ -129,37 +115,32 @@ namespace aoe.Controllers
             if (assignment == null)
                 return NotFound();
 
-            var results =
-                _context.Results
-                .Where(x =>
-                    x.AssignmentId == assignmentId);
+            var results = _context.Results
+                .Where(x => x.AssignmentId == assignmentId);
 
-            return Ok(new
+            var dto = new AssignmentStatisticDTO
             {
-                assignment.Id,
-                assignment.Name,
+                Id = assignment.Id,
+                Name = assignment.Name,
 
-                submissions =
-                    results.Count(),
+                Submissions = results.Count(),
 
-                averageScore =
-                    results.Any()
+                AverageScore = results.Any()
                     ? results.Average(x => x.Score)
                     : 0,
 
-                highestScore =
-                    results.Any()
+                HighestScore = results.Any()
                     ? results.Max(x => x.Score)
                     : 0,
 
-                suspiciousCount =
-                    results.Count(x => x.Suspicious),
+                SuspiciousCount = results.Count(x => x.Suspicious),
 
-                averageTime =
-                    results.Any()
+                AverageTime = results.Any()
                     ? results.Average(x => x.TimeSpentSeconds)
                     : 0
-            });
+            };
+
+            return Ok(dto);
         }
     }
 }

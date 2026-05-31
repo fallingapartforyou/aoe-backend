@@ -1,333 +1,247 @@
-const params = new URLSearchParams(location.search);
-
-const assignmentId = params.get("assignmentId");
-
-let questions = [];
+let examStartTime = null;
+let tabSwitchCount = 0;
+let questionsCache = [];
 let currentIndex = 0;
-let answers = {};
 
-let time = 0;
-let timerInterval;
-
-// ===== INIT =====
 window.onload = async () => {
-
     renderLayout("student");
 
-    await loadQuestions();
+    initAntiCheat();
 
-    startTimer();
+    await startExam();
 };
 
-// ===== LOAD QUESTIONS =====
-async function loadQuestions() {
-
+// ================= START EXAM =================
+async function startExam() {
     try {
+        const assignmentId =
+            new URLSearchParams(location.search)
+                .get("assignmentId");
 
-        if (!assignmentId) {
+        examStartTime = Date.now();
 
-            alert("Missing assignmentId");
+        const questions = await API.get(
+            `/exam/start/${assignmentId}`
+        );
+
+        questionsCache = questions;
+
+        if (!questions || questions.length === 0) {
+            document.getElementById("questionBox").innerHTML =
+                "<p>No questions</p>";
             return;
         }
 
-        const data =
-            await API.request(
-                "/exam/start/" + assignmentId
-            );
-
-        // normalize
-        questions = data.map(q => ({
-
-            ...q,
-
-            // normalize answer
-            correctAnswer:
-                q.correctAnswer
-                    ? q.correctAnswer.trim().toUpperCase()
-                    : "",
-
-            // normalize options
-            options:
-                q.options
-                    ? q.options.map(o => ({
-                        ...o,
-                        label: o.label?.toUpperCase()
-                    }))
-                    : []
-        }));
-
+        renderQuestion(0);
         renderNav();
-
-        renderQuestion();
-
+        updateProgress();
     }
     catch (err) {
-
         console.error(err);
-
-        alert("Cannot load exam");
+        alert("Cannot start exam");
     }
 }
 
-// ===== NAV =====
+// ================= RENDER SINGLE QUESTION =================
+function renderQuestion(index) {
+    const q = questionsCache[index];
+    if (!q) return;
+
+    currentIndex = index;
+
+    const box = document.getElementById("questionBox");
+
+    let optionsHtml = "";
+
+    if (q.type === "single_choice" && q.options) {
+        optionsHtml = q.options.map(o => `
+            <label class="option-item">
+                <input type="radio"
+                    name="q_${q.id}"
+                    value="${o.label}"
+                    ${getSavedAnswer(q.id) === o.label ? "checked" : ""}>
+                ${o.content}
+            </label>
+        `).join("");
+    }
+
+    box.innerHTML = `
+        <h3>${q.content}</h3>
+        <div class="options">
+            ${optionsHtml}
+        </div>
+    `;
+
+    updateHeader();
+}
+
+// ================= NAV =================
 function renderNav() {
-
-    const nav =
-        document.getElementById("questionNav");
-
+    const nav = document.getElementById("questionNav");
     nav.innerHTML = "";
 
-    questions.forEach((q, i) => {
-
-        const btn =
-            document.createElement("button");
-
+    questionsCache.forEach((q, i) => {
+        const btn = document.createElement("button");
         btn.innerText = i + 1;
 
-        btn.className = "nav-btn";
-
-        if (answers[q.id]) {
-
-            btn.classList.add("answered");
-        }
-
-        if (i === currentIndex) {
-
-            btn.classList.add("active");
-        }
-
-        btn.onclick = () => {
-
-            currentIndex = i;
-
-            renderQuestion();
-        };
+        btn.onclick = () => renderQuestion(i);
 
         nav.appendChild(btn);
     });
 }
 
-// ===== RENDER QUESTION =====
-function renderQuestion() {
+// ================= PROGRESS =================
+function updateProgress() {
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
 
-    const q = questions[currentIndex];
+    const percent =
+        ((currentIndex + 1) / questionsCache.length) * 100;
 
-    const box =
-        document.getElementById("questionBox");
-
-    let html = `
-        <h3>
-            Question ${currentIndex + 1}
-        </h3>
-
-        <p>
-            ${q.content}
-        </p>
-    `;
-
-    // ===== SINGLE CHOICE =====
-    if (q.type === "single_choice") {
-
-    q.options.forEach((opt) => {
-
-        const label = opt.label;
-        const content = opt.content;
-
-        const checked =
-            answers[q.id] === label
-                ? "checked"
-                : "";
-
-        html += `
-            <label class="option">
-
-                <input
-                    type="radio"
-                    name="q${q.id}"
-                    value="${label}"
-                    ${checked}
-                    onchange="saveAnswer(${q.id}, '${label}')"
-                >
-
-                <b>${label}.</b>
-                ${content}
-
-            </label>
-        `;
-    });
+    progressText.innerText = `${Math.round(percent)}%`;
+    progressFill.style.width = `${percent}%`;
 }
 
-    // ===== FILL BLANK =====
-    else {
+// ================= HEADER =================
+function updateHeader() {
+    document.getElementById("questionIndex").innerText =
+        `Question ${currentIndex + 1}`;
 
-        html += `
-            <input
-                class="form-input"
-                value="${answers[q.id] || ""}"
-                placeholder="Your answer"
-                oninput="saveAnswer(${q.id}, this.value)"
-            />
-        `;
-    }
+    document.getElementById("questionProgress").innerText =
+        `${currentIndex + 1} / ${questionsCache.length}`;
 
-    box.innerHTML = html;
-
-    renderNav();
+    updateProgress();
 }
 
-// ===== SAVE ANSWER =====
-function saveAnswer(id, value) {
-
-    answers[id] =
-        String(value)
-            .trim()
-            .toUpperCase();
-
-    console.log(answers);
-
-    renderNav();
-}
-
-// ===== NEXT =====
+// ================= NAV BUTTONS =================
 function nextQuestion() {
-
-    if (currentIndex < questions.length - 1) {
-
-        currentIndex++;
-
-        renderQuestion();
+    if (currentIndex < questionsCache.length - 1) {
+        renderQuestion(currentIndex + 1);
     }
 }
 
-// ===== PREV =====
 function prevQuestion() {
-
     if (currentIndex > 0) {
-
-        currentIndex--;
-
-        renderQuestion();
+        renderQuestion(currentIndex - 1);
     }
 }
 
-// ===== TIMER =====
-function startTimer() {
+// ================= SAVE ANSWER (memory) =================
+function getSavedAnswer(questionId) {
+    const input = document.querySelector(
+        `input[name="q_${questionId}"]:checked`
+    );
 
-    timerInterval = setInterval(() => {
-
-        time++;
-
-        const min =
-            Math.floor(time / 60);
-
-        const sec =
-            time % 60;
-
-        document.getElementById("timer").innerText =
-            `${pad(min)}:${pad(sec)}`;
-
-    }, 1000);
+    return input ? input.value : null;
 }
 
-function pad(n) {
+// ================= ANTI CHEAT =================
+function initAntiCheat() {
 
-    return n < 10
-        ? "0" + n
-        : n;
-}
-
-// ===== SUBMIT =====
-async function submitExam() {
-
-    const total =
-        questions.length;
-
-    if (Object.keys(answers).length < total) {
-
-        if (!confirm(
-            "You haven't answered all questions. Submit anyway?"
-        )) {
-            return;
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            tabSwitchCount++;
+            updateWarningUI();
         }
-    }
+    });
 
-    if (!confirm("Submit exam?")) {
-        return;
-    }
+    window.addEventListener("blur", () => {
+        tabSwitchCount++;
+        updateWarningUI();
+    });
 
+    setInterval(() => {
+        document.getElementById("tabSwitchCount").innerText =
+            tabSwitchCount;
+    }, 500);
+}
+
+// ================= UI WARNING =================
+function updateWarningUI() {
+    document.getElementById("tabSwitchCount").innerText =
+        tabSwitchCount;
+
+    const toast = document.getElementById("warningToast");
+
+    toast.style.display = "block";
+
+    setTimeout(() => {
+        toast.style.display = "none";
+    }, 2000);
+
+    const status = document.getElementById("securityStatus");
+
+    if (tabSwitchCount >= 3) {
+        status.innerText = "Suspicious";
+        status.style.color = "red";
+    }
+}
+
+// ================= TIMER =================
+setInterval(() => {
+    if (!examStartTime) return;
+
+    const diff = Math.floor((Date.now() - examStartTime) / 1000);
+
+    const h = String(Math.floor(diff / 3600)).padStart(2, "0");
+    const m = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+    const s = String(diff % 60).padStart(2, "0");
+
+    document.getElementById("timer").innerText =
+        `${h}:${m}:${s}`;
+}, 1000);
+
+// ================= SUBMIT =================
+function submitExam() {
+    document.getElementById("submitModal").style.display = "block";
+}
+
+function closeSubmitModal() {
+    document.getElementById("submitModal").style.display = "none";
+}
+
+async function confirmSubmit() {
     try {
+        const assignmentId =
+            new URLSearchParams(location.search)
+                .get("assignmentId");
 
-        clearInterval(timerInterval);
+        const timeSpentSeconds =
+            Math.floor((Date.now() - examStartTime) / 1000);
 
-        // 🔥 IMPORTANT FIX
-        // single_choice gửi A/B/C/D
-        // fill_blank trim()
-        const payloadAnswers =
-            Object.entries(answers).map(
-                ([questionId, answer]) => {
-
-                    const q =
-                        questions.find(
-                            x => x.id === parseInt(questionId)
-                        );
-
-                    let finalAnswer = answer;
-
-                    if (q.type === "single_choice") {
-
-                        finalAnswer =
-                            String(answer)
-                                .trim()
-                                .toUpperCase();
-                    }
-                    else {
-
-                        finalAnswer =
-                            String(answer)
-                                .trim();
-                    }
-
-                    return {
-
-                        questionId:
-                            parseInt(questionId),
-
-                        answer:
-                            finalAnswer
-                    };
-                }
+        const answers = questionsCache.map(q => {
+            const selected = document.querySelector(
+                `input[name="q_${q.id}"]:checked`
             );
 
-        console.log("SUBMIT PAYLOAD:", payloadAnswers);
+            return {
+                questionId: q.id,
+                answer: selected ? selected.value : ""
+            };
+        });
 
-        const result =
-            await API.request(
-                "/exam/submit",
-                "POST",
-                {
-                    assignmentId:
-                        parseInt(assignmentId),
-
-                    answers:
-                        payloadAnswers
-                }
-            );
-
-        console.log("RESULT:", result);
+        const res = await API.request(
+            "/exam/submit",
+            "POST",
+            {
+                assignmentId: parseInt(assignmentId),
+                answers,
+                timeSpentSeconds,
+                tabSwitchCount
+            }
+        );
 
         alert(
-            "Submit success. Score: " +
-            result.score
+            res.suspicious
+                ? `⚠ Suspicious detected!\nScore: ${res.score}`
+                : `Score: ${res.score}`
         );
 
         location.href =
-            "/pages/student/result.html?assignmentId="
-            + assignmentId;
+            `/pages/student/result.html?assignmentId=${assignmentId}`;
     }
     catch (err) {
-
         console.error(err);
-
         alert("Submit failed");
     }
 }

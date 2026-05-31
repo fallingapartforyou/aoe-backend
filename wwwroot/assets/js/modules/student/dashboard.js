@@ -10,18 +10,36 @@ window.onload = async () => {
 // ================= STATS =================
 async function loadStats() {
     try {
-        const [classes, assignments, attempts] = await Promise.all([
-            API.get("/student/my"),
-            API.get("/assignment/student"),
-            API.get("/submission/my") // dùng submission thay attempt
-        ]);
+        // 1. classes
+        const classes = await API.get("/api/student/my");
 
-        document.getElementById("myClasses").innerText = classes.length;
-        document.getElementById("myAssignments").innerText = assignments.length;
-        document.getElementById("myAttempts").innerText = attempts.length;
+        // 2. assignments per class (compose logic)
+        let assignments = [];
+
+        for (const c of classes) {
+            const classAssignments =
+                await API.get(`/api/assignment/classes/${c.id}`)
+                    .catch(() => []);
+
+            assignments.push(...classAssignments);
+        }
+
+        // 3. attempts (submissions)
+        const submissions =
+            await API.get("/api/submission/my")
+                .catch(() => []);
+
+        document.getElementById("myClasses").innerText =
+            classes.length;
+
+        document.getElementById("myAssignments").innerText =
+            assignments.length;
+
+        document.getElementById("myAttempts").innerText =
+            submissions.length;
 
     } catch (err) {
-        console.log("Dashboard load error", err);
+        console.log("Stats error:", err);
     }
 }
 
@@ -30,30 +48,39 @@ async function loadAssignments() {
 
     const container = document.getElementById("assignmentList");
 
-    // skeleton
     container.innerHTML = `
         <div class="skeleton-card"></div>
         <div class="skeleton-card"></div>
     `;
 
     try {
-        const assignments = await API.get("/assignment/student");
+        const classes = await API.get("/api/student/my");
 
-        if (!assignments || assignments.length === 0) {
-            container.innerHTML = `<p class="text-muted">No assignments</p>`;
+        let assignments = [];
+
+        for (const c of classes) {
+            const res =
+                await API.get(`/api/assignment/classes/${c.id}`)
+                    .catch(() => []);
+
+            assignments.push(...res);
+        }
+
+        if (!assignments.length) {
+            container.innerHTML = `<p>No assignments</p>`;
             return;
         }
 
-        // sort mới nhất
+        // remove duplicates (important)
+        assignments = [...new Map(assignments.map(a => [a.id, a])).values()];
+
         assignments.sort((a, b) =>
             new Date(b.openTime) - new Date(a.openTime)
         );
 
-        const latest = assignments.slice(0, 5);
-
         container.innerHTML = "";
 
-        latest.forEach(a => {
+        assignments.slice(0, 5).forEach(a => {
 
             const card = document.createElement("div");
             card.className = "card";
@@ -89,8 +116,8 @@ async function loadAssignments() {
         });
 
     } catch (err) {
-        console.error(err);
-        container.innerHTML = `<p class="text-danger">Load failed</p>`;
+        console.error("Assignment error:", err);
+        container.innerHTML = `<p>Load failed</p>`;
     }
 }
 

@@ -2,14 +2,43 @@
 <html>
 
 <head>
-<meta charset="UTF-8">
-<title>Classes</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<meta charset="UTF-8">
+
+<title>Class Management</title>
+
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/skeleton.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/teacher/class.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -19,8 +48,10 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/teacher/classes.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
+<script defer
+src="../../assets/js/modules/teacher/classes.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -33,35 +64,120 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
+
 <div class="container">
 
-    <!-- 🔷 TOPBAR -->
-    <div class="topbar">
-        <div class="topbar-title">Lớp học</div>
+    <!-- HEADER -->
 
-        <div class="topbar-actions">
-            <button onclick="history.back()">Back</button>
+    <div class="page-header">
+
+        <div>
+
+            <h1>Class Management</h1>
+
+            <p>
+                Create, manage and monitor your classes
+            </p>
+
         </div>
+
+        <div class="header-actions">
+
+            <button
+                class="btn-secondary"
+                onclick="history.back()">
+
+                Back
+
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- 🔍 SEARCH -->
-    <div class="card" style="margin-bottom: 20px;">
-        <input id="keyword" placeholder="Search class">
-        <button onclick="loadClasses()">Search</button>
+    <!-- SEARCH + CREATE -->
+
+    <div class="management-row">
+
+        <div class="card management-card">
+
+            <h3>
+                Search Class
+            </h3>
+
+            <div class="search-box">
+
+                <input
+                    id="keyword"
+                    class="form-input"
+                    placeholder="Search by class name">
+
+                <button
+                    class="btn-primary"
+                    onclick="loadClasses()">
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="card management-card">
+
+            <h3>
+                Create New Class
+            </h3>
+
+            <div class="create-box">
+
+                <input
+                    id="className"
+                    class="form-input"
+                    placeholder="Enter class name">
+
+                <button
+                    class="btn-primary"
+                    onclick="createClass()">
+
+                    Create
+
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- ➕ CREATE -->
-    <div class="card" style="margin-bottom: 20px;">
-        <input id="className" placeholder="New class name">
-        <button onclick="createClass()">Create class</button>
+    <!-- FILTER BAR -->
+
+    <div class="card filter-card">
+
+        <div class="filter-left">
+
+            <span>
+                Class List
+            </span>
+
+        </div>
+
     </div>
 
-    <!-- 📦 CLASS GRID -->
-    <div id="classList" class="class-grid"></div>
+    <!-- CLASS LIST -->
+
+    <div
+        id="classList"
+        class="class-grid">
+
+    </div>
 
 </div>
-</div>
+
+</main>
 
 </body>
+
 </html>

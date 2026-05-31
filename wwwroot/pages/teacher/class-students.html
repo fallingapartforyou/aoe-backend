@@ -4,13 +4,41 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Students</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<title>Class Students</title>
+
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/table.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/teacher/class-student.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -20,8 +48,11 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
 
-<script defer src="../../assets/js/modules/teacher/students.js"></script>
+<script defer
+src="../../assets/js/modules/teacher/students.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -34,48 +65,234 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
+
 <div class="container">
 
-    <!-- 🔷 TOPBAR -->
-    <div class="topbar">
-        <div class="topbar-title">Students</div>
+    <div class="page-header">
 
-        <div class="topbar-actions">
-            <button onclick="history.back()">Back</button>
+        <div>
+
+            <h1>
+                Students
+            </h1>
+
+            <p>
+                Manage students enrolled in this class
+            </p>
+
         </div>
+
+        <div class="header-actions">
+
+            <button
+                class="btn-secondary"
+                onclick="history.back()">
+
+                Back
+
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- ➕ ADD STUDENT -->
-    <div class="card" style="margin-bottom: 20px;">
-        <input id="email" placeholder="Student email">
-        <button onclick="addStudent()">Add student</button>
+    <div class="stats-grid">
 
-        <button onclick="toggleBulkRemove()">Bulk Remove</button>
-        <button onclick="removeSelected()" id="bulkBtn" style="display:none;">
-            Remove Selected
-        </button>
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Total Students
+            </span>
+
+            <h2 id="totalStudents">
+                0
+            </h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Pending Requests
+            </span>
+
+            <h2 id="pendingRequests">
+                0
+            </h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Selected
+            </span>
+
+            <h2 id="selectedStudents">
+                0
+            </h2>
+
+        </div>
+
     </div>
 
-    <!-- 📊 TABLE -->
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th id="selectCol" style="display:none;"></th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+    <div class="card add-student-card">
 
-            <tbody id="studentList"></tbody>
+        <div class="section-header">
 
-        </table>
+            <h3>
+                Invite Student
+            </h3>
+
+        </div>
+
+        <div class="add-student-row">
+
+            <input
+                id="email"
+                class="form-input"
+                placeholder="Student email">
+
+            <button
+                class="btn-primary"
+                onclick="addStudent()">
+
+                Send Invitation
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="section-header">
+
+            <h3>
+                Pending Join Requests
+            </h3>
+
+        </div>
+
+        <div class="table-container">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="requestList">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="card student-table-card">
+
+        <div class="table-toolbar">
+
+            <div>
+
+                <h3>
+                    Student List
+                </h3>
+
+            </div>
+
+            <div class="toolbar-actions">
+
+                <button
+                    class="btn-secondary"
+                    onclick="toggleBulkRemove()">
+
+                    Bulk Remove
+
+                </button>
+
+                <button
+                    id="bulkBtn"
+                    class="btn-primary"
+                    onclick="removeSelected()"
+                    style="display:none;">
+
+                    Remove Selected
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="table-container">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th
+                            id="selectCol"
+                            style="display:none;">
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentList">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
     </div>
 
 </div>
-</div>
+
+</main>
 
 </body>
+
 </html>

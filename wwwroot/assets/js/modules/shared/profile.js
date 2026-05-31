@@ -1,80 +1,129 @@
 window.onload = () => {
+
     const role = Storage.getRole();
+
     renderLayout(role);
+
     loadProfile();
 };
 
 async function loadProfile() {
+
     try {
-        const profile = await API.request("/user/profile");
 
-        // form
-        document.getElementById("name").value = profile.name || "";
-        document.getElementById("email").value = profile.email || "";
-        document.getElementById("phone").value = profile.phone || "";
-        document.getElementById("role").value = profile.role || "";
+        const profile =
+            await API.request("/api/user/profile");
 
-        // display
+        // ===== FORM =====
+
+        document.getElementById("name").value =
+            profile.name || "";
+
+        document.getElementById("email").value =
+            profile.email || "";
+
+        document.getElementById("phone").value =
+            profile.phone || "";
+
+        document.getElementById("role").value =
+            profile.role || "";
+
+        // ===== SIDEBAR =====
+
         document.getElementById("displayName").innerText =
             profile.name || "User";
 
         document.getElementById("avatar").innerText =
             (profile.name || "U")[0].toUpperCase();
 
-        const badge = document.getElementById("roleBadge");
-        badge.innerText = profile.role;
-        badge.classList.add(profile.role); // teacher / student
+        const badge =
+            document.getElementById("roleBadge");
 
-        // show form
-        document.getElementById("loadingState").remove();
-        document.getElementById("profileForm").style.display = "block";
+        badge.innerText =
+            profile.role || "user";
+
+        badge.classList.remove(
+            "teacher",
+            "student"
+        );
+
+        if (profile.role) {
+
+            badge.classList.add(profile.role);
+
+        }
 
     } catch (err) {
+
         console.error(err);
-        document.getElementById("loadingState").innerText =
-            "Failed to load profile";
+
+        alert("Failed to load profile");
     }
 }
 
 async function updateProfile() {
-    const btn = document.getElementById("updateBtn");
 
-    const name = document.getElementById("name").value.trim();
-    const phone = document.getElementById("phone").value.trim();
+    const btn =
+        document.getElementById("updateBtn");
+
+    const name =
+        document.getElementById("name")
+        .value
+        .trim();
+
+    const phone =
+        document.getElementById("phone")
+        .value
+        .trim();
 
     if (!name) {
+
         alert("Name cannot be empty");
+
         return;
     }
 
     btn.disabled = true;
+
     btn.innerText = "Updating...";
 
     try {
-        await API.request("/user/update-profile", "PUT", {
-            name,
-            phone
-        });
 
-        btn.innerText = "Updated";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-success");
+        await API.request(
+            "/api/user/update-profile",
+            "PUT",
+            {
+                name,
+                phone
+            }
+        );
+
+        // ===== UPDATE UI =====
+
+        document.getElementById("displayName").innerText =
+            name;
+
+        document.getElementById("avatar").innerText =
+            name[0].toUpperCase();
+
+        btn.innerText = "Saved";
 
         setTimeout(() => {
+
             btn.disabled = false;
-            btn.innerText = "Update Profile";
-            btn.classList.remove("btn-success");
-            btn.classList.add("btn-primary");
-        }, 1500);
+
+            btn.innerText = "Save Changes";
+
+        }, 1200);
 
     } catch (err) {
+
         console.error(err);
+
         btn.disabled = false;
-        btn.innerText = "Update Profile";
+
+        btn.innerText = "Save Changes";
+
         alert("Update failed");
     }
-}
-
-function goChangePassword() {
-    location.href = "/pages/shared/change-password.html";
 }

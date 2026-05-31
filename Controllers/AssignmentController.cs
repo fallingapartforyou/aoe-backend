@@ -255,31 +255,5 @@ AssignToClassDTO dto)
 
             return Ok(classes.ToList());
         }
-
-        [HttpGet("suspicious-results/{assignmentId}")]
-        public IActionResult SuspiciousResults(
-    int assignmentId)
-        {
-            var data =
-                _context.Results
-                .Where(x =>
-                    x.AssignmentId == assignmentId &&
-                    x.Suspicious)
-                .Select(x => new
-                {
-                    x.Id,
-                    x.StudentId,
-                    x.Score,
-                    x.AttemptNumber,
-                    x.TimeSpentSeconds,
-                    x.TabSwitchCount,
-                    x.SuspiciousReason,
-                    x.SubmittedAt
-                })
-                .OrderByDescending(x => x.SubmittedAt)
-                .ToList();
-
-            return Ok(data);
-        }
     }
 }

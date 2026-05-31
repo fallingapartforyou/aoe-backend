@@ -1,6 +1,5 @@
 ﻿using aoe.DTOs.Class;
 using aoe.DTOs.Student;
-using aoe.Helpers;
 using aoe.Models;
 using aoe.Services.Systems;
 using Microsoft.AspNetCore.Authorization;
@@ -25,63 +24,62 @@ namespace aoe.Controllers
             _systemService = systemService;
         }
 
-        // JOIN CLASS
-        [HttpPost("join-class")]
-        public IActionResult JoinClass(
-    JoinClassDTO dto)
+        // =========================
+        // UTILS
+        // =========================
+        private int GetStudentId()
         {
-            var studentId =
-                int.Parse(
-                    User.FindFirstValue(
-                        ClaimTypes.NameIdentifier
-                    )
-                );
+            return int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        }
 
-            var classObj =
-                _context.Classes.FirstOrDefault(
-                    x => x.ClassCode == dto.ClassCode
-                );
+        // =========================
+        // JOIN CLASS (BY CODE)
+        // =========================
+        [HttpPost("join-class")]
+        public IActionResult JoinClass(JoinClassDTO dto)
+        {
+            var studentId = GetStudentId();
+
+            var classObj = _context.Classes
+                .FirstOrDefault(x => x.ClassCode == dto.ClassCode);
 
             if (classObj == null)
                 return NotFound("Class not found");
 
-            bool exists =
-                _context.ClassStudents.Any(
-                    x =>
-                        x.ClassId == classObj.Id &&
-                        x.StudentId == studentId
-                );
+            bool alreadyJoined = _context.ClassStudents
+                .Any(x =>
+                    x.ClassId == classObj.Id &&
+                    x.StudentId == studentId);
 
-            if (exists)
-                return BadRequest(
-                    "Already joined"
-                );
+            if (alreadyJoined)
+                return BadRequest("Already joined");
 
-            bool requested =
-                _context.ClassJoinRequests.Any(x =>
+            bool pendingRequest = _context.ClassJoinRequests
+                .Any(x =>
                     x.ClassId == classObj.Id &&
                     x.StudentId == studentId &&
                     x.Status == "pending");
 
-            if (requested)
+            if (pendingRequest)
                 return BadRequest("Request already sent");
 
-            var request =
-                new ClassJoinRequest
-                {
-                    ClassId = classObj.Id,
-                    StudentId = studentId,
-                    Type = "student_request",
-                    Status = "pending",
-                    CreatedAt = DateTime.UtcNow
-                };
+            var request = new ClassJoinRequest
+            {
+                ClassId = classObj.Id,
+                StudentId = studentId,
+                Type = "student_request",
+                Status = "pending",
+                CreatedAt = DateTime.UtcNow
+            };
 
             _context.ClassJoinRequests.Add(request);
 
+            // notify teacher
             _systemService.CreateNotification(
                 classObj.TeacherId,
                 "New Join Request",
-                $"A student requested to join class {classObj.Name}",
+                $"Student requested to join class {classObj.Name}",
                 "join_request");
 
             _systemService.CreateLog(
@@ -96,22 +94,18 @@ namespace aoe.Controllers
             return Ok("Request sent");
         }
 
-
-        // LIST MY CLASSES
+        // =========================
+        // MY CLASSES (FIXED - SINGLE SOURCE OF TRUTH)
+        // =========================
         [HttpGet("my-classes")]
         public IActionResult MyClasses()
         {
-            var studentId =
-                int.Parse(
-                    User.FindFirstValue(
-                        ClaimTypes.NameIdentifier
-                    )
-                );
+            var studentId = GetStudentId();
 
             var classes =
                 from cs in _context.ClassStudents
                 join c in _context.Classes
-                on cs.ClassId equals c.Id
+                    on cs.ClassId equals c.Id
                 where cs.StudentId == studentId
                 select new
                 {
@@ -126,49 +120,16 @@ namespace aoe.Controllers
 
             return Ok(classes.ToList());
         }
-        
-        [HttpGet("my")]
-        [Authorize(Roles = "student")]
-        public IActionResult GetMyClasses()
-        {
-            var studentId =
-            int.Parse(
-            User.FindFirstValue(
-            ClaimTypes.NameIdentifier
-            )
-            );
 
-            var classes =
-            from cs in _context.ClassStudents
-            join c in _context.Classes
-            on cs.ClassId equals c.Id
-            where cs.StudentId == studentId
-            select new
-            {
-                c.Id,
-                c.Name,
-                c.ClassCode,
-
-                teacherName = c.Teacher.Name,
-                teacherEmail = c.Teacher.Email,
-                teacherPhone = c.Teacher.Phone
-            };
-
-            return Ok(classes.ToList());
-        }
-
+        // =========================
+        // JOIN REQUESTS (HISTORY + STATUS)
+        // =========================
         [HttpGet("join-requests")]
         public IActionResult JoinRequests()
         {
-            var studentId =
-                int.Parse(
-                    User.FindFirstValue(
-                        ClaimTypes.NameIdentifier
-                    )
-                );
+            var studentId = GetStudentId();
 
-            var requests =
-                _context.ClassJoinRequests
+            var requests = _context.ClassJoinRequests
                 .Where(x => x.StudentId == studentId)
                 .Select(x => new
                 {
@@ -179,7 +140,9 @@ namespace aoe.Controllers
 
                     classId = x.Class.Id,
                     className = x.Class.Name,
-                    classCode = x.Class.ClassCode
+                    classCode = x.Class.ClassCode,
+
+                    teacherName = x.Class.Teacher.Name
                 })
                 .OrderByDescending(x => x.CreatedAt)
                 .ToList();

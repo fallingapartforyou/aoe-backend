@@ -1,15 +1,33 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
+
 <meta charset="UTF-8">
+
 <title>Exam</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/modal.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/student/exam.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -17,8 +35,9 @@
 <script src="../../assets/js/core/guard.js"></script>
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/student/exam.js"></script>
+<script defer
+src="../../assets/js/modules/student/exam.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -29,40 +48,320 @@ Guard.requireStudent();
 
 <body>
 
-<div class="exam-container">
+<div class="exam-page">
 
     <!-- HEADER -->
-    <div class="exam-header">
-        <h2>Exam</h2>
-        <div id="timer">00:00</div>
-    </div>
 
-    <!-- BODY -->
-    <div class="exam-body">
+    <header class="exam-header">
 
-        <!-- LEFT: QUESTION -->
-        <div class="exam-left">
-            <div id="questionBox"></div>
+        <div class="exam-info">
 
-            <div class="exam-actions">
-                <button onclick="prevQuestion()">Prev</button>
-                <button onclick="nextQuestion()">Next</button>
+            <span class="exam-badge">
+
+                Online Examination
+
+            </span>
+
+            <h1 id="examTitle">
+
+                Assignment Name
+
+            </h1>
+
+        </div>
+
+        <div class="exam-tools">
+
+            <div class="warning-box">
+
+                ⚠️ Warnings:
+                <span id="warningCount">
+                    0
+                </span>
+
             </div>
+
+            <div
+                id="timer"
+                class="timer-box">
+
+                00:00:00
+
+            </div>
+
         </div>
 
-        <!-- RIGHT: NAV -->
-        <div class="exam-right">
-            <h4>Questions</h4>
-            <div id="questionNav"></div>
+    </header>
 
-            <button class="submit-btn" onclick="submitExam()">
-                Submit
+    <!-- MAIN -->
+
+    <div class="exam-layout">
+
+        <!-- LEFT -->
+
+        <section class="question-panel">
+
+            <div class="question-header">
+
+                <span id="questionIndex">
+
+                    Question 1
+
+                </span>
+
+                <span id="questionProgress">
+
+                    1 / 20
+
+                </span>
+
+            </div>
+
+            <div
+                id="questionBox"
+                class="question-card">
+
+            </div>
+
+            <div class="question-actions">
+
+                <button
+                    class="btn-secondary"
+                    onclick="prevQuestion()">
+
+                    ← Previous
+
+                </button>
+
+                <button
+                    class="btn-primary"
+                    onclick="nextQuestion()">
+
+                    Next →
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- RIGHT -->
+
+        <aside class="exam-sidebar">
+
+            <!-- PROGRESS -->
+
+            <div class="sidebar-card">
+
+                <h3>
+
+                    Progress
+
+                </h3>
+
+                <div class="progress-bar">
+
+                    <div
+                        id="progressFill"
+                        class="progress-fill">
+
+                    </div>
+
+                </div>
+
+                <span id="progressText">
+
+                    0%
+
+                </span>
+
+            </div>
+
+            <!-- QUESTION NAV -->
+
+            <div class="sidebar-card">
+
+                <h3>
+
+                    Question List
+
+                </h3>
+
+                <div
+                    id="questionNav"
+                    class="question-nav">
+
+                </div>
+
+            </div>
+
+            <!-- ANTI CHEAT -->
+
+            <div class="sidebar-card">
+
+                <h3>
+
+                    Exam Monitoring
+
+                </h3>
+
+                <div class="monitor-status">
+
+                    <div class="status-item">
+
+                        <span>
+                            Focus Status
+                        </span>
+
+                        <strong id="focusStatus">
+
+                            Active
+
+                        </strong>
+
+                    </div>
+
+                    <div class="status-item">
+
+                        <span>
+                            Tab Switches
+                        </span>
+
+                        <strong id="tabSwitchCount">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+                    <div class="status-item">
+
+                        <span>
+                            Suspicious Events
+                        </span>
+
+                        <strong id="suspiciousCount">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+                    <div class="status-item">
+
+                        <span>
+                            Security Status
+                        </span>
+
+                        <strong id="securityStatus">
+
+                            Safe
+
+                        </strong>
+
+                    </div>
+
+                    <div class="status-item">
+
+                        <span>
+                            Fullscreen
+                        </span>
+
+                        <strong id="fullscreenStatus">
+
+                            Active
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SUBMIT -->
+
+            <button
+                class="submit-btn"
+                onclick="submitExam()">
+
+                Submit Exam
+
             </button>
-        </div>
+
+        </aside>
 
     </div>
 
 </div>
 
+<!-- WARNING TOAST -->
+
+<div
+id="warningToast"
+class="warning-toast">
+
+⚠ Suspicious activity detected
+
+</div>
+
+<!-- ANTI CHEAT POPUP -->
+
+<div
+id="antiCheatPopup"
+class="anti-cheat-popup">
+
+Security Warning
+
+</div>
+
+<!-- SUBMIT MODAL -->
+
+<div
+class="modal"
+id="submitModal">
+
+<div class="modal-content">
+
+    <h3>
+
+        Submit Exam
+
+    </h3>
+
+    <p>
+
+        Are you sure you want to submit?
+        You cannot continue afterwards.
+
+    </p>
+
+    <div class="modal-actions">
+
+        <button
+            class="btn-secondary"
+            onclick="closeSubmitModal()">
+
+            Cancel
+
+        </button>
+
+        <button
+            class="btn-primary"
+            onclick="confirmSubmit()">
+
+            Submit
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
 </body>
+
 </html>

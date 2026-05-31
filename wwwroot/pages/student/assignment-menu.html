@@ -1,15 +1,42 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
+
 <meta charset="UTF-8">
+
 <title>Assignment Menu</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/modal.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/student/assignment-menu.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -19,8 +46,10 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/student/menu.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
+<script defer
+src="../../assets/js/modules/student/menu.js">
+</script>
 
 <script>
 Guard.requireLogin();
@@ -33,59 +62,288 @@ Guard.requireStudent();
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
 
-<!-- HEADER -->
-<div class="page-header">
-    <div>
-        <h2>Assignment</h2>
-        <p class="text-muted">Choose what you want to do</p>
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="assignment-hero">
+
+        <div>
+
+            <div class="page-badge">
+
+                Assignment Center
+
+            </div>
+
+            <h1 id="assignmentTitle">
+
+                Assignment Name
+
+            </h1>
+
+            <p>
+
+                Select an action below to continue.
+
+            </p>
+
+        </div>
+
+        <div class="hero-actions">
+
+            <button
+                class="btn-secondary"
+                onclick="history.back()">
+
+                Back
+
+            </button>
+
+        </div>
+
     </div>
 
-    <button class="btn-back" onclick="history.back()">
-        ← Back
-    </button>
+    <!-- INFO -->
+
+    <div class="info-grid">
+
+        <div class="info-card">
+
+            <span>Status</span>
+
+            <h3 id="statusText">
+
+                Not Started
+
+            </h3>
+
+        </div>
+
+        <div class="info-card">
+
+            <span>Open Time</span>
+
+            <h3 id="openTime">
+
+                --
+
+            </h3>
+
+        </div>
+
+        <div class="info-card">
+
+            <span>Deadline</span>
+
+            <h3 id="closeTime">
+
+                --
+
+            </h3>
+
+        </div>
+
+        <div class="info-card">
+
+            <span>Score</span>
+
+            <h3 id="scoreText">
+
+                --
+
+            </h3>
+
+        </div>
+
+    </div>
+
+    <!-- MENU -->
+
+    <div class="menu-grid">
+
+        <div
+            id="startCard"
+            class="action-card start-card"
+            onclick="startExam()">
+
+            <div class="card-icon">
+
+                🚀
+
+            </div>
+
+            <h3>
+
+                Start Exam
+
+            </h3>
+
+            <p id="startDesc">
+
+                Begin your assignment attempt
+
+            </p>
+
+        </div>
+
+        <div
+            id="resultCard"
+            class="action-card result-card"
+            onclick="viewResult()">
+
+            <div class="card-icon">
+
+                📊
+
+            </div>
+
+            <h3>
+
+                View Result
+
+            </h3>
+
+            <p id="resultDesc">
+
+                Check your score and performance
+
+            </p>
+
+        </div>
+
+        <div
+            id="reviewCard"
+            class="action-card review-card"
+            onclick="reviewExam()">
+
+            <div class="card-icon">
+
+                📝
+
+            </div>
+
+            <h3>
+
+                Review Answers
+
+            </h3>
+
+            <p id="reviewDesc">
+
+                View detailed solutions
+
+            </p>
+
+        </div>
+
+        <div
+            class="action-card exit-card"
+            onclick="history.back()">
+
+            <div class="card-icon">
+
+                ↩️
+
+            </div>
+
+            <h3>
+
+                Exit
+
+            </h3>
+
+            <p>
+
+                Return to assignment list
+
+            </p>
+
+        </div>
+
+    </div>
+
 </div>
 
-<!-- ACTIONS -->
-<div class="menu-grid">
+</main>
 
-    <div id="startCard" class="menu-card start" onclick="startExam()">
-        <h3>Start Exam</h3>
-        <p id="startDesc">Loading...</p>
+<!-- START EXAM MODAL -->
+
+<div
+class="modal"
+id="startModal">
+
+<div class="modal-content">
+
+    <div class="modal-header">
+
+        <h3>
+
+            Start Assignment
+
+        </h3>
+
     </div>
 
-    <div id="resultCard" class="menu-card result" onclick="viewResult()">
-        <h3>View Result</h3>
-        <p id="resultDesc">Loading...</p>
+    <div class="exam-warning">
+
+        <div class="warning-icon">
+
+            ⏱️
+
+        </div>
+
+        <p>
+
+            The timer will start immediately
+            after confirmation.
+
+        </p>
+
+        <ul>
+
+            <li>
+                Ensure stable internet connection
+            </li>
+
+            <li>
+                Do not refresh browser while taking exam
+            </li>
+
+            <li>
+                Submit before deadline
+            </li>
+
+        </ul>
+
     </div>
-
-    <div id="reviewCard" class="menu-card review" onclick="reviewExam()">
-        <h3>Review</h3>
-        <p id="reviewDesc">Loading...</p>
-    </div>
-
-    <div class="menu-card exit" onclick="history.back()">
-        <h3>Exit</h3>
-        <p>Go back to assignments</p>
-    </div>
-
-</div>
-
-</div>
-
-<!-- START MODAL -->
-<div id="startModal" class="modal">
-  <div class="modal-box">
-    <h3>Start Exam?</h3>
-    <p>Timer will start immediately.</p>
 
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="confirmStart()">Start</button>
+
+        <button
+            class="btn-secondary"
+            onclick="closeModal()">
+
+            Cancel
+
+        </button>
+
+        <button
+            class="btn-primary"
+            onclick="confirmStart()">
+
+            Start Now
+
+        </button>
+
     </div>
-  </div>
+
+</div>
+
 </div>
 
 </body>
+
 </html>

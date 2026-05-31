@@ -1,12 +1,45 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
-<meta charset="UTF-8">
-<title>Review</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<meta charset="UTF-8">
+
+<title>Review Exam</title>
+
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/sidebar.css">
+
+<link rel="stylesheet"
+href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/card.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/modal.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/student/review.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -14,8 +47,10 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
-<script defer src="../../assets/js/modules/student/review.js"></script>
+<script src="../../assets/js/modules/shared/notification.js"></script>
+<script defer
+src="../../assets/js/modules/student/review.js">
+</script>
 
 </head>
 
@@ -23,28 +58,208 @@
 
 <div id="layout"></div>
 
-<div class="main-content">
+<main class="content">
 
-    <div class="page-header">
+<div class="container">
+
+    <!-- HERO -->
+
+    <div class="review-hero">
 
         <div>
-            <h2>Review Exam</h2>
-            <p class="text-muted">
-                Check answers and explanations
+
+            <div class="page-badge">
+
+                Review Center
+
+            </div>
+
+            <h1 id="assignmentTitle">
+
+                Assignment Review
+
+            </h1>
+
+            <p>
+
+                Review answers, explanations
+                and AI guidance.
+
             </p>
+
         </div>
 
         <button
-            class="btn-back"
+            class="btn-secondary"
             onclick="goBack()">
 
-            ← Back
+            Back
 
         </button>
 
     </div>
 
-    <div id="reviewContainer"></div>
+    <!-- ATTEMPT SELECTOR -->
+
+    <div class="card filter-card">
+
+        <div class="filter-row">
+
+            <div>
+
+                <label>
+
+                    Attempt
+
+                </label>
+
+                <select id="attemptSelector">
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Filter
+
+                </label>
+
+                <select id="questionFilter">
+
+                    <option value="all">
+                        All Questions
+                    </option>
+
+                    <option value="correct">
+                        Correct
+                    </option>
+
+                    <option value="wrong">
+                        Wrong
+                    </option>
+
+                    <option value="empty">
+                        Unanswered
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SUMMARY -->
+
+    <div class="review-stats">
+
+        <div class="stat-card">
+
+            <span>
+                Score
+            </span>
+
+            <h2 id="attemptScore">
+                0
+            </h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <span>
+                Correct
+            </span>
+
+            <h2 id="correctCount">
+                0
+            </h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <span>
+                Wrong
+            </span>
+
+            <h2 id="wrongCount">
+                0
+            </h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <span>
+                Accuracy
+            </span>
+
+            <h2 id="accuracy">
+                0%
+            </h2>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="review-layout">
+
+        <!-- LEFT -->
+
+        <div>
+
+            <div
+                id="reviewContainer">
+
+            </div>
+
+        </div>
+
+</div>
+
+    </div>
+
+</div>
+
+</main>
+
+<!-- AI EXPLANATION MODAL -->
+
+<div
+class="modal"
+id="aiModal">
+
+<div class="modal-content modal-lg">
+
+    <div class="modal-header">
+
+        <h3>
+
+            AI Explanation
+
+        </h3>
+
+        <button
+            onclick="closeAiModal()">
+
+            ✕
+
+        </button>
+
+    </div>
+
+    <div id="aiAnswer">
+
+    </div>
+
+</div>
 
 </div>
 

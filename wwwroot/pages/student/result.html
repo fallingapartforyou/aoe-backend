@@ -2,14 +2,16 @@
 <html>
 
 <head>
+
 <meta charset="UTF-8">
 <title>Result</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/core/variables.css">
+<link rel="stylesheet" href="../../assets/css/core/base.css">
+<link rel="stylesheet" href="../../assets/css/components/button.css">
+<link rel="stylesheet" href="../../assets/css/components/card.css">
+<link rel="stylesheet" href="../../assets/css/components/table.css">
+<link rel="stylesheet" href="../../assets/css/pages/student/result.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -21,40 +23,113 @@
 
 <body>
 
-<div class="result-container">
+<div class="result-page">
 
-    <!-- HEADER -->
-    <div class="result-header">
-        <h2>Result</h2>
+    <!-- HERO -->
+    <div class="result-hero">
 
-        <button class="btn-back" onclick="backExam()">
-            ← Back
+        <div>
+
+            <div class="result-badge">Exam Result</div>
+
+            <h1 id="assignmentName">Assignment</h1>
+
+            <p>Your latest submission summary</p>
+
+        </div>
+
+        <button class="btn-secondary" onclick="goMenu()">
+            Back
         </button>
+
     </div>
 
     <!-- SCORE -->
-    <div id="scoreBox" class="result-score"></div>
+    <div class="score-panel">
 
-    <!-- HISTORY -->
-    <div class="result-history">
-        <h3>Attempts</h3>
-        <div id="history"></div>
+        <div class="score-circle">
+            <span id="scoreValue">0</span>
+            <small>/100</small>
+        </div>
+
+        <div class="score-info">
+
+            <h2 id="scoreStatus">--</h2>
+            <p id="scoreMessage">--</p>
+
+        </div>
+
     </div>
 
+    <!-- LAYOUT -->
+    <div class="result-layout">
+
+        <!-- LEFT -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Attempt History</h3>
+            </div>
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Attempt</th>
+                        <th>Score</th>
+                        <th>Duration</th>
+                        <th>Submit Time</th>
+                    </tr>
+                </thead>
+
+                <tbody id="history"></tbody>
+
+            </table>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="card">
+
+            <h3>Submission Summary</h3>
+
+            <div class="summary-list">
+
+                <div>
+                    <span>Submitted At</span>
+                    <strong id="submitTime">--</strong>
+                </div>
+
+                <div>
+                    <span>Tab Switches</span>
+                    <strong id="tabSwitches">0</strong>
+                </div>
+
+                <div>
+                    <span>Suspicious</span>
+                    <strong id="suspiciousScore">Low</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ACTIONS -->
     <div class="result-actions">
 
-    <button
-        class="btn-primary"
-        onclick="goMenu()">
+        <button class="btn-secondary" onclick="goMenu()">
+            Back To Menu
+        </button>
 
-        Back To Exam Menu
+        <button class="btn-primary" onclick="reviewExam()">
+            Review Answers
+        </button>
 
-    </button>
-
-</div>
+    </div>
 
 </div>
 
 </body>
-
 </html>

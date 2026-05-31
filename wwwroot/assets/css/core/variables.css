@@ -1,0 +1,29 @@
+:root {
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+
+    --text: #0f172a;
+    --text-muted: #64748b;
+
+    --border: #242628;
+
+    --surface: #6b6666;
+    --surface-soft: #404345;
+
+    --shadow-sm:
+        0 3px 8px rgba(0,0,0,0.05);
+
+    --shadow-md:
+        0 10px 25px rgba(0,0,0,0.08);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    --sidebar-width: 260px;
+}

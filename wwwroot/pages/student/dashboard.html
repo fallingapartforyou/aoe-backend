@@ -5,11 +5,14 @@
 <meta charset="UTF-8">
 <title>Student Dashboard</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/core/variables.css">
+<link rel="stylesheet" href="../../assets/css/core/base.css">
+<link rel="stylesheet" href="../../assets/css/core/animation.css">
+<link rel="stylesheet" href="../../assets/css/layout/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/layout/layout.css">
+<link rel="stylesheet" href="../../assets/css/components/button.css">
+<link rel="stylesheet" href="../../assets/css/components/card.css">
+<link rel="stylesheet" href="../../assets/css/pages/student/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -20,51 +23,65 @@
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
 
-<script src="../../assets/js/core/logout.js"></script>
-
 <script>
 Guard.requireLogin();
 Guard.requireStudent();
 </script>
 
 <script defer src="../../assets/js/modules/student/dashboard.js"></script>
+
 </head>
 
 <body>
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
 
-<h2 class="mb-4">Student Dashboard</h2>
+<div class="container">
 
-<!-- STATS -->
-<div class="dashboard-grid">
+    <!-- HERO (clean) -->
+    <section class="welcome-banner">
 
-    <div class="card">
-        <p>My Classes</p>
-        <h2 id="myClasses">0</h2>
-    </div>
+        <div>
+            <h1>Welcome Back</h1>
+            <p>Track your classes, assignments and progress</p>
+        </div>
 
-    <div class="card">
-        <p>Assignments</p>
-        <h2 id="myAssignments">0</h2>
-    </div>
+    </section>
 
-    <div class="card">
-        <p>Attempts</p>
-        <h2 id="myAttempts">0</h2>
-    </div>
+    <!-- STATS -->
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <span>My Classes</span>
+            <h2 id="myClasses">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Assignments</span>
+            <h2 id="myAssignments">0</h2>
+        </div>
+
+    </section>
+
+    <!-- NOTIFICATIONS (placeholder only) -->
+    <section class="card">
+
+        <div class="card-header">
+            <h3>Notifications</h3>
+        </div>
+
+        <div id="notificationList">
+            <p class="text-muted">No notifications loaded yet</p>
+        </div>
+
+    </section>
 
 </div>
 
-<!-- ASSIGNMENTS LIST -->
-<div class="card mt-4">
-    <h5>Assignments</h5>
-    <div id="assignmentList"></div>
-</div>
-
-</div>
+</main>
 
 </body>
+
 </html>

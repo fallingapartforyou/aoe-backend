@@ -1,4 +1,5 @@
-﻿using aoe.Models;
+﻿using aoe.DTOs.Notification;
+using aoe.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -17,37 +18,35 @@ namespace aoe.Controllers
             _context = context;
         }
 
+        // =====================
+        // UTILS
+        // =====================
         private int GetUserId()
         {
             return int.Parse(
-                User.FindFirstValue(
-                    ClaimTypes.NameIdentifier
-                )!
-            );
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         }
 
         // =====================
-        // MY NOTIFICATIONS
+        // GET MY NOTIFICATIONS
         // =====================
-
         [HttpGet("my")]
         public IActionResult My()
         {
             var userId = GetUserId();
 
-            var data =
-                _context.Notifications
+            var data = _context.Notifications
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(30)
-                .Select(x => new
+                .Select(x => new NotificationDTO
                 {
-                    x.Id,
-                    x.Title,
-                    x.Message,
-                    x.Type,
-                    x.IsRead,
-                    x.CreatedAt
+                    Id = x.Id,
+                    Title = x.Title,
+                    Message = x.Message,
+                    Type = x.Type,
+                    IsRead = x.IsRead,
+                    CreatedAt = x.CreatedAt
                 })
                 .ToList();
 
@@ -57,17 +56,13 @@ namespace aoe.Controllers
         // =====================
         // UNREAD COUNT
         // =====================
-
         [HttpGet("unread-count")]
         public IActionResult UnreadCount()
         {
             var userId = GetUserId();
 
-            var count =
-                _context.Notifications
-                .Count(x =>
-                    x.UserId == userId &&
-                    !x.IsRead);
+            var count = _context.Notifications
+                .Count(x => x.UserId == userId && !x.IsRead);
 
             return Ok(new
             {
@@ -76,16 +71,14 @@ namespace aoe.Controllers
         }
 
         // =====================
-        // MARK READ
+        // MARK AS READ
         // =====================
-
         [HttpPost("read/{id}")]
         public IActionResult Read(int id)
         {
             var userId = GetUserId();
 
-            var noti =
-                _context.Notifications
+            var noti = _context.Notifications
                 .FirstOrDefault(x =>
                     x.Id == id &&
                     x.UserId == userId);
@@ -98,6 +91,26 @@ namespace aoe.Controllers
             _context.SaveChanges();
 
             return Ok("Read");
+        }
+
+        // =====================
+        // MARK ALL READ (OPTIONAL)
+        // =====================
+        [HttpPost("read-all")]
+        public IActionResult ReadAll()
+        {
+            var userId = GetUserId();
+
+            var notifications = _context.Notifications
+                .Where(x => x.UserId == userId && !x.IsRead)
+                .ToList();
+
+            foreach (var n in notifications)
+                n.IsRead = true;
+
+            _context.SaveChanges();
+
+            return Ok("All read");
         }
     }
 }

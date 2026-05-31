@@ -3,41 +3,42 @@ async function login() {
     try {
 
         const email =
-            document
-            .getElementById("email")
-            .value
-            .trim();
+            document.getElementById("email").value.trim();
 
         const password =
-            document
-            .getElementById("password")
-            .value
-            .trim();
+            document.getElementById("password").value.trim();
 
         const response =
             await API.request(
-                "/auth/login",
+                "/api/auth/login",
                 "POST",
-                {
-                    email,
-                    password
-                }
+                { email, password }
             );
 
-        Storage.setToken(response.token);
+        // =========================
+        // FIX AN TOÀN (HANDLE 2 FORMAT)
+        // =========================
 
-        Storage.setRole(response.role);
+        const token = response.token;
+
+        const user = response.user || response;
+
+        const role = response.user?.role || response.role;
+
+        if (!token || !role) {
+            throw new Error("Invalid login response format");
+        }
+
+        Storage.setToken(token);
+        Storage.setUser(user);
+        Storage.setRole(role);
 
         Router.redirectByRole();
 
     }
-
     catch (err) {
 
         console.error(err);
-
         alert("Login failed");
-
     }
-
 }

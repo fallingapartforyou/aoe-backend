@@ -1,37 +1,65 @@
-async function changePassword()
-{
-    const btn = document.getElementById("changeBtn");
+async function changePassword() {
 
-    const oldPassword = document.getElementById("oldPassword").value.trim();
-    const newPassword = document.getElementById("newPassword").value.trim();
+    const btn =
+        document.getElementById("changeBtn");
 
-    if (!oldPassword || !newPassword)
+    const oldPassword =
+        document.getElementById("oldPassword")
+        .value
+        .trim();
+
+    const newPassword =
+        document.getElementById("newPassword")
+        .value
+        .trim();
+
+    if (!oldPassword || !newPassword) {
+
         return alert("Please fill all fields");
 
-    if (newPassword.length < 6)
-        return alert("New password must be at least 6 characters");
+    }
+
+    if (newPassword.length < 6) {
+
+        return alert(
+            "New password must be at least 6 characters"
+        );
+    }
 
     btn.disabled = true;
+
     btn.innerText = "Changing...";
 
-    try
-    {
-        await API.request("/user/change-password", "PUT", {
-            oldPassword,
-            newPassword
-        });
+    try {
 
-        btn.innerText = "Success ✓";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-success");
+        await API.request(
+            "/user/change-password",
+            "PUT",
+            {
+                oldPassword,
+                newPassword
+            }
+        );
 
-        setTimeout(() => history.back(), 1200);
-    }
-    catch(err)
-    {
+        btn.innerText = "Changed";
+
+        document.getElementById("oldPassword").value = "";
+        document.getElementById("newPassword").value = "";
+
+        setTimeout(() => {
+
+            btn.disabled = false;
+
+            btn.innerText = "Change Password";
+
+        }, 1200);
+
+    } catch (err) {
+
         console.error(err);
 
         btn.disabled = false;
+
         btn.innerText = "Change Password";
 
         alert("Change password failed");

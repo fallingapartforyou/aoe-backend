@@ -1,3 +1,4 @@
+console.log("classes.js loaded");
 window.onload = async () =>
 {
 renderLayout("teacher");
@@ -31,34 +32,22 @@ document.getElementById("classList").innerHTML =
 `;
 }
 
-
-
 async function loadClasses()
 {
-try
-{
+    try
+    {
+        const keyword =
+            document.getElementById("keyword")?.value || "";
 
-showSkeleton();
+        const classes =
+            await API.get("/api/class/my-classes?keyword=" + encodeURIComponent(keyword));
 
-const keyword =
-document
-.getElementById("keyword")
-?.value || "";
-
-
-const classes =
-await API.request(
-"/class/my-classes?keyword=" + keyword
-);
-
-
-renderClasses(classes);
-
-}
-catch(err)
-{
-console.error(err);
-}
+        renderClasses(classes);
+    }
+    catch(err)
+    {
+        console.error(err);
+    }
 }
 
 function renderClasses(classes)
@@ -66,7 +55,8 @@ function renderClasses(classes)
     const container = document.getElementById("classList");
     container.innerHTML = "";
 
-    if (!classes || classes.length === 0) {
+    if (!Array.isArray(classes) || classes.length === 0)
+    {
         container.innerHTML = `<p>No classes found</p>`;
         return;
     }
@@ -77,8 +67,8 @@ function renderClasses(classes)
         div.className = "class-card";
 
         div.innerHTML = `
-            <h3>${cls.name}</h3>
-            <p>Code: ${cls.classCode}</p>
+            <h3>${cls.name ?? "Unnamed class"}</h3>
+            <p>Code: ${cls.classCode ?? "-"}</p>
         `;
 
         const actions = document.createElement("div");
@@ -118,7 +108,7 @@ return alert("Enter class name");
 
 
 await API.request(
-"/class/create",
+"/api/class/create",
 "POST",
 { name }
 );
@@ -144,7 +134,7 @@ try
 {
 
 await API.request(
-"/class/delete/" + classId,
+"/api/class/delete/" + classId,
 "DELETE"
 );
 
@@ -173,3 +163,4 @@ location.href =
 + classId;
 
 }
+

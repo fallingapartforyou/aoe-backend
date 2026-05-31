@@ -1,0 +1,399 @@
+/* =========================
+STUDENT DASHBOARD
+========================= */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* =========================
+HERO
+========================= */
+
+.welcome-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 28px 32px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+    color: white;
+
+    margin-bottom: 24px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(37,99,235,.18);
+}
+
+.welcome-banner h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.welcome-banner p {
+    margin-top: 8px;
+    opacity: .9;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* =========================
+STATS
+========================= */
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px,1fr)
+        );
+
+    gap: 20px;
+
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 4px 14px
+        rgba(15,23,42,.06);
+
+    transition: .25s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-card span {
+    display: block;
+
+    font-size: 13px;
+
+    color: #64748b;
+
+    margin-bottom: 10px;
+}
+
+.stat-card h2 {
+    margin: 0;
+
+    font-size: 32px;
+
+    color: #0f172a;
+}
+
+/* =========================
+COMMON CARD
+========================= */
+
+.card {
+    margin-bottom: 24px;
+}
+
+.card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+}
+
+.card-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+
+    color: #0f172a;
+}
+
+/* =========================
+ASSIGNMENTS
+========================= */
+
+#assignmentList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.assignment-item {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+}
+
+.assignment-info h4 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.assignment-info span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* =========================
+2 COLUMN
+========================= */
+
+.dashboard-two-column {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 24px;
+
+    margin-bottom: 24px;
+}
+
+/* =========================
+STATISTICS
+========================= */
+
+#statisticsBox {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    color: #64748b;
+}
+
+.stat-value {
+    font-weight: 700;
+}
+
+/* progress */
+
+.progress-wrapper {
+    margin-top: 8px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+
+    border-radius: 999px;
+
+    background: #e2e8f0;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #60a5fa
+        );
+}
+
+/* =========================
+NOTIFICATION
+========================= */
+
+#notificationList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-item {
+    padding: 14px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    border-left: 4px solid #2563eb;
+}
+
+.notification-item h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+}
+
+.notification-item p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================
+RESULTS
+========================= */
+
+#recentResults {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.result-item {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+}
+
+.result-score {
+    font-weight: 700;
+
+    color: #2563eb;
+}
+
+/* =========================
+ACTIVITY LOG
+========================= */
+
+#activityLog {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.activity-item {
+    position: relative;
+
+    padding-left: 24px;
+}
+
+.activity-item::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 6px;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+}
+
+.activity-title {
+    font-weight: 600;
+}
+
+.activity-time {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* =========================
+LINK BUTTON
+========================= */
+
+.btn-link {
+    border: none;
+    background: transparent;
+
+    color: #2563eb;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media (max-width: 1024px) {
+
+    .dashboard-two-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .welcome-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .hero-actions {
+        width: 100%;
+    }
+
+    .hero-actions button {
+        flex: 1;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .assignment-item,
+    .result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

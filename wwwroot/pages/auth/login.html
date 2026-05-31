@@ -17,30 +17,89 @@
 src="../../assets/js/modules/auth/login.js">
 </script>
 
+<link rel="stylesheet"
+href="../../assets/css/core/variables.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/base.css">
+
+<link rel="stylesheet"
+href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/button.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/form.css">
+
+<link rel="stylesheet"
+href="../../assets/css/pages/auth/auth.css">
+
 </head>
 
-<body>
+<body class="auth-page">
 
-<link rel="stylesheet" href="../../assets/css/auth.css">
+<div class="auth-background">
 
 <div class="bg-circle circle1"></div>
 <div class="bg-circle circle2"></div>
 
-<div class="glass-card">
+</div>
 
-<h2>English Hub Login</h2>
+<div class="auth-card">
 
-<input id="email" placeholder="Email">
+<div class="auth-header">
 
-<input id="password" type="password" placeholder="Password">
+<h1>English Hub</h1>
 
-<button onclick="login()">Login</button>
+<p>
+Online Learning & Examination System
+</p>
 
-<button onclick="Router.goRegister()"
-class="secondary-btn">
+</div>
 
-Register
+<div class="auth-form">
+
+<div class="form-group">
+
+<label>Email</label>
+
+<input
+id="email"
+class="form-input"
+placeholder="Enter your email">
+
+</div>
+
+<div class="form-group">
+
+<label>Password</label>
+
+<input
+id="password"
+type="password"
+class="form-input"
+placeholder="Enter your password">
+
+</div>
+
+<button
+class="btn-primary auth-btn"
+onclick="login()">
+
+Login
+
 </button>
+
+<button
+class="btn-secondary auth-btn"
+onclick="Router.goRegister()">
+
+Create Account
+
+</button>
+
+</div>
 
 </div>
 

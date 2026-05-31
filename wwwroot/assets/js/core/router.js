@@ -5,17 +5,15 @@ redirectByRole() {
 const role =
 Storage.getRole();
 
-if(
-role ===
-CONFIG.ROLES.TEACHER
+if (
+role === CONFIG.ROLES.TEACHER
 )
 
 location.href =
 "/pages/teacher/dashboard.html";
 
-else if(
-role ===
-CONFIG.ROLES.STUDENT
+else if (
+role === CONFIG.ROLES.STUDENT
 )
 
 location.href =
@@ -27,7 +25,6 @@ location.href =
 "/pages/auth/login.html";
 
 },
-
 
 /* ================= AUTH ================= */
 
@@ -45,7 +42,6 @@ location.href =
 
 },
 
-
 /* ================= TEACHER ================= */
 
 goTeacherDashboard() {
@@ -62,6 +58,14 @@ location.href =
 
 },
 
+goStudents(classId) {
+
+location.href =
+"/pages/teacher/class-students.html?classId="
++ classId;
+
+},
+
 goAssignments() {
 
 location.href =
@@ -69,16 +73,51 @@ location.href =
 
 },
 
+goQuestions(assignmentId, type) {
+
+    location.href =
+
+        "/pages/teacher/questions.html?assignmentId="
+        + assignmentId
+        + "&type="
+        + type;
+
+},
+
 goAssignmentResults(assignmentId) {
 
 location.href =
-
 "/pages/teacher/assignment-results.html?assignmentId="
-
 + assignmentId;
 
 },
 
+goReports() {
+
+location.href =
+"/pages/teacher/reports.html";
+
+},
+
+goSuspiciousReports() {
+
+    location.href =
+        "/pages/teacher/suspicious-list.html";
+},
+
+goStatistics() {
+
+location.href =
+"/pages/teacher/statistics.html";
+
+},
+
+goNotifications() {
+
+location.href =
+"/pages/teacher/notifications.html";
+
+},
 
 /* ================= STUDENT ================= */
 
@@ -96,51 +135,57 @@ location.href =
 
 },
 
-goJoinClass() {
-
-location.href =
-"/pages/student/join-class.html";
-
-},
-
 goStudentAssignments(classId) {
 
 location.href =
-
 "/pages/student/assignments.html?classId="
-
 + classId;
+
+},
+
+goAssignmentMenu(assignmentId) {
+
+location.href =
+"/pages/student/assignment-menu.html?assignmentId="
++ assignmentId;
 
 },
 
 goExam(assignmentId) {
 
 location.href =
-
 "/pages/student/exam.html?assignmentId="
-
 + assignmentId;
 
 },
 
-goHistory() {
+goResult(attemptId) {
 
 location.href =
-"/pages/student/history.html";
+"/pages/student/result.html?attemptId="
++ attemptId;
 
 },
 
-goResult(assignmentId) {
+goReview(attemptId) {
 
 location.href =
-
-"/pages/student/result.html?assignmentId="
-
-+ assignmentId;
+"/pages/student/review.html?attemptId="
++ attemptId;
 
 },
 
+goStudentStatistics() {
 
+    location.href =
+        "/pages/student/statistics.html";
+},
+
+goStudentNotifications() {
+
+    location.href =
+        "/pages/student/notifications.html";
+},
 /* ================= SHARED ================= */
 
 goProfile() {
@@ -150,11 +195,12 @@ location.href =
 
 },
 
-goChangePassword() {
+goNotifications() {
 
-location.href =
-"/pages/shared/change-password.html";
-
-}
+    location.href =
+        "/pages/shared/notifications.html";
+},
 
 };
+
+window.Router = Router;

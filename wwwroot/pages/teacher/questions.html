@@ -4,12 +4,25 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Questions</title>
+<title>Question Bank</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/core/variables.css">
+<link rel="stylesheet" href="../../assets/css/core/base.css">
+<link rel="stylesheet" href="../../assets/css/core/animation.css">
+
+<link rel="stylesheet" href="../../assets/css/layout/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/layout/layout.css">
+
+<link rel="stylesheet" href="../../assets/css/components/button.css">
+<link rel="stylesheet" href="../../assets/css/components/card.css">
+<link rel="stylesheet" href="../../assets/css/components/form.css">
+<link rel="stylesheet" href="../../assets/css/components/modal.css">
+<link rel="stylesheet" href="../../assets/css/components/table.css">
+
+<link rel="stylesheet" href="../../assets/css/pages/teacher/question.css">
+
+<link rel="stylesheet"
+href="../../assets/css/components/notification.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
@@ -19,7 +32,7 @@
 
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
+<script src="../../assets/js/modules/shared/notification.js"></script>
 <script defer src="../../assets/js/modules/teacher/questions.js"></script>
 
 <script>
@@ -33,25 +46,31 @@ Guard.requireTeacher();
 
 <div id="layout"></div>
 
-<div class="main-content">
+<main class="content">
+
+<div class="container">
 
     <!-- HEADER -->
+
     <div class="page-header">
 
         <div>
-            <h2>Questions</h2>
-            <p class="text-muted">
-                Create and manage questions
+
+            <h1>Question Bank</h1>
+
+            <p>
+                Manage questions and generate new content
             </p>
+
         </div>
 
         <div class="header-actions">
 
             <button
-                class="btn-back"
+                class="btn-secondary"
                 onclick="history.back()">
 
-                ← Back
+                Back
 
             </button>
 
@@ -59,15 +78,23 @@ Guard.requireTeacher();
                 class="btn-primary"
                 onclick="toggleCreate()">
 
-                + Create
+                + Create Question
 
             </button>
 
             <button
-                class="btn-secondary"
+               class="btn-primary"
+               onclick="openAIModal()">
+
+                 AI Generate
+
+            </button>
+
+            <button
+                class="btn-primary"
                 onclick="toggleAssign()">
 
-                Assign
+                Assign Class
 
             </button>
 
@@ -75,251 +102,139 @@ Guard.requireTeacher();
 
     </div>
 
-    <!-- CREATE -->
-    <div id="createBox" class="card form-card">
+    <!-- INFO -->
 
-        <h4>Create Question</h4>
+    <div class="info-banner">
 
-        <p
-            id="assignmentTypeLabel"
-            class="text-muted">
-        </p>
+        <span id="assignmentTypeLabel"></span>
 
-        <p
-            id="questionCounter"
-            class="text-muted">
-        </p>
+        <span id="questionCounter"></span>
 
-        <!-- AI GENERATE -->
-        <div class="card" style="margin-bottom:20px;">
+    </div>
 
-            <h4>Generate With AI</h4>
+    <!-- STATS -->
 
-            <div class="form-group">
+    <div class="stats-grid">
 
-                <label>Topic</label>
+        <div class="stat-card">
 
-                <input
-                    id="aiTopic"
-                    class="form-input"
-                    placeholder="Example: Object Oriented Programming">
+            <span>Total Questions</span>
 
-            </div>
+            <h2 id="totalQuestions">
+                0
+            </h2>
 
-            <div class="form-group">
+        </div>
 
-                <label>Difficulty</label>
+        <div class="stat-card">
 
-                <select
-                    id="aiDifficulty"
-                    class="form-input">
+            <span>Multiple Choice</span>
 
-                    <option value="easy">
-                        Easy
-                    </option>
+            <h2 id="totalChoice">
+                0
+            </h2>
 
-                    <option value="medium">
-                        Medium
-                    </option>
+        </div>
 
-                    <option value="hard">
-                        Hard
-                    </option>
+        <div class="stat-card">
 
-                </select>
+            <span>Fill Blank</span>
 
-            </div>
+            <h2 id="totalFill">
+                0
+            </h2>
 
-            <div class="form-group">
+        </div>
 
-                <label>Question Count</label>
+    </div>
 
-                <input
-                    id="aiCount"
-                    type="number"
-                    class="form-input"
-                    value="3"
-                    min="1"
-                    max="10">
+    <!-- AI PREVIEW -->
 
-            </div>
+    <div
+        id="aiPreviewBox"
+        class="card"
+        style="display:none;">
+
+        <div class="card-header">
+
+            <h3>
+                AI Preview
+            </h3>
+
+        </div>
+
+        <div id="aiPreviewList"></div>
+
+        <div class="card-actions">
 
             <button
-                type="button"
-                class="btn-secondary"
-                onclick="generateAIQuestions()">
+                onclick="saveAIQuestions()">
 
-                Generate AI Questions
+                Save Selected
+
+            </button>
+
+            <button
+                class="btn-secondary"
+                onclick="clearAIPreview()">
+
+                Cancel
 
             </button>
 
         </div>
 
-        <!-- AI PREVIEW -->
-        <div
-            id="aiPreviewBox"
-            class="card"
-            style="margin-bottom:20px; display:none;">
-
-            <h4>AI Generated Questions</h4>
-
-            <div id="aiPreviewList"></div>
-
-            <div style="margin-top:20px;">
-
-                <button
-                    type="button"
-                    class="btn-primary"
-                    onclick="saveAIQuestions()">
-
-                    Save All
-
-                </button>
-
-                <button
-                    type="button"
-                    onclick="clearAIPreview()">
-
-                    Cancel
-
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- MANUAL CREATE -->
-        <div class="form-group">
-
-            <label>Question</label>
-
-            <input
-                id="content"
-                class="form-input">
-
-        </div>
-
-        <!-- SINGLE -->
-        <div
-            id="optionsBox"
-            class="form-group"
-            style="display:none">
-
-            <label>Options</label>
-
-            <input
-                id="A"
-                class="form-input"
-                placeholder="Option A">
-
-            <input
-                id="B"
-                class="form-input"
-                placeholder="Option B">
-
-            <input
-                id="C"
-                class="form-input"
-                placeholder="Option C">
-
-            <input
-                id="D"
-                class="form-input"
-                placeholder="Option D">
-
-            <label>Correct Answer</label>
-
-            <select
-                id="correctAnswer"
-                class="form-input">
-
-                <option value="">
-                    -- Select --
-                </option>
-
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
-
-            </select>
-
-        </div>
-
-        <!-- FILL -->
-        <div
-            id="fillAnswerBox"
-            class="form-group"
-            style="display:none">
-
-            <label>Correct Answer</label>
-
-            <input
-                id="fillCorrectAnswer"
-                class="form-input">
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Explanation</label>
-
-            <input
-                id="explanation"
-                class="form-input">
-
-        </div>
-
-        <hr style="margin:20px 0">
-
-        <button
-            id="createBtn"
-            type="button"
-            class="btn-primary"
-            onclick="createQuestion()">
-
-            Create Question
-
-        </button>
-
     </div>
 
-    <!-- ASSIGN -->
-    <div id="assignModal" class="custom-modal">
+    <div class="card toolbar-card">
 
-        <div class="custom-modal-content">
+    <input
+        id="questionSearch"
+        class="form-input"
+        placeholder="Search question..."
+        onchange="applyFilters()">
 
-            <div class="modal-header">
+    <select
+        id="questionSort"
+        onchange="applyFilters()">
 
-                <h3>Assign To Class</h3>
+        <option value="newest">
+            Newest
+        </option>
 
-                <button
-                    class="close-btn"
-                    onclick="closeAssignModal()">
+        <option value="oldest">
+            Oldest
+        </option>
 
-                    ✕
+        <option value="az">
+            A → Z
+        </option>
 
-                </button>
+        <option value="za">
+            Z → A
+        </option>
 
-            </div>
+    </select>
 
-            <div
-                id="classList"
-                class="class-list">
-            </div>
+</div>
 
-        </div>
+<!-- QUESTION TABLE -->
 
-    </div>
+<div class="card">
 
-    <!-- QUESTION LIST -->
-    <div
-        class="card"
-        style="margin-top:20px;">
+    <div class="card-header">
 
-        <h4 style="margin-bottom:10px;">
+        <h3>
             Question List
-        </h4>
+        </h3>
+
+        <input
+            id="searchQuestion"
+            class="form-input"
+            placeholder="Search question..."
+            oninput="applyFilters()">
+
+    </div>
 
         <div class="table-container">
 
@@ -329,19 +244,21 @@ Guard.requireTeacher();
 
                     <tr>
 
-                        <th style="width:60px">
-                            #
-                        </th>
+                        <th>#</th>
 
                         <th>
                             Question
                         </th>
 
-                        <th style="width:120px">
+                        <th>
                             Answer
                         </th>
 
-                        <th style="width:140px">
+                        <th>
+                            Score
+                        </th>
+
+                        <th>
                             Action
                         </th>
 
@@ -350,6 +267,7 @@ Guard.requireTeacher();
                 </thead>
 
                 <tbody id="questionList">
+
                 </tbody>
 
             </table>
@@ -360,86 +278,179 @@ Guard.requireTeacher();
 
 </div>
 
-<!-- ===== EDIT MODAL ===== -->
+</main>
 
-<div class="modal" id="editModal">
+<!-- QUESTION MODAL -->
 
-    <div class="modal-box">
+<div
+class="modal"
+id="editModal">
 
-        <h3>Edit Question</h3>
+<div class="modal-content modal-lg">
 
-        <div class="form-group">
+    <div class="modal-header">
 
-            <label>Question</label>
+        <h3 id="modalTitle">
 
-            <input
-                id="editContent"
-                class="form-input">
+            Create Question
+
+        </h3>
+
+        <button onclick="closeEdit()">
+
+            ✕
+
+        </button>
+
+    </div>
+
+    <input
+        id="content"
+        placeholder="Question content">
+
+    <!-- SINGLE CHOICE -->
+
+    <div
+        id="optionsBox"
+        class="form-grid">
+
+        <input id="A" placeholder="Option A">
+        <input id="B" placeholder="Option B">
+        <input id="C" placeholder="Option C">
+        <input id="D" placeholder="Option D">
+
+        <select id="correctAnswer">
+
+            <option value="">
+                Select Correct Answer
+            </option>
+
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+            <option>D</option>
+
+        </select>
+
+    </div>
+
+    <!-- FILL BLANK -->
+
+    <div
+        id="fillAnswerBox"
+        style="display:none;">
+
+        <input
+            id="fillCorrectAnswer"
+            placeholder="Correct answer">
+
+    </div>
+
+    <input
+        id="explanation"
+        placeholder="Explanation">
+
+    <div class="modal-actions">
+
+        <button
+            id="createBtn"
+            onclick="createQuestion()">
+
+            Save
+
+        </button>
+
+        <button
+            onclick="closeEdit()">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<div
+class="modal"
+id="assignModal">
+
+<div class="modal-content modal-lg">
+
+    <div class="modal-header">
+
+        <h3>
+            Assign To Classes
+        </h3>
+
+        <button
+            onclick="closeAssignModal()">
+
+            ✕
+
+        </button>
+
+    </div>
+
+    <div
+        id="classList">
+
+    </div>
+
+</div>
+</div>
+
+<div
+class="modal"
+id="aiModal">
+
+    <div class="modal-content modal-lg">
+
+        <div class="modal-header">
+
+            <h3>
+                AI Question Generator
+            </h3>
+
+            <button
+                onclick="closeAIModal()">
+
+                ✕
+
+            </button>
 
         </div>
 
-        <!-- SINGLE -->
-        <div
-            id="editOptionsBox"
-            class="form-group">
-
-            <label>Options</label>
+        <div class="form-grid">
 
             <input
-                id="editA"
-                class="form-input"
-                placeholder="Option A">
+                id="aiTopic"
+                placeholder="Topic">
 
-            <input
-                id="editB"
-                class="form-input"
-                placeholder="Option B">
+            <select id="aiDifficulty">
 
-            <input
-                id="editC"
-                class="form-input"
-                placeholder="Option C">
+                <option value="easy">
+                    Easy
+                </option>
 
-            <input
-                id="editD"
-                class="form-input"
-                placeholder="Option D">
+                <option value="medium">
+                    Medium
+                </option>
 
-            <label>Correct Answer</label>
-
-            <select
-                id="editCorrect"
-                class="form-input">
-
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
+                <option value="hard">
+                    Hard
+                </option>
 
             </select>
 
-        </div>
-
-        <!-- FILL -->
-        <div
-            id="editFillBox"
-            class="form-group">
-
-            <label>Correct Answer</label>
-
             <input
-                id="editFill"
-                class="form-input">
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Explanation</label>
-
-            <input
-                id="editExplanation"
-                class="form-input">
+                id="aiCount"
+                type="number"
+                value="3"
+                min="1"
+                max="20">
 
         </div>
 
@@ -447,13 +458,14 @@ Guard.requireTeacher();
 
             <button
                 class="btn-primary"
-                onclick="saveEdit()">
+                onclick="generateAIQuestions()">
 
-                Save
+                Generate
 
             </button>
 
-            <button onclick="closeEdit()">
+            <button
+                onclick="closeAIModal()">
 
                 Cancel
 
@@ -462,6 +474,8 @@ Guard.requireTeacher();
         </div>
 
     </div>
+
+</div>
 
 </div>
 

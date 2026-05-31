@@ -1,0 +1,135 @@
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+}
+
+.header-actions{
+    display:flex;
+    gap:10px;
+}
+
+.exam-banner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:24px;
+
+    padding:24px;
+}
+
+.exam-banner h3{
+    margin:0 0 6px;
+}
+
+.exam-banner span{
+    color:var(--text-muted);
+}
+
+.exam-status{
+    padding:8px 14px;
+    border-radius:999px;
+
+    background:#dcfce7;
+    color:#15803d;
+    font-weight:600;
+}
+
+.stats-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+    margin-bottom:24px;
+}
+
+.stat-card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+
+    box-shadow:var(--shadow-sm);
+}
+
+.stat-card span{
+    display:block;
+
+    color:var(--text-muted);
+
+    margin-bottom:8px;
+}
+
+.stat-card h2{
+    margin:0;
+}
+
+.toolbar-card{
+    display:flex;
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:24px;
+}
+
+.toolbar-card input{
+    flex:1;
+    min-width:260px;
+}
+
+.toolbar-card select{
+    min-width:180px;
+}
+
+.card-header{
+    margin-bottom:16px;
+}
+
+.card-header h3{
+    margin:0;
+}
+
+.table td:last-child{
+    white-space:nowrap;
+}
+
+.score-badge{
+    padding:6px 12px;
+    border-radius:999px;
+
+    background:#dbeafe;
+    color:#1d4ed8;
+
+    font-weight:600;
+}
+
+.activity-card{
+    margin-top:24px;
+}
+
+.timeline-item{
+    display:flex;
+    gap:12px;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+.timeline-item:last-child{
+    border-bottom:none;
+}
+
+.timeline-time{
+    width:140px;
+    color:#64748b;
+}
+
+.timeline-content{
+    flex:1;
+}

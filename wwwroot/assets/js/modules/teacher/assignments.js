@@ -1,204 +1,619 @@
 let deleteMode = false;
+
 let selectedIds = new Set();
 
+let assignmentsCache = [];
+
+// ================= INIT =================
+
 window.onload = async () => {
+
     renderLayout("teacher");
+
     showSkeleton();
+
     await loadAssignments();
+
 };
 
-// ===== SKELETON =====
+// ================= SKELETON =================
+
 function showSkeleton() {
-    document.getElementById("assignmentList").innerHTML = `
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
+
+    document.getElementById(
+        "assignmentList"
+    ).innerHTML = `
+
+        <div class="assignment-card skeleton-card"></div>
+
+        <div class="assignment-card skeleton-card"></div>
+
+        <div class="assignment-card skeleton-card"></div>
+
     `;
 }
 
-// ===== LOAD =====
+// ================= LOAD =================
+
 async function loadAssignments() {
+
     try {
+
         showSkeleton();
 
         const keyword =
-            document.getElementById("keyword")?.value || "";
+            document
+            .getElementById("keyword")
+            ?.value
+            ?.trim() || "";
 
-        const assignments =
+        const data =
             await API.request(
-                "/assignment/my-assignments?keyword=" + keyword
+                "/api/assignment/my-assignments?keyword="
+                + encodeURIComponent(keyword)
             );
 
-        render(assignments);
+        assignmentsCache = data || [];
+
+        renderAssignments(assignmentsCache);
+
+        updateStats(assignmentsCache);
+
     }
     catch (err) {
+
         console.error(err);
+
+        document.getElementById(
+            "assignmentList"
+        ).innerHTML = `
+            <div class="card">
+                Load failed
+            </div>
+        `;
     }
 }
 
-// ===== RENDER =====
-function render(assignments) {
-    const container = document.getElementById("assignmentList");
+// ================= RENDER =================
+
+function renderAssignments(assignments) {
+
+    const container =
+        document.getElementById(
+            "assignmentList"
+        );
+
     container.innerHTML = "";
 
-    if (!assignments || assignments.length === 0) {
-        container.innerHTML = `<div class="card">No assignments</div>`;
+    if (!assignments.length) {
+
+        container.innerHTML = `
+            <div class="card empty-card">
+
+                <h3>
+                    No assignments
+                </h3>
+
+                <p>
+                    Create your first assignment
+                </p>
+
+            </div>
+        `;
+
         return;
     }
 
     assignments.forEach(a => {
 
-    const count =
-        a.questionCount ??
-        a.totalQuestions ??
-        (a.questions ? a.questions.length : 0);
+        const type =
+            formatType(
+                a.questionType
+            );
 
-    const type =
-        a.type ??
-        a.questionType ??
-        a.assignmentType ??
-        "unknown";
+        const openTime =
+            formatDate(
+                a.openTime
+            );
 
-    const card = document.createElement("div");
-    card.className = "assignment-card";
+        const closeTime =
+            formatDate(
+                a.closeTime
+            );
 
-    card.innerHTML = `
-        ${deleteMode ? `
-            <input type="checkbox"
-                   class="assignment-checkbox"
-                   onchange="toggleSelect(${a.id}, this.checked)">
-        ` : ""}
+        const card =
+            document.createElement("div");
 
-        <div class="assignment-title">
-            ${a.name}
-        </div>
+        card.className =
+            "assignment-card";
 
-        <div class="assignment-meta">
-            Type: ${type}
-        </div>
+        card.innerHTML = `
 
-        <div class="assignment-meta">
-            Questions: ${count}
-        </div>
+            <div class="assignment-top">
 
-        <div class="assignment-actions">
-            <button onclick="openQuestions(${a.id}, '${type}')">Q</button>
-            <button onclick="assignClass(${a.id})">Assign</button>
-            <button onclick="viewResult(${a.id})">Result</button>
-        </div>
-    `;
+                ${
+                    deleteMode
+                    ?
+                    `
+                    <input
+                        type="checkbox"
+                        class="assignment-checkbox"
+                        onchange="
+                            toggleSelect(
+                                ${a.id},
+                                this.checked
+                            )
+                        ">
+                    `
+                    :
+                    ""
+                }
 
-    container.appendChild(card);
-});
+                <div class="assignment-badge">
+
+                    ${type}
+
+                </div>
+
+            </div>
+
+            <div class="assignment-title">
+
+                ${a.name}
+
+            </div>
+
+            <div class="assignment-meta">
+
+                <div class="meta-item">
+
+                    <span>
+                        Questions
+                    </span>
+
+                    <b>
+                        ${a.questionCount}
+                    </b>
+
+                </div>
+
+                <div class="meta-item">
+
+                    <span>
+                        Result
+                    </span>
+
+                    <b>
+                        ${
+                            a.showResult
+                            ? "Visible"
+                            : "Hidden"
+                        }
+                    </b>
+
+                </div>
+
+            </div>
+
+            <div class="assignment-time">
+
+                <div>
+
+                    <small>
+                        Open
+                    </small>
+
+                    <div>
+                        ${openTime}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <small>
+                        Close
+                    </small>
+
+                    <div>
+                        ${closeTime}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="assignment-actions">
+
+                <button
+                    class="btn-primary"
+                    onclick="
+                        openQuestions(
+                            ${a.id},
+                            '${a.questionType}'
+                        )
+                    ">
+
+                    Questions
+
+                </button>
+
+                <button
+                    class="btn-secondary"
+                    onclick="
+                        viewResult(
+                            ${a.id}
+                        )
+                    ">
+
+                    Results
+
+                </button>
+
+                <button
+                    class="btn-danger"
+                    onclick="
+                        deleteSingle(
+                            ${a.id}
+                        )
+                    ">
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        `;
+
+        container.appendChild(card);
+
+    });
 }
 
-// ===== DELETE MODE =====
+// ================= STATS =================
+
+function updateStats(assignments) {
+
+    const totalAssignmentsEl =
+        document.getElementById(
+            "totalAssignments"
+        );
+
+    const totalQuestionsEl =
+        document.getElementById(
+            "totalQuestions"
+        );
+
+    const totalAssignedEl =
+        document.getElementById(
+            "totalAssigned"
+        );
+
+    if (
+        !totalAssignmentsEl ||
+        !totalQuestionsEl ||
+        !totalAssignedEl
+    ) {
+        return;
+    }
+
+    totalAssignmentsEl.innerText =
+        assignments.length;
+
+    let totalQuestions = 0;
+
+    assignments.forEach(a => {
+
+        totalQuestions +=
+            a.questionCount || 0;
+
+    });
+
+    totalQuestionsEl.innerText =
+        totalQuestions;
+
+    totalAssignedEl.innerText =
+        "-";
+}
+// ================= DELETE MODE =================
+
 function toggleDeleteMode() {
+
     deleteMode = !deleteMode;
 
-    document.getElementById("confirmDeleteBtn").style.display =
-        deleteMode ? "inline-block" : "none";
-
     selectedIds.clear();
-    loadAssignments();
+
+    document.getElementById(
+        "confirmDeleteBtn"
+    ).style.display =
+        deleteMode
+        ? "inline-flex"
+        : "none";
+
+    document.getElementById(
+        "deleteModeBtn"
+    ).innerText =
+        deleteMode
+        ? "Cancel Delete"
+        : "Delete Mode";
+
+    renderAssignments(
+        assignmentsCache
+    );
 }
 
 function toggleSelect(id, checked) {
-    if (checked) selectedIds.add(id);
-    else selectedIds.delete(id);
+
+    if (checked)
+        selectedIds.add(id);
+
+    else
+        selectedIds.delete(id);
 }
 
-// ===== DELETE MULTI =====
+// ================= DELETE =================
+
 async function deleteSelected() {
+
     if (selectedIds.size === 0)
         return alert("No selected");
 
-    if (!confirm("Delete selected assignments?"))
+    const confirmed =
+        confirm(
+            "Delete selected assignments?"
+        );
+
+    if (!confirmed)
         return;
 
-    for (const id of selectedIds) {
-        await API.request("/assignment/delete/" + id, "DELETE");
+    try {
+
+        for (const id of selectedIds) {
+
+            await API.request(
+                "/api/assignment/delete/" + id,
+                "DELETE"
+            );
+        }
+
+        deleteMode = false;
+
+        selectedIds.clear();
+
+        await loadAssignments();
+
     }
+    catch (err) {
 
-    deleteMode = false;
-    selectedIds.clear();
+        console.error(err);
 
-    loadAssignments();
+        alert("Delete failed");
+    }
 }
 
-// ===== MODAL =====
+async function deleteSingle(id) {
+
+    const confirmed =
+        confirm(
+            "Delete assignment?"
+        );
+
+    if (!confirmed)
+        return;
+
+    try {
+
+        await API.request(
+            "/api/assignment/delete/" + id,
+            "DELETE"
+        );
+
+        await loadAssignments();
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        alert("Delete failed");
+    }
+}
+
+// ================= CREATE MODAL =================
+
 function openCreateModal() {
-    document.getElementById("createModal").style.display = "flex";
+
+    document.getElementById(
+        "createModal"
+    ).style.display = "flex";
 }
 
 function closeModal() {
-    document.getElementById("createModal").style.display = "none";
+
+    document.getElementById(
+        "createModal"
+    ).style.display = "none";
+
+    resetCreateForm();
 }
 
-// ===== CREATE =====
-async function createAssignment() {
-    try {
-        const name =
-            document.getElementById("assignmentName").value.trim();
+function resetCreateForm() {
 
-        if (!Validator.assignmentName(name))
-            return alert("Assignment name max 20 characters");
+    document.getElementById(
+        "assignmentName"
+    ).value = "";
+
+    document.getElementById(
+        "questionCount"
+    ).value = "";
+
+    document.getElementById(
+        "openTime"
+    ).value = "";
+
+    document.getElementById(
+        "closeTime"
+    ).value = "";
+
+    document.getElementById(
+        "showResult"
+    ).checked = false;
+
+    document.getElementById(
+        "showExplanation"
+    ).checked = false;
+}
+
+// ================= CREATE =================
+
+async function createAssignment() {
+
+    try {
+
+        const name =
+            document
+            .getElementById(
+                "assignmentName"
+            )
+            .value
+            .trim();
+
+        if (
+            !Validator.assignmentName(name)
+        ) {
+
+            return alert(
+                "Assignment name max 20 characters"
+            );
+        }
 
         const questionType =
-            document.getElementById("questionType").value;
+            document
+            .getElementById(
+                "questionType"
+            )
+            .value;
 
         const questionCount =
-            document.getElementById("questionCount").value;
+            parseInt(
+                document
+                .getElementById(
+                    "questionCount"
+                )
+                .value
+            );
 
-        if (!questionCount || questionCount <= 0)
-            return alert("Question count must be > 0");
+        if (
+            !questionCount ||
+            questionCount <= 0
+        ) {
 
-        const openTime =
-            document.getElementById("openTime").value || null;
+            return alert(
+                "Question count must be > 0"
+            );
+        }
 
-        const closeTime =
-            document.getElementById("closeTime").value || null;
+        const payload = {
 
-        const showResult =
-            document.getElementById("showResult").checked;
-
-        const showExplanation =
-            document.getElementById("showExplanation").checked;
-
-        await API.request("/assignment/create", "POST", {
             name,
+
             questionType,
+
             questionCount,
-            openTime,
-            closeTime,
-            showResult,
-            showExplanation
-        });
+
+            openTime:
+                document
+                .getElementById(
+                    "openTime"
+                )
+                .value || null,
+
+            closeTime:
+                document
+                .getElementById(
+                    "closeTime"
+                )
+                .value || null,
+
+            showResult:
+                document
+                .getElementById(
+                    "showResult"
+                )
+                .checked,
+
+            showExplanation:
+                document
+                .getElementById(
+                    "showExplanation"
+                )
+                .checked
+        };
+
+        await API.request(
+            "/api/assignment/create",
+            "POST",
+            payload
+        );
 
         closeModal();
-        loadAssignments();
+
+        await loadAssignments();
+
     }
     catch (err) {
+
         console.error(err);
+
         alert("Create failed");
     }
 }
 
-// ===== NAVIGATION =====
+// ================= NAVIGATION =================
+
 function openQuestions(id, type) {
+
+    if (!id || !type) {
+
+        alert("Missing assignment info");
+
+        return;
+    }
+ 
     location.href =
+
         "/pages/teacher/questions.html?assignmentId="
         + id
         + "&type="
-        + type;
+        + encodeURIComponent(type);
 }
 
 function viewResult(id) {
+
     location.href =
-        "/pages/teacher/results.html?assignmentId=" + id;
+        "/pages/teacher/results.html?assignmentId="
+        + id;
 }
 
-function assignClass(id) {
-    location.href =
-        "/pages/teacher/assign-class.html?assignmentId=" + id;
+// ================= UTIL =================
+
+function formatType(type) {
+
+    if (type === "single_choice")
+        return "Single Choice";
+
+    if (type === "fill_blank")
+        return "Fill Blank";
+
+    return type;
+}
+
+function formatDate(date) {
+
+    if (!date)
+        return "--";
+
+    return new Date(date)
+        .toLocaleString();
 }

@@ -1,320 +1,214 @@
-const params =
-    new URLSearchParams(location.search);
+const params = new URLSearchParams(location.search);
 
-const assignmentId =
-    params.get("assignmentId");
+const assignmentId = params.get("assignmentId");
+let attempts = [];
+let questions = [];
+let currentResultId = null;
+let currentIndex = 0;
 
-let reviewData = [];
-
-// ===== INIT =====
 window.onload = async () => {
 
-    try {
+    renderLayout("student");
 
-        renderLayout("student");
-
-        await loadReview();
-
-    } catch (err) {
-
-        console.error(err);
-
-        document.getElementById(
-            "reviewContainer"
-        ).innerHTML = `
-            <div class="card">
-                Failed to load review
-            </div>
-        `;
-    }
-};
-
-// ===== LOAD =====
-async function loadReview() {
-
-    try {
-
-        const data =
-            await API.request(
-                "/exam/review/" + assignmentId
-            );
-
-        renderReview(data);
-
-    } catch (err) {
-
-        console.error(err);
-
-        document.getElementById(
-            "reviewContainer"
-        ).innerHTML = `
-            <div class="card">
-                Review load failed
-            </div>
-        `;
-    }
-}
-
-// ===== RENDER =====
-function renderReview(list) {
-
-    reviewData = list;
-
-    const container =
-        document.getElementById(
-            "reviewContainer"
-        );
-
-    container.innerHTML = "";
-
-    if (!list || list.length === 0) {
-
-        container.innerHTML = `
-            <div class="card">
-                No review data
-            </div>
-        `;
-
+    if (!assignmentId) {
+        console.error("Missing assignmentId");
         return;
     }
 
-    list.forEach((q, index) => {
+    try {
+        attempts = await API.get(`/api/exam/attempts/${assignmentId}`);
+    } catch (e) {
+        console.error("load attempts failed", e);
+        attempts = [];
+    }
 
-        const card =
-            document.createElement("div");
+    renderAttempts();
 
-        card.className = "card";
+    if (attempts.length > 0) {
+        await loadReview(attempts[0].id);
+    }
+};
 
-        let html = `
-            <div class="question-title">
-                Question ${index + 1}
-            </div>
+function renderAttempts() {
 
-            <div class="question-content">
-                ${q.content}
-            </div>
-        `;
+    const el = document.getElementById("attemptSelector");
+    if (!el) return;
 
-        // ===== SINGLE CHOICE =====
-        if (q.type === "single_choice") {
+    el.innerHTML = "";
 
-            html += `<div class="options">`;
+    attempts.forEach(a => {
+
+        const opt = document.createElement("option");
+
+        opt.value = a.id;
+
+        opt.textContent =
+            `Attempt ${a.attemptNumber} | Score ${a.score} | ${new Date(a.submittedAt).toLocaleString()}`;
+
+        el.appendChild(opt);
+    });
+
+    el.onchange = async e => {
+        await loadReview(e.target.value);
+    };
+}
+
+async function loadReview(resultId) {
+
+    currentResultId = resultId;
+
+    if (!resultId) return;
+
+    try {
+        questions = await API.get(`/api/exam/review/${resultId}`);
+    } catch (e) {
+        console.error("review load failed", e);
+        questions = [];
+    }
+
+    renderStats();
+    renderQuestions();
+}
+
+function renderStats() {
+
+    const correct = questions.filter(q => q.isCorrect === true).length;
+    const wrong = questions.length - correct;
+    const acc = questions.length
+        ? ((correct / questions.length) * 100).toFixed(1)
+        : 0;
+
+    const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = val;
+    };
+
+    set("correctCount", correct);
+    set("wrongCount", wrong);
+    set("accuracy", acc + "%");
+    set("attemptScore", `${correct}/${questions.length}`);
+}
+
+function renderQuestions() {
+
+    const container = document.getElementById("reviewContainer");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    questions.forEach((q, i) => {
+
+        let optionsHtml = "";
+
+        if (q.options?.length) {
 
             q.options.forEach(o => {
 
-                const isCorrect =
-                    o.label === q.correctAnswer;
+                const isCorrect = o.label === q.correctAnswer;
+                const isUser = o.label === q.studentAnswer;
 
-                const isChosen =
-                    o.label === q.studentAnswer;
+                let cls = "option";
 
-                html += `
-                    <div class="
-                        option
-                        ${isCorrect ? "correct" : ""}
-                        ${isChosen ? "selected" : ""}
-                    ">
+                if (isCorrect) cls += " correct";
+                else if (isUser) cls += " wrong";
 
-                        <b>${o.label}.</b>
-                        ${o.content}
-
-                        ${isChosen
-                            ? "(Your answer)"
-                            : ""}
-
+                optionsHtml += `
+                    <div class="${cls}">
+                        <b>${o.label}.</b> ${o.content}
+                        ${isUser ? "<span> (Your answer)</span>" : ""}
+                        ${isCorrect ? "<span> (Correct)</span>" : ""}
                     </div>
                 `;
             });
 
-            html += `</div>`;
-        }
+        } else {
 
-        // ===== FILL BLANK =====
-        else {
-
-            html += `
-                <div class="option">
-
-                    <b>Your answer:</b>
-                    ${q.studentAnswer || "-"}
-
+            optionsHtml = `
+                <div class="option wrong">
+                    Your answer: ${q.studentAnswer || "-"}
                 </div>
 
                 <div class="option correct">
-
-                    <b>Correct answer:</b>
-                    ${q.correctAnswer}
-
+                    Correct: ${q.correctAnswer}
                 </div>
             `;
         }
 
-        // ===== STATUS =====
-        html += `
-            <div class="
-                review-status
-                ${q.isCorrect
-                    ? "success"
-                    : "fail"}
-            ">
+        const div = document.createElement("div");
 
-                ${q.isCorrect
-                    ? "Correct"
-                    : "Wrong"}
+        const isCorrect = q.isCorrect === true;
 
+        div.className =
+            "review-question " + (isCorrect ? "correct" : "wrong");
+
+        div.innerHTML = `
+            <div class="question-title">
+                Q${i + 1}. ${q.content}
             </div>
-        `;
 
-        // ===== EXPLANATION =====
-        if (q.explanation) {
+            <div class="answer-box">
+                ${optionsHtml}
+            </div>
 
-            html += `
-                <div class="explanation">
-
-                    <b>Explanation:</b>
-
-                    <br><br>
-
-                    ${q.explanation}
-
+            <div class="answer-block">
+                <div class="answer-item student-answer">
+                    Your answer: ${q.studentAnswer || "-"}
                 </div>
-            `;
-        }
 
-        // ===== AI REVIEW =====
-        html += `
+                <div class="answer-item correct-answer">
+                    Correct answer: ${q.correctAnswer}
+                </div>
+            </div>
 
-            <div class="ai-review-box">
+            <div class="ai-section">
+                <textarea id="ai-input-${i}" class="ai-input"
+                    placeholder="Ask AI about this question..."></textarea>
 
-                <button
-                    class="btn-secondary"
-                    onclick="toggleAIBox(${index})">
-
+                <button class="btn-primary ai-btn" onclick="askAI(${i})">
                     Ask AI
-
                 </button>
 
-                <div
-                    id="aiBox-${index}"
-                    style="
-                        display:none;
-                        margin-top:15px;
-                    ">
-
-                    <input
-                        id="aiQuestion-${index}"
-                        class="form-input"
-                        placeholder="Ask AI about this question">
-
-                    <button
-                        class="btn-primary"
-                        style="margin-top:10px"
-                        onclick="askAI(${index})">
-
-                        Send
-
-                    </button>
-
-                    <div
-                        id="aiResponse-${index}"
-                        class="explanation"
-                        style="margin-top:15px">
-                    </div>
-
-                </div>
-
+                <div id="ai-${i}" class="ai-explanation"></div>
             </div>
         `;
 
-        card.innerHTML = html;
-
-        container.appendChild(card);
+        container.appendChild(div);
     });
 }
 
-// ===== TOGGLE AI =====
-function toggleAIBox(index) {
-
-    const box =
-        document.getElementById(
-            "aiBox-" + index
-        );
-
-    if (box.style.display === "none") {
-
-        box.style.display = "block";
-
-    } else {
-
-        box.style.display = "none";
-    }
-}
-
-// ===== ASK AI =====
 async function askAI(index) {
+
+    const q = questions[index];
+
+    const box = document.getElementById(`ai-${index}`);
+    const input = document.getElementById(`ai-input-${index}`);
+
+    if (!q || !box) return;
+
+    const ask = input?.value || "Explain why this answer is correct/incorrect";
+
+    box.innerHTML = "Thinking...";
 
     try {
 
-        const q =
-            reviewData[index];
+        const res = await API.post("/api/ai/review-answer", {
+            question: q.content,
+            options: q.options || [],
+            correctAnswer: q.correctAnswer,
+            studentAnswer: q.studentAnswer || "",
+            explanation: q.explanation || "",
+            ask: ask
+        });
 
-        const ask =
-            document
-            .getElementById(
-                "aiQuestion-" + index
-            )
-            .value
-            .trim();
-
-        if (!ask)
-            return alert("Enter question");
-
-        const responseBox =
-            document.getElementById(
-                "aiResponse-" + index
-            );
-
-        responseBox.innerHTML =
-            "AI is thinking...";
-
-        const result =
-            await API.request(
-                "/ai/review-answer",
-                "POST",
-                {
-                    question: q.content,
-
-                    correctAnswer:
-                        q.correctAnswer,
-
-                    studentAnswer:
-                        q.studentAnswer,
-
-                    explanation:
-                        q.explanation || "",
-
-                    ask
-                }
-            );
-
-        responseBox.innerHTML = `
-            <b>AI Response:</b>
-            <br><br>
-            ${result.response}
-        `;
+        box.innerHTML = res?.response || "No response";
 
     } catch (err) {
 
         console.error(err);
-
-        alert("AI review failed");
+        box.innerHTML = "AI failed";
     }
 }
 
-// ===== BACK =====
 function goBack() {
-
-    location.href =
-        "/pages/student/exam-menu.html?assignmentId="
-        + assignmentId;
+    history.back();
 }

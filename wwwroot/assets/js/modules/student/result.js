@@ -1,27 +1,28 @@
 const params = new URLSearchParams(location.search);
 const assignmentId = params.get("assignmentId");
 
-// ===== LOAD =====
+let historyData = [];
+
+// ================= INIT =================
+window.onload = async () => {
+    await loadResult();
+};
+
+// ================= LOAD =================
 async function loadResult() {
+
     try {
-        if (!assignmentId) {
-            alert("Missing assignmentId");
-            return;
-        }
 
-        // latest
-        const result = await API.request(
-            "/exam/result/" + assignmentId
-        );
+        const result =
+            await API.request("/api/exam/result/" + assignmentId);
 
-        renderScore(result);
+        renderResult(result);
 
-        // history
-        const history = await API.request(
-            "/exam/history/" + assignmentId
-        );
+        const history =
+            await API.request("/api/exam/history/" + assignmentId);
 
-        renderHistory(history);
+        historyData = history || [];
+        renderHistory(historyData);
 
     } catch (err) {
         console.error(err);
@@ -29,106 +30,95 @@ async function loadResult() {
     }
 }
 
-// ===== SCORE =====
-function renderScore(result) {
-    const box = document.getElementById("scoreBox");
-
-    if (!result) {
-        box.innerHTML = `<p>No result</p>`;
-        return;
-    }
-
-    const score = result.score || 0;
-
-    let status = "Fail";
-    let cls = "fail";
-
-    if (score >= 8) {
-        status = "Excellent";
-        cls = "excellent";
-    }
-    else if (score >= 5) {
-        status = "Pass";
-        cls = "pass";
-    }
-
-    box.innerHTML = `
-        <div class="score-main ${cls}">
-            <h1>${score}</h1>
-            <p>${status}</p>
-        </div>
-    `;
+// ================= SAFE SET =================
+function set(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
 }
 
-// ===== HISTORY =====
+// ================= RESULT =================
+function renderResult(result) {
+
+    if (!result) return;
+
+    set("scoreValue", result.score ?? 0);
+
+    set(
+        "scoreStatus",
+        result.score >= 8 ? "Excellent"
+        : result.score >= 5 ? "Pass"
+        : "Fail"
+    );
+
+    set(
+        "scoreMessage",
+        result.score >= 8 ? "Outstanding performance"
+        : result.score >= 5 ? "Good job"
+        : "Needs improvement"
+    );
+
+    set("submitTime", formatTime(result.submittedAt));
+    set("tabSwitches", result.tabSwitchCount ?? 0);
+    set("suspiciousScore", result.suspicious ? "High" : "Low");
+
+    set("assignmentName", "Assignment");
+}
+
+// ================= HISTORY =================
 function renderHistory(list) {
+
     const container = document.getElementById("history");
+    if (!container) return;
+
     container.innerHTML = "";
 
     if (!list || list.length === 0) {
         container.innerHTML =
-            `<p class="text-muted">No attempts yet</p>`;
+            `<tr><td colspan="4">No attempts</td></tr>`;
         return;
     }
 
-    list.forEach((item, index) => {
+    list.forEach(item => {
 
-        const div = document.createElement("div");
-        div.className = "history-card";
+        const tr = document.createElement("tr");
 
-        // highlight latest
-        if (index === 0) {
-            div.classList.add("latest");
-        }
-
-        div.innerHTML = `
-            <div class="history-left">
-                <b>Attempt ${index + 1}</b>
-                <p>${formatTime(item.time)}</p>
-            </div>
-
-            <div class="history-right">
-                <span class="score-badge">
-                    ${item.score}
-                </span>
-
-                <button onclick="goReview(${index})">
-                    Review
-                </button>
-            </div>
+        tr.innerHTML = `
+            <td>${item.attemptNumber}</td>
+            <td>${item.score}</td>
+            <td>${formatSeconds(item.timeSpentSeconds)}</td>
+            <td>
+                ${formatTime(item.submittedAt)}
+                <button onclick="goReview(${item.id})">Review</button>
+            </td>
         `;
 
-        container.appendChild(div);
+        container.appendChild(tr);
     });
 }
 
+// ================= NAV =================
+function goReview(id) {
+    location.href =
+        "/pages/student/review.html?resultId=" + id;
+}
+
+function reviewExam() {
+    if (historyData.length > 0)
+        goReview(historyData[0].id);
+}
+
 function goMenu() {
-
     location.href =
-        "/pages/student/exam-menu.html?assignmentId="
-        + assignmentId;
+        "/pages/student/exam-menu.html?assignmentId=" + assignmentId;
 }
 
-// ===== FORMAT =====
+// ================= FORMAT =================
 function formatTime(t) {
-    if (!t) return "N/A";
-
-    const date = new Date(t);
-    return date.toLocaleString();
+    if (!t) return "--";
+    return new Date(t).toLocaleString();
 }
 
-// ===== NAV =====
-function goReview(index) {
-    location.href =
-        "/pages/student/review.html?assignmentId=" +
-        assignmentId +
-        "&attempt=" + index;
+function formatSeconds(sec) {
+    if (sec == null) return "--";
+    return `${Math.floor(sec / 60)}m ${sec % 60}s`;
 }
-
-function backExam() {
-    location.href =
-        "/pages/student/my-classes.html";
-}
-
-// ===== INIT =====
-loadResult();

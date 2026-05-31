@@ -5,56 +5,67 @@ window.onload = async () => {
     await loadNotifications();
 };
 
-// ===== STATS =====
+// =========================
+// STATS
+// =========================
 async function loadStats() {
     try {
-        const classes = await API.get("/class/my");
+        const classes = await API.get("/api/class/my-classes");
         document.getElementById("totalClasses").innerText = classes.length;
 
-        const assignments = await API.get("/assignment/my");
+        const assignments = await API.get("/assignment/my-assignments");
         document.getElementById("totalAssignments").innerText = assignments.length;
 
-        const students = await API.get("/student/my");
-        document.getElementById("totalStudents").innerText = students.length;
+        // teacher không có endpoint student list toàn hệ thống
+        // nên lấy từ class students
+        let studentCount = 0;
+
+        for (const c of classes) {
+            const res = await API.get(`/api/class/students/${c.id}`);
+            studentCount += res.length;
+        }
+
+        document.getElementById("totalStudents").innerText = studentCount;
 
         const submissions = await API.get("/submission/my");
         document.getElementById("totalSubmissions").innerText = submissions.length;
-    }
-    catch (err) {
+
+    } catch (err) {
         console.log("Dashboard load error", err);
     }
 }
 
-// ===== NOTIFICATIONS =====
+// =========================
+// NOTIFICATIONS
+// =========================
 async function loadNotifications() {
     const container = document.getElementById("notifications");
 
-    // skeleton
     container.innerHTML = `
-        <div class="skeleton-line skeleton-title"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line skeleton-small"></div>
+        <div class="text-muted">Loading...</div>
     `;
 
     try {
-        const submissions = await API.get("/submission/my");
+        const data = await API.get("/api/notification/my");
 
-        if (!submissions || submissions.length === 0) {
-            container.innerHTML = `<p class="text-muted">No recent activity</p>`;
+        if (!data || data.length === 0) {
+            container.innerHTML = `<div class="text-muted">No notifications yet</div>`;
             return;
         }
 
-        const latest = submissions.slice(0, 5);
-
         container.innerHTML = "";
 
-        latest.forEach(s => {
+        data.slice(0, 10).forEach(n => {
             const div = document.createElement("div");
-            div.className = "mb-2 p-2 border rounded";
+
+            div.className = "notification-item";
 
             div.innerHTML = `
-                <strong>${s.studentName || "Student"}</strong> submitted<br>
-                <small class="text-muted">${s.assignmentTitle || "Assignment"}</small>
+                <strong>${n.title}</strong>
+                <div>${n.message}</div>
+                <small class="text-muted">
+                    ${new Date(n.createdAt).toLocaleString()}
+                </small>
             `;
 
             container.appendChild(div);
@@ -62,6 +73,6 @@ async function loadNotifications() {
 
     } catch (err) {
         console.error(err);
-        container.innerHTML = `<p class="text-danger">Failed to load activity</p>`;
+        container.innerHTML = `<div class="text-danger">Failed to load notifications</div>`;
     }
 }

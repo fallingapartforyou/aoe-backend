@@ -2,24 +2,27 @@
 <html>
 
 <head>
+
 <meta charset="UTF-8">
 <title>Teacher Dashboard</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
-<link rel="stylesheet" href="../../assets/css/skeleton.css">
-<link rel="stylesheet" href="../../assets/css/dashboard.css">
+<link rel="stylesheet" href="../../assets/css/core/variables.css">
+<link rel="stylesheet" href="../../assets/css/core/base.css">
+<link rel="stylesheet" href="../../assets/css/core/animation.css">
+<link rel="stylesheet" href="../../assets/css/layout/sidebar.css">
+<link rel="stylesheet" href="../../assets/css/layout/layout.css">
+<link rel="stylesheet" href="../../assets/css/components/button.css">
+<link rel="stylesheet" href="../../assets/css/components/card.css">
+<link rel="stylesheet" href="../../assets/css/components/notification.css">
+<link rel="stylesheet" href="../../assets/css/pages/teacher/dashboard.css">
 
 <script src="../../assets/js/core/config.js"></script>
 <script src="../../assets/js/core/storage.js"></script>
 <script src="../../assets/js/core/api.js"></script>
 <script src="../../assets/js/core/router.js"></script>
 <script src="../../assets/js/core/guard.js"></script>
-
 <script src="../../assets/js/layout/sidebar.js"></script>
 <script src="../../assets/js/layout/layout.js"></script>
-
 <script src="../../assets/js/core/logout.js"></script>
 
 <script>
@@ -28,83 +31,70 @@ Guard.requireTeacher();
 </script>
 
 <script defer src="../../assets/js/modules/teacher/dashboard.js"></script>
+
 </head>
 
 <body>
 
 <div id="layout"></div>
 
-<div class="content">
+<main class="content">
+
 <div class="container">
 
-    <!-- 🔷 TOP BAR -->
-    <div class="topbar">
-        <div class="topbar-title">Màn hình chính</div>
+    <!-- HEADER -->
+    <div class="page-header">
 
-        <div class="topbar-actions">
-            <button>🔔</button>
-            <button onclick="logout()">Logout</button>
-        </div>
-    </div>
-
-    <!-- 🔥 DASHBOARD MENU (MAIN UI) -->
-    <div class="dashboard-grid">
-
-        <div class="dashboard-card" onclick="Router.goTeacherClasses()">
-            <div class="icon">📚</div>
-            <span>Lớp học</span>
-        </div>
-
-        <div class="dashboard-card" onclick="Router.goAssignments()">
-            <div class="icon">📄</div>
-            <span>Bài tập</span>
-        </div>
-
-        <div class="dashboard-card" onclick="Router.goStudents()">
-            <div class="icon">👨‍🎓</div>
-            <span>Học sinh</span>
-        </div>
-
-        <div class="dashboard-card">
-            <div class="icon">📊</div>
-            <span>Kết quả</span>
+        <div>
+            <h1>Teacher Dashboard</h1>
+            <p>Overview of classes, assignments, students</p>
         </div>
 
     </div>
 
-    <!-- 🔢 STATS -->
+    <!-- KPI -->
     <div class="stats-grid">
 
-        <div class="card">
-            <p>Total Classes</p>
+        <div class="stat-card">
+            <span class="stat-label">Total Classes</span>
             <h2 id="totalClasses">0</h2>
         </div>
 
-        <div class="card">
-            <p>Assignments</p>
+        <div class="stat-card">
+            <span class="stat-label">Assignments</span>
             <h2 id="totalAssignments">0</h2>
         </div>
 
-        <div class="card">
-            <p>Students</p>
+        <div class="stat-card">
+            <span class="stat-label">Students</span>
             <h2 id="totalStudents">0</h2>
         </div>
 
-        <div class="card">
-            <p>Submissions</p>
+        <div class="stat-card">
+            <span class="stat-label">Submissions</span>
             <h2 id="totalSubmissions">0</h2>
         </div>
 
     </div>
 
-    <!-- 🔔 NOTIFICATIONS -->
-    <div class="card" style="margin-top:20px;">
-        <h4>Recent Activity</h4>
-        <div id="notifications"></div>
+    <!-- NOTIFICATIONS ONLY -->
+    <div class="card">
+
+        <div class="panel-header">
+            <h3>Notifications</h3>
+        </div>
+
+        <div id="notifications">
+            <div class="text-muted">
+                No notifications yet
+            </div>
+        </div>
+
     </div>
 
 </div>
-</div>
+
+</main>
 
 </body>
 </html>
