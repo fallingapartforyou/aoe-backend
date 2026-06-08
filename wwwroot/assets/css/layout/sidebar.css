@@ -2,92 +2,414 @@
 
     position: fixed;
 
-    top: 0;
-    left: 0;
+    inset: 0 auto 0 0;
 
     width:
         var(--sidebar-width);
-
-    height: 100vh;
-
-    background: #1e3a8a;
-
-    color: white;
-
-    z-index: 1000;
-
-    overflow-y: auto;
 
     display: flex;
 
     flex-direction: column;
 
     padding: 20px 16px;
+
+    overflow-y: auto;
+
+    z-index:
+        var(--z-sticky);
+
+    background:
+        linear-gradient(
+            180deg,
+            #0B1F1A 0%,
+            #102923 35%,
+            #12332C 100%
+        );
+
+    border-right:
+        1.5px solid
+        rgba(20,184,166,.18);
+
+    box-shadow:
+        10px 0 40px
+        rgba(15,23,42,.22);
 }
 
-.sidebar h3 {
+/* mint glow */
 
-    margin-bottom: 20px;
+.sidebar::before {
 
-    text-align: center;
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(20,184,166,.06),
+            transparent 30%
+        );
 }
+
+/* =========================
+   BRAND
+========================= */
+
+.sidebar-brand,
+.sidebar-logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 18px;
+
+    margin-bottom: 28px;
+
+    border-radius:
+        22px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.08),
+            rgba(255,255,255,.04)
+        );
+
+    border:
+        1px solid
+        rgba(20,184,166,.12);
+
+    box-shadow:
+        0 10px 24px rgba(0,0,0,.14);
+}
+
+/* =========================
+   BRAND ICON
+========================= */
+
+.brand-logo {
+
+    width: 50px;
+
+    height: 50px;
+
+    border-radius:
+        16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0F766E,
+            #14B8A6
+        );
+
+    box-shadow:
+        0 12px 26px
+        rgba(20,184,166,.24);
+}
+
+/* =========================
+   BRAND TEXT
+========================= */
+
+.brand-info h3,
+.sidebar-logo h3 {
+
+    margin: 0 0 4px;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color:
+        #F8FAFC;
+}
+
+.brand-info span {
+
+    font-size: 13px;
+
+    color:
+        rgba(226,232,240,.72);
+}
+
+/* =========================
+   SECTION TITLE
+========================= */
+
+.sidebar-section {
+
+    margin-bottom: 12px;
+
+    padding-left: 14px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .14em;
+
+    text-transform: uppercase;
+
+    color:
+        rgba(148,163,184,.72);
+}
+
+/* =========================
+   MENU
+========================= */
+
+.sidebar-menu {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    flex: 1;
+}
+
+/* =========================
+   ITEM
+========================= */
 
 .sidebar-item {
 
     width: 100%;
 
-    padding: 12px 14px;
+    display: flex !important;
 
-    border: none;
+    align-items: center !important;
 
-    border-radius: 10px;
+    justify-content: flex-start !important;
 
-    background: transparent;
+    gap: 14px;
 
-    color: white;
+    padding: 15px 16px;
 
-    cursor: pointer;
+    border-radius:
+        18px;
 
-    text-align: left;
+    background:
+        transparent;
 
-    transition: .2s;
+    border:
+        1px solid transparent;
+
+    color:
+        rgba(241,245,249,.88);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-align: left !important;
+
+    transition:
+        background .22s ease,
+        color .22s ease,
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
 }
+
+/* =========================
+   HOVER
+========================= */
 
 .sidebar-item:hover {
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            .15
-        );
+        rgba(20,184,166,.10);
+
+    border-color:
+        rgba(20,184,166,.12);
+
+    color:
+        #FFFFFF;
+
+    transform:
+        translateX(4px);
 }
+
+/* =========================
+   ACTIVE
+========================= */
 
 .sidebar-item.active {
 
-    background: white;
+    background:
+        linear-gradient(
+            135deg,
+            #0F766E,
+            #14B8A6
+        );
 
-    color: #1e3a8a;
+    border-color:
+        rgba(255,255,255,.08);
+
+    color: white;
+
+    box-shadow:
+        0 14px 30px
+        rgba(20,184,166,.22);
 }
+
+/* =========================
+   ICON
+========================= */
+
+.sidebar-icon {
+
+    width: 20px !important;
+
+    min-width: 20px !important;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    font-size: 16px;
+}
+
+/* =========================
+   TEXT FIX
+========================= */
+
+.sidebar-item span {
+
+    flex: 0 0 auto !important;
+}
+
+.sidebar-item span:not(.notification-badge):not(.sidebar-icon) {
+
+    display: flex;
+
+    align-items: center;
+}
+
+/* =========================
+   BADGE
+========================= */
 
 .notification-badge {
 
-margin-left: auto;
+    margin-left: auto;
 
-background: #ef4444;
+    min-width: 22px;
 
-color: white;
+    height: 22px;
 
-font-size: 11px;
+    display: flex;
 
-font-weight: 700;
+    align-items: center;
 
-padding: 2px 8px;
+    justify-content: center;
 
-border-radius: 999px;
+    padding: 0 8px;
 
-min-width: 20px;
+    border-radius:
+        999px;
 
-text-align: center;
+    font-size: 11px;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            135deg,
+            #EF4444,
+            #DC2626
+        );
+
+    color: white;
+
+    box-shadow:
+        0 6px 18px
+        rgba(239,68,68,.28);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.sidebar-footer {
+
+    margin-top: auto;
+
+    padding-top: 16px;
+
+    border-top:
+        1px solid
+        rgba(148,163,184,.14);
+}
+
+/* =========================
+   LOGOUT
+========================= */
+
+.logout-btn {
+
+    color:
+        #FCA5A5;
+}
+
+.logout-btn:hover {
+
+    background:
+        rgba(239,68,68,.14);
+
+    border-color:
+        rgba(239,68,68,.18);
+
+    color:
+        #FFFFFF;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.sidebar::-webkit-scrollbar {
+
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+
+    background:
+        rgba(20,184,166,.20);
+
+    border-radius:
+        999px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+
+    background:
+        rgba(20,184,166,.34);
 }

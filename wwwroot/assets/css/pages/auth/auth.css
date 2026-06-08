@@ -2,12 +2,6 @@
 
     min-height: 100vh;
 
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
     position: relative;
 
     overflow: hidden;
@@ -15,124 +9,418 @@
     background:
         linear-gradient(
             135deg,
-            #0f172a,
-            #1e3a8a,
-            #2563eb
+            #67C79F 0%,
+            #52B88E 45%,
+            #3FA57E 100%
         );
 }
 
-.auth-background {
+/* background glow */
+
+.auth-page::before {
+
+    content: "";
 
     position: absolute;
 
     inset: 0;
 
-    overflow: hidden;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(255,255,255,.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(15,118,110,.24),
+            transparent 40%
+        );
 }
 
-.bg-circle {
+.auth-page::after {
+
+    content: "";
 
     position: absolute;
 
-    border-radius: 50%;
+    inset: 0;
 
-    filter: blur(100px);
-
-    opacity: .4;
-
-    animation:
-        float 6s ease-in-out infinite;
-}
-
-.circle1 {
-
-    width: 320px;
-
-    height: 320px;
-
-    background: #60a5fa;
-
-    top: 5%;
-
-    left: 5%;
-}
-
-.circle2 {
-
-    width: 260px;
-
-    height: 260px;
-
-    background: #2563eb;
-
-    right: 5%;
-
-    bottom: 5%;
-}
-
-.auth-card {
-
-    width: 420px;
-
-    max-width: 90vw;
+    pointer-events: none;
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            .95
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.04),
+            transparent 24%
         );
+}
 
-    backdrop-filter:
-        blur(12px);
+.auth-layout {
 
-    border-radius: 20px;
+    min-height: 100vh;
 
-    padding: 32px;
+    display: grid;
 
-    box-shadow:
-        0 20px 50px
-        rgba(
-            0,
-            0,
-            0,
-            .2
-        );
+    grid-template-columns:
+        7fr 3fr;
 
     position: relative;
 
-    z-index: 10;
-
-    animation:
-        fadeIn .3s ease;
+    z-index: 2;
 }
 
-.register-card {
+/* =========================
+   PORTAL
+========================= */
 
-    width: 500px;
+.portal-side {
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 70px 80px;
 }
+
+.portal-content {
+
+    width: 100%;
+
+    max-width: 920px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.portal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 54px;
+}
+
+.portal-logo {
+
+    width: 78px;
+
+    height: 78px;
+
+    border-radius:
+        24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0B3B33,
+            #0F766E
+        );
+
+    color: white;
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    box-shadow:
+        0 20px 42px rgba(15,118,110,.30);
+}
+
+.portal-header h1 {
+
+    font-size: 42px;
+
+    font-weight: 800;
+
+    color:
+        #FFFFFF;
+
+    margin-bottom: 6px;
+}
+
+.portal-header p {
+
+    font-size: 16px;
+
+    color:
+        rgba(240,253,250,.82);
+}
+
+/* =========================
+   HERO
+========================= */
+
+.portal-hero {
+
+    margin-bottom: 54px;
+}
+
+.portal-hero h2 {
+
+    font-size: 58px;
+
+    line-height: 1.08;
+
+    letter-spacing:
+        -1.5px;
+
+    color:
+        #FFFFFF;
+
+    margin-bottom: 20px;
+
+    max-width: 760px;
+
+    text-shadow:
+        0 4px 18px rgba(0,0,0,.10);
+}
+
+.portal-hero p {
+
+    max-width: 720px;
+
+    font-size: 18px;
+
+    line-height: 1.9;
+
+    color:
+        rgba(240,253,250,.88);
+}
+
+/* =========================
+   MODULES
+========================= */
+
+.portal-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 22px;
+
+    margin-bottom: 46px;
+}
+
+.portal-card {
+
+    padding: 28px;
+
+    border-radius:
+        24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.18),
+            rgba(255,255,255,.10)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.14);
+
+    backdrop-filter:
+        blur(18px);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.10);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+}
+
+.portal-card:hover {
+
+    transform:
+        translateY(-5px);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.24),
+            rgba(255,255,255,.14)
+        );
+
+    border-color:
+        rgba(255,255,255,.20);
+
+    box-shadow:
+        0 22px 50px rgba(0,0,0,.14);
+}
+
+.portal-card h3 {
+
+    color:
+        #FFFFFF;
+
+    font-size: 18px;
+
+    margin-bottom: 10px;
+}
+
+.portal-card p {
+
+    color:
+        rgba(240,253,250,.82);
+
+    line-height: 1.7;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.portal-stats {
+
+    display: flex;
+
+    gap: 48px;
+}
+
+.stat-item {
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.stat-item strong {
+
+    font-size: 38px;
+
+    font-weight: 800;
+
+    color:
+        #FFFFFF;
+}
+
+.stat-item span {
+
+    margin-top: 4px;
+
+    color:
+        rgba(240,253,250,.74);
+
+    font-size: 14px;
+}
+
+/* =========================
+   AUTH PANEL
+========================= */
+
+.auth-side {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px;
+
+    background:
+        rgba(7,28,24,.22);
+
+    backdrop-filter:
+        blur(22px);
+
+    border-left:
+        1px solid
+        rgba(255,255,255,.08);
+
+    box-shadow:
+        -12px 0 40px rgba(0,0,0,.12);
+}
+
+.auth-panel {
+
+    width: 100%;
+
+    max-width: 420px;
+}
+
+/* =========================
+   FORM CONTAINER
+========================= */
+
+.auth-form-container {
+
+    padding: 40px;
+
+    border-radius:
+        32px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.96),
+            rgba(245,255,251,.94)
+        );
+
+    border:
+        1.5px solid
+        rgba(15,118,110,.18);
+
+    backdrop-filter:
+        blur(20px);
+
+    box-shadow:
+        0 30px 70px rgba(15,23,42,.16);
+}
+
+/* =========================
+   FORM HEADER
+========================= */
 
 .auth-header {
 
-    text-align: center;
-
-    margin-bottom: 24px;
+    margin-bottom: 34px;
 }
 
-.auth-header h1 {
+.auth-header h2 {
 
-    margin-bottom: 8px;
+    font-size: 34px;
 
-    color: #0f172a;
+    font-weight: 800;
+
+    color:
+        #0F172A;
+
+    margin-bottom: 10px;
 }
 
 .auth-header p {
 
-    color: #64748b;
+    color:
+        #5B6475;
 
-    font-size: 14px;
+    line-height: 1.7;
 }
+
+/* =========================
+   FORM
+========================= */
 
 .auth-form {
 
@@ -140,10 +428,120 @@
 
     flex-direction: column;
 
-    gap: 14px;
+    gap: 18px;
+}
+
+.auth-form label {
+
+    color:
+        #1E293B;
+
+    font-size: 14px;
+
+    font-weight: 700;
 }
 
 .auth-btn {
 
     width: 100%;
+}
+
+.register-page .auth-form {
+
+    gap: 18px;
+}
+
+.register-page .form-row {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 16px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width:1200px) {
+
+    .auth-layout {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .portal-side {
+
+        padding-bottom: 20px;
+    }
+
+    .auth-side {
+
+        padding-top: 0;
+
+        padding-bottom: 60px;
+
+        background:
+            transparent;
+
+        border-left: none;
+
+        box-shadow: none;
+    }
+
+    .portal-hero h2 {
+
+        font-size: 46px;
+    }
+}
+
+@media (max-width:768px) {
+
+    .portal-side {
+
+        padding: 40px 24px;
+    }
+
+    .portal-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .portal-stats {
+
+        flex-wrap: wrap;
+
+        gap: 24px;
+    }
+
+    .portal-hero h2 {
+
+        font-size: 38px;
+    }
+
+    .portal-hero p {
+
+        font-size: 16px;
+    }
+
+    .auth-side {
+
+        padding:
+            0 24px 40px;
+    }
+
+    .auth-form-container {
+
+        padding: 28px;
+    }
+
+    .register-page .form-row {
+
+        grid-template-columns:
+            1fr;
+    }
 }

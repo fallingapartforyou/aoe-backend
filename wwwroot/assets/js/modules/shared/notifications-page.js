@@ -51,7 +51,7 @@ async function loadNotifications() {
 
 async function markRead(id) {
     try {
-        await API.post(`/notification/read/${id}`);
+        await API.post(`/api/notification/read/${id}`);
         await loadNotifications();
     } catch (err) {
         console.error(err);

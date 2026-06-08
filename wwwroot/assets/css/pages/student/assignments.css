@@ -1,230 +1,245 @@
-.container{
-    max-width:1400px;
-    margin:0 auto;
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 /* ======================
 HEADER
 ====================== */
 
-.page-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    margin-bottom:24px;
+    margin-bottom: 24px;
 }
 
-.page-header h1{
-    margin:0;
-    font-size:28px;
+.page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--text);
 }
 
-.page-header p{
-    margin-top:6px;
-    color:#64748b;
+.page-header p {
+    margin-top: 6px;
+    color: var(--text-muted);
 }
 
 /* ======================
 CLASS BANNER
 ====================== */
 
-.class-banner{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.class-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    gap:30px;
+    gap: 30px;
 
-    margin-bottom:24px;
+    margin-bottom: 24px;
 
-    padding:28px;
+    padding: 28px;
 
-    border-radius:20px;
+    border-radius: 20px;
 
-    color:white;
+    color: var(--text);
 
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #3b82f6
-        );
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    box-shadow: var(--shadow-md);
 }
 
-.class-code{
-    display:inline-block;
+.class-code {
+    display: inline-block;
 
-    padding:6px 12px;
+    padding: 6px 12px;
 
-    border-radius:999px;
+    border-radius: 999px;
 
-    background:rgba(255,255,255,.2);
+    background: rgba(255, 255, 255, .12);
 
-    margin-bottom:10px;
+    border: 1px solid rgba(255, 255, 255, .15);
 
-    font-size:13px;
+    margin-bottom: 10px;
+
+    font-size: 13px;
 }
 
-.class-banner h2{
-    margin:0;
-    font-size:28px;
+.class-banner h2 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--text);
 }
 
-.class-banner p{
-    margin-top:8px;
-    opacity:.9;
+.class-banner p {
+    margin-top: 8px;
+    opacity: .9;
 }
 
-.class-summary{
-    display:flex;
-    gap:30px;
+.class-summary {
+    display: flex;
+    gap: 30px;
 }
 
-.class-summary div{
-    text-align:center;
+.class-summary div {
+    text-align: center;
 }
 
-.class-summary span{
-    display:block;
-    font-size:13px;
-    opacity:.8;
+.class-summary span {
+    display: block;
+    font-size: 13px;
+    opacity: .8;
 }
 
-.class-summary strong{
-    font-size:26px;
+.class-summary strong {
+    font-size: 26px;
 }
 
 /* ======================
 TOOLBAR
 ====================== */
 
-.toolbar-card{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
+.toolbar-card {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
 
-    margin-bottom:24px;
+    margin-bottom: 24px;
 }
 
-.toolbar-card input{
-    min-width:250px;
+.toolbar-card input {
+    min-width: 250px;
 }
 
-.toolbar-card select{
-    min-width:180px;
+.toolbar-card select {
+    min-width: 180px;
 }
 
 /* ======================
 GRID
 ====================== */
 
-.assignment-grid{
-    display:grid;
+.assignment-grid {
+    display: grid;
 
     grid-template-columns:
         repeat(
             auto-fill,
-            minmax(320px,1fr)
+            minmax(320px, 1fr)
         );
 
-    gap:20px;
+    gap: 20px;
 }
 
 /* ======================
 CARD
 ====================== */
 
-.assignment-card{
-    background:white;
+.assignment-card {
+    background: var(--card);
 
-    border-radius:18px;
+    border-radius: 18px;
 
-    padding:20px;
+    padding: 20px;
 
-    box-shadow:
-        0 4px 14px
-        rgba(15,23,42,.06);
+    border: 1px solid var(--border);
 
-    transition:.25s;
+    box-shadow: var(--shadow-sm);
+
+    transition: var(--transition);
 }
 
-.assignment-card:hover{
-    transform:translateY(-4px);
+.assignment-card:hover {
+    transform: translateY(-4px);
+
+    background: var(--card-hover);
+
+    border-color: var(--border-hover);
+
+    box-shadow: var(--shadow-md);
 }
 
-.assignment-status{
-    display:inline-flex;
+.assignment-status {
+    display: inline-flex;
 
-    padding:6px 12px;
+    padding: 6px 12px;
 
-    border-radius:999px;
+    border-radius: 999px;
 
-    font-size:12px;
-    font-weight:600;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-.status-pending{
-    background:#fef3c7;
-    color:#92400e;
+.status-pending {
+    background: var(--warning-soft);
+    color: var(--warning);
 }
 
-.status-completed{
-    background:#dcfce7;
-    color:#166534;
+.status-completed {
+    background: var(--success-soft);
+    color: var(--success);
 }
 
-.status-expired{
-    background:#fee2e2;
-    color:#991b1b;
+.status-expired {
+    background: var(--danger-soft);
+    color: var(--danger);
 }
 
-.assignment-card h3{
-    margin:14px 0 10px;
+.assignment-card h3 {
+    margin: 14px 0 10px;
+    color: var(--text);
 }
 
-.assignment-meta{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+.assignment-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-    color:#64748b;
-    font-size:14px;
+    color: var(--text-muted);
+
+    font-size: 14px;
 }
 
-.assignment-actions{
-    margin-top:20px;
+.assignment-actions {
+    margin-top: 20px;
 
-    display:flex;
-    gap:10px;
+    display: flex;
+    gap: 10px;
 }
 
 /* ======================
 RESPONSIVE
 ====================== */
 
-@media(max-width:900px){
+@media (max-width: 900px) {
 
-    .class-banner{
-        flex-direction:column;
-        align-items:flex-start;
+    .class-banner {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .class-summary{
-        width:100%;
-        justify-content:space-between;
+    .class-summary {
+        width: 100%;
+        justify-content: space-between;
     }
+
 }
 
-@media(max-width:768px){
+@media (max-width: 768px) {
 
-    .page-header{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:12px;
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
-    .assignment-grid{
-        grid-template-columns:1fr;
+    .assignment-grid {
+        grid-template-columns: 1fr;
     }
+
 }

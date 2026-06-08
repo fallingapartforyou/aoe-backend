@@ -21,7 +21,7 @@ async function startExam() {
         examStartTime = Date.now();
 
         const questions = await API.get(
-            `/exam/start/${assignmentId}`
+            `/api/exam/start/${assignmentId}`
         );
 
         questionsCache = questions;
@@ -221,7 +221,7 @@ async function confirmSubmit() {
         });
 
         const res = await API.request(
-            "/exam/submit",
+            "/api/exam/submit",
             "POST",
             {
                 assignmentId: parseInt(assignmentId),

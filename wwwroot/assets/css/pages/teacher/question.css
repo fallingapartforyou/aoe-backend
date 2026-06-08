@@ -13,10 +13,13 @@ PAGE HEADER
 
 .page-header h1 {
     margin: 0;
+
+    color: var(--text);
 }
 
 .page-header p {
     margin-top: 6px;
+
     color: var(--text-muted);
 }
 
@@ -39,7 +42,9 @@ INFO BANNER
     justify-content: space-between;
     align-items: center;
 
-    background: white;
+    background: var(--card);
+
+    border: 1px solid var(--border);
 
     border-radius: 14px;
 
@@ -52,7 +57,8 @@ INFO BANNER
 
 .info-banner span {
     font-weight: 500;
-    color: var(--text-secondary);
+
+    color: var(--text);
 }
 
 /* ==================================================
@@ -71,13 +77,25 @@ STATS
 }
 
 .stat-card {
-    background: white;
+    background: var(--card);
+
+    border: 1px solid var(--border);
 
     border-radius: 16px;
 
     padding: 20px;
 
     box-shadow: var(--shadow-sm);
+
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    background: var(--card-hover);
+
+    border-color: var(--border-hover);
+
+    box-shadow: var(--shadow-md);
 }
 
 .stat-card span {
@@ -93,7 +111,7 @@ STATS
 .stat-card h2 {
     margin: 0;
 
-    color: var(--primary-color);
+    color: var(--primary);
 }
 
 /* ==================================================
@@ -110,6 +128,8 @@ CARD HEADER
 
 .card-header h3 {
     margin: 0;
+
+    color: var(--text);
 }
 
 /* ==================================================
@@ -153,19 +173,21 @@ AI PREVIEW
 
     border-radius: 12px;
 
-    background: #f8fafc;
+    background: var(--surface);
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
 }
 
 .ai-preview-question {
     font-weight: 600;
 
     margin-bottom: 8px;
+
+    color: var(--text);
 }
 
 .ai-preview-answer {
-    color: #16a34a;
+    color: var(--success);
 }
 
 /* ==================================================
@@ -209,10 +231,13 @@ MODAL
 
 .modal-header h3 {
     margin: 0;
+
+    color: var(--text);
 }
 
 .modal-header button {
     min-width: auto;
+
     padding: 8px 10px;
 }
 
@@ -223,6 +248,7 @@ QUESTION FORM
 #content,
 #explanation {
     width: 100%;
+
     margin-bottom: 12px;
 }
 
@@ -262,9 +288,9 @@ ASSIGN CLASS
 }
 
 .class-item {
-    background: #f8fafc;
+    background: var(--surface);
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
 
     border-radius: 12px;
 
@@ -273,22 +299,24 @@ ASSIGN CLASS
 
 .class-item h4 {
     margin: 0 0 8px;
+
+    color: var(--text);
 }
 
 .class-item p {
     margin: 0;
+
     color: var(--text-muted);
 }
 
-.assigned
-{
-    background:#d1fae5;
+.assigned {
+    background: var(--success-soft);
 
-    color:#065f46;
+    color: var(--success);
 
-    border:none;
+    border: none;
 
-    cursor:not-allowed;
+    cursor: not-allowed;
 }
 
 /* ==================================================
@@ -323,46 +351,47 @@ RESPONSIVE
     #optionsBox select {
         grid-column: auto;
     }
+
 }
 
-.score-badge
-{
-    display:inline-block;
+.score-badge {
+    display: inline-block;
 
-    padding:6px 10px;
+    padding: 6px 10px;
 
-    border-radius:8px;
+    border-radius: 8px;
 
-    background:#eef6ff;
+    background: var(--primary-soft);
 
-    color:#2563eb;
+    color: var(--primary);
 
-    font-weight:600;
+    font-weight: 600;
 
-    min-width:50px;
+    min-width: 50px;
 
-    text-align:center;
+    text-align: center;
 }
 
-.ai-select-row
-{
-    display:flex;
+.ai-select-row {
+    display: flex;
 
-    gap:8px;
+    gap: 8px;
 
-    margin-bottom:10px;
+    margin-bottom: 10px;
 
-    font-weight:600;
+    font-weight: 600;
+
+    color: var(--text);
 }
 
-.ai-summary
-{
-    margin-bottom:16px;
+.ai-summary {
+    margin-bottom: 16px;
 
-    font-weight:700;
+    font-weight: 700;
+
+    color: var(--text);
 }
 
-.ai-actions
-{
-    margin-top:12px;
+.ai-actions {
+    margin-top: 12px;
 }

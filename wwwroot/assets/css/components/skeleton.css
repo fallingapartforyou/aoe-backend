@@ -1,44 +1,123 @@
 .skeleton-card {
 
-    background: white;
+    position: relative;
 
-    padding: 20px;
+    overflow: hidden;
+
+    padding: 24px;
 
     border-radius:
-        var(--radius-md);
+        24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.94),
+            rgba(240,255,248,.92)
+        );
+
+    border:
+        1.5px solid
+        rgba(15,118,110,.22);
 
     box-shadow:
-        var(--shadow-sm);
+        0 12px 28px rgba(15,23,42,.08),
+        0 0 0 1px rgba(20,184,166,.04);
+
+    transition:
+        var(--transition);
 }
+
+/* mint top tint */
+
+.skeleton-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(20,184,166,.08),
+            transparent 34%
+        );
+}
+
+/* =========================
+   SHIMMER ELEMENTS
+========================= */
+
+.skeleton-line,
+.skeleton-avatar,
+.skeleton-button {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15,118,110,.12),
+            rgba(148,163,184,.16)
+        );
+
+    border:
+        1px solid
+        rgba(15,118,110,.10);
+}
+
+.skeleton-line::after,
+.skeleton-avatar::after,
+.skeleton-button::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    transform:
+        translateX(-100%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.82),
+            transparent
+        );
+
+    animation:
+        shimmer 1.45s infinite;
+}
+
+/* =========================
+   TEXT LINES
+========================= */
 
 .skeleton-line {
 
     height: 14px;
 
-    border-radius: 999px;
+    margin-bottom: 14px;
 
-    margin-bottom: 12px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #e5e7eb,
-            #f8fafc,
-            #e5e7eb
-        );
-
-    background-size:
-        200px 100%;
-
-    animation:
-        shimmer 1.2s infinite;
+    border-radius:
+        999px;
 }
 
 .skeleton-title {
 
-    width: 60%;
+    width: 55%;
 
-    height: 20px;
+    height: 22px;
+
+    margin-bottom: 20px;
 }
 
 .skeleton-text {
@@ -48,52 +127,95 @@
 
 .skeleton-small {
 
-    width: 40%;
+    width: 35%;
 }
+
+/* =========================
+   AVATAR
+========================= */
 
 .skeleton-avatar {
 
-    width: 60px;
+    width: 64px;
 
-    height: 60px;
+    height: 64px;
 
     border-radius: 50%;
 
-    background:
-        linear-gradient(
-            90deg,
-            #e5e7eb,
-            #f8fafc,
-            #e5e7eb
-        );
-
-    background-size:
-        200px 100%;
-
-    animation:
-        shimmer 1.2s infinite;
+    margin-bottom: 18px;
 }
+
+/* =========================
+   BUTTON
+========================= */
 
 .skeleton-button {
 
-    width: 120px;
+    width: 130px;
 
-    height: 36px;
+    height: 42px;
+
+    margin-top: 18px;
 
     border-radius:
-        var(--radius-sm);
+        14px;
+}
 
-    background:
-        linear-gradient(
-            90deg,
-            #e5e7eb,
-            #f8fafc,
-            #e5e7eb
+/* =========================
+   GRID
+========================= */
+
+.skeleton-grid {
+
+    display: grid;
+
+    gap: 24px;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
         );
+}
 
-    background-size:
-        200px 100%;
+/* =========================
+   PAGE LOADED
+========================= */
+
+.loaded {
 
     animation:
-        shimmer 1.2s infinite;
+        pageReveal .32s ease;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes shimmer {
+
+    100% {
+
+        transform:
+            translateX(100%);
+    }
+}
+
+@keyframes pageReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(8px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
 }

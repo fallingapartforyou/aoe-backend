@@ -2,56 +2,533 @@
 <html>
 
 <head>
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+```
 <meta charset="UTF-8">
-<title>Notifications</title>
 
-<link rel="stylesheet" href="../../assets/css/core/base.css">
-<link rel="stylesheet" href="../../assets/css/layout/layout.css">
-<link rel="stylesheet" href="../../assets/css/components/card.css">
-<link rel="stylesheet" href="../../assets/css/components/button.css">
-<link rel="stylesheet" href="../../assets/css/components/notification.css">
-<link rel="stylesheet"
-href="../../assets/css/layout/sidebar.css">
+<title>
+    Notifications
+</title>
 
-<link rel="stylesheet"
-href="../../assets/css/layout/layout.css">
+<!-- =========================
+     CORE CSS
+========================== -->
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/core/variables.css">
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/core/base.css">
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/core/animation.css">
+
+<!-- =========================
+     LAYOUT CSS
+========================== -->
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/layout/layout.css">
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/layout/sidebar.css">
+
+<!-- =========================
+     COMPONENT CSS
+========================== -->
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/components/button.css">
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/components/card.css">
+
+<!-- =========================
+     SHARED CSS
+========================== -->
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/shared/notification.css">
+
+<!-- =========================
+     ICONS
+========================== -->
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- =========================
+     CORE JS
+========================== -->
 
 <script src="../../assets/js/core/config.js"></script>
+
 <script src="../../assets/js/core/api.js"></script>
+
 <script src="../../assets/js/core/storage.js"></script>
+
 <script src="../../assets/js/core/guard.js"></script>
+
 <script src="../../assets/js/core/router.js"></script>
+
+<!-- =========================
+     LAYOUT JS
+========================== -->
+
 <script src="../../assets/js/layout/sidebar.js"></script>
+
 <script src="../../assets/js/layout/layout.js"></script>
+
 <script>
-Guard.requireLogin();
+    Guard.requireLogin();
 </script>
 
-<script defer src="../../assets/js/modules/shared/notifications-page.js"></script>
+<!-- =========================
+     PAGE JS
+========================== -->
+
+<script
+    defer
+    src="../../assets/js/modules/shared/notifications-page.js">
+</script>
+```
 
 </head>
 
 <body>
 
+```
+<!-- =========================
+     SIDEBAR + TOPBAR
+========================== -->
+
 <div id="layout"></div>
+
+<!-- =========================
+     PAGE CONTENT
+========================== -->
 
 <main class="content">
 
-<div class="container">
+    <div class="container">
 
-    <section class="card">
+        <!-- =========================
+             PAGE HEADER
+        ========================== -->
 
-        <div class="card-header">
-            <h2>Notifications</h2>
-        </div>
+        <section class="page-header">
 
-        <div id="notificationList"></div>
+            <div>
 
-    </section>
+                <h1>
+                    Notifications Center
+                </h1>
 
-</div>
+                <p>
+                    Stay updated with assignments,
+                    announcements and classroom activity.
+                </p>
+
+            </div>
+
+            <div class="header-actions">
+
+                <button class="btn-secondary">
+
+                    <i class="bi bi-check2-all"></i>
+
+                    Mark All Read
+
+                </button>
+
+                <button class="btn-primary">
+
+                    <i class="bi bi-arrow-clockwise"></i>
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- =========================
+             OVERVIEW
+        ========================== -->
+
+        <section class="notification-overview">
+
+            <div class="overview-card">
+
+                <div class="overview-icon blue">
+
+                    <i class="bi bi-bell-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        24
+                    </strong>
+
+                    <span>
+                        Total Notifications
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="overview-card">
+
+                <div class="overview-icon purple">
+
+                    <i class="bi bi-envelope-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        6
+                    </strong>
+
+                    <span>
+                        Unread Messages
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="overview-card">
+
+                <div class="overview-icon green">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        18
+                    </strong>
+
+                    <span>
+                        Read Notifications
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =========================
+             MAIN LAYOUT
+        ========================== -->
+
+        <section class="notification-layout">
+
+            <!-- =========================
+                 LEFT SIDE
+            ========================== -->
+
+            <div class="notification-main">
+
+                <!-- FILTER -->
+
+                <div class="notification-toolbar">
+
+                    <div class="notification-tabs">
+
+                        <button class="noti-tab active">
+                            All
+                        </button>
+
+                        <button class="noti-tab">
+                            Unread
+                        </button>
+
+                        <button class="noti-tab">
+                            Assignments
+                        </button>
+
+                        <button class="noti-tab">
+                            Classes
+                        </button>
+
+                    </div>
+
+                    <div class="notification-search">
+
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="text"
+                            placeholder="Search notifications...">
+
+                    </div>
+
+                </div>
+
+                <!-- NOTIFICATION LIST -->
+
+                <div
+                    id="notificationList"
+                    class="notification-list">
+
+                    <!-- ITEM -->
+
+                    <div class="notification-item unread notification-info">
+
+                        <div class="notification-top">
+
+                            <div>
+
+                                <div class="notification-title">
+
+                                    New Assignment Uploaded
+
+                                </div>
+
+                                <div class="notification-message">
+
+                                    Your teacher uploaded a new grammar
+                                    assignment for English Communication.
+                                    Submission deadline is tomorrow.
+
+                                </div>
+
+                            </div>
+
+                            <div class="notification-time">
+
+                                5 min ago
+
+                            </div>
+
+                        </div>
+
+                        <div class="notification-type type-info">
+
+                            Assignment
+
+                        </div>
+
+                    </div>
+
+                    <!-- ITEM -->
+
+                    <div class="notification-item notification-success">
+
+                        <div class="notification-top">
+
+                            <div>
+
+                                <div class="notification-title">
+
+                                    Submission Approved
+
+                                </div>
+
+                                <div class="notification-message">
+
+                                    Your speaking practice assignment
+                                    has been reviewed and approved
+                                    by the instructor.
+
+                                </div>
+
+                            </div>
+
+                            <div class="notification-time">
+
+                                1 hour ago
+
+                            </div>
+
+                        </div>
+
+                        <div class="notification-type type-success">
+
+                            Review
+
+                        </div>
+
+                    </div>
+
+                    <!-- ITEM -->
+
+                    <div class="notification-item notification-warning">
+
+                        <div class="notification-top">
+
+                            <div>
+
+                                <div class="notification-title">
+
+                                    Upcoming Deadline
+
+                                </div>
+
+                                <div class="notification-message">
+
+                                    Vocabulary quiz submission closes
+                                    in 3 hours. Please complete it soon.
+
+                                </div>
+
+                            </div>
+
+                            <div class="notification-time">
+
+                                3 hours ago
+
+                            </div>
+
+                        </div>
+
+                        <div class="notification-type type-warning">
+
+                            Deadline
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =========================
+                 RIGHT SIDE
+            ========================== -->
+
+            <aside class="notification-sidebar">
+
+                <!-- QUICK ACTION -->
+
+                <div class="notification-side-card">
+
+                    <div class="side-card-header">
+
+                        <h3>
+                            Quick Actions
+                        </h3>
+
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <button class="quick-action-btn">
+
+                            <i class="bi bi-check2-square"></i>
+
+                            Mark all as read
+
+                        </button>
+
+                        <button class="quick-action-btn">
+
+                            <i class="bi bi-trash3"></i>
+
+                            Clear notifications
+
+                        </button>
+
+                        <button class="quick-action-btn">
+
+                            <i class="bi bi-gear"></i>
+
+                            Notification settings
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- SUMMARY -->
+
+                <div class="notification-side-card">
+
+                    <div class="side-card-header">
+
+                        <h3>
+                            Activity Summary
+                        </h3>
+
+                    </div>
+
+                    <div class="activity-list">
+
+                        <div class="activity-item">
+
+                            <span>
+                                Assignments
+                            </span>
+
+                            <strong>
+                                12
+                            </strong>
+
+                        </div>
+
+                        <div class="activity-item">
+
+                            <span>
+                                Classes
+                            </span>
+
+                            <strong>
+                                7
+                            </strong>
+
+                        </div>
+
+                        <div class="activity-item">
+
+                            <span>
+                                System
+                            </span>
+
+                            <strong>
+                                5
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </div>
 
 </main>
+```
 
 </body>
+
 </html>

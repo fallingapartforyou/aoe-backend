@@ -13,7 +13,7 @@ async function loadStats() {
         const classes = await API.get("/api/class/my-classes");
         document.getElementById("totalClasses").innerText = classes.length;
 
-        const assignments = await API.get("/assignment/my-assignments");
+        const assignments = await API.get("/api/assignment/my-assignments");
         document.getElementById("totalAssignments").innerText = assignments.length;
 
         // teacher không có endpoint student list toàn hệ thống
@@ -27,14 +27,14 @@ async function loadStats() {
 
         document.getElementById("totalStudents").innerText = studentCount;
 
-        const submissions = await API.get("/submission/my");
+        const submissions = await API.get("/api/submission/my");
         document.getElementById("totalSubmissions").innerText = submissions.length;
 
     } catch (err) {
         console.log("Dashboard load error", err);
     }
 }
-
+ 
 // =========================
 // NOTIFICATIONS
 // =========================

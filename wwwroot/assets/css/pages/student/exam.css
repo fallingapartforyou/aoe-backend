@@ -1,322 +1,302 @@
-.exam-page{
+.exam-page {
+    min-height: 100vh;
 
-min-height:100vh;
+    background: var(--bg);
 
-background:#f8fafc;
+    padding: 24px;
+}
 
-padding:24px;
+.exam-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 24px 32px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 24px;
+
+    box-shadow: var(--shadow-md);
+
+    margin-bottom: 24px;
+}
+
+.exam-badge {
+    display: inline-block;
+
+    padding: 6px 12px;
+
+    background: var(--primary-soft);
+
+    color: var(--primary);
+
+    border-radius: 999px;
+
+    border: 1px solid var(--border);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    margin-bottom: 10px;
+}
+
+.exam-header h1 {
+    margin: 0;
+
+    font-size: 28px;
+
+    color: var(--text);
+}
+
+.exam-tools {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.warning-box {
+    background: var(--warning-soft);
+
+    color: var(--warning);
+
+    padding: 12px 16px;
+
+    border-radius: 12px;
+
+    border: 1px solid var(--border);
+
+    font-weight: 600;
+}
+
+.timer-box {
+    background: var(--primary);
+
+    color: var(--text);
+
+    padding: 14px 22px;
+
+    border-radius: 14px;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    min-width: 140px;
+
+    text-align: center;
+
+    box-shadow: var(--shadow-glow);
+}
+
+.exam-layout {
+    display: grid;
+
+    grid-template-columns:
+        1fr 340px;
+
+    gap: 24px;
+}
+
+.question-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.question-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    font-weight: 600;
+
+    color: var(--text);
+}
+
+.question-card {
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 24px;
+
+    padding: 32px;
+
+    min-height: 420px;
+
+    box-shadow: var(--shadow-md);
+}
+
+.question-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.exam-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-card {
+    background: var(--card);
+
+    padding: 24px;
+
+    border-radius: 20px;
+
+    border: 1px solid var(--border);
+
+    box-shadow: var(--shadow-md);
+}
+
+.question-nav {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.progress-bar {
+    height: 10px;
+
+    background: var(--surface-hover);
+
+    border-radius: 999px;
+
+    overflow: hidden;
+
+    margin: 12px 0;
+}
+
+.progress-fill {
+    height: 100%;
+
+    width: 0%;
+
+    background: linear-gradient(
+        90deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    transition: var(--transition);
+}
+
+.monitor-status {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+
+    color: var(--text);
+}
+
+.submit-btn {
+    width: 100%;
+
+    padding: 16px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    background: var(--danger);
+
+    color: var(--text);
+
+    border: none;
+
+    border-radius: 16px;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+}
+
+.submit-btn:hover {
+    filter: brightness(1.08);
+}
+
+.warning-toast {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    padding: 14px 20px;
+
+    background: var(--danger);
+
+    color: var(--text);
+
+    border-radius: 14px;
+
+    font-weight: 600;
+
+    display: none;
+
+    z-index: var(--z-modal);
+
+    box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 1024px) {
+
+    .exam-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .exam-sidebar {
+        order: -1;
+    }
 
 }
 
-.exam-header{
-
-display:flex;
-
-justify-content:space-between;
-align-items:center;
-
-padding:24px 32px;
-
-background:white;
-
-border-radius:24px;
-
-box-shadow:0 8px 30px rgba(15,23,42,.08);
-
-margin-bottom:24px;
-
-}
-
-.exam-badge{
-
-display:inline-block;
-
-padding:6px 12px;
-
-background:#dbeafe;
-
-color:#2563eb;
-
-border-radius:999px;
-
-font-size:12px;
-font-weight:600;
-
-margin-bottom:10px;
-
-}
-
-.exam-header h1{
-
-margin:0;
-
-font-size:28px;
-
-}
-
-.exam-tools{
-
-display:flex;
-align-items:center;
-gap:16px;
-
-}
-
-.warning-box{
-
-background:#fef3c7;
-
-padding:12px 16px;
-
-border-radius:12px;
-
-font-weight:600;
-
-}
-
-.timer-box{
-
-background:#2563eb;
-
-color:white;
-
-padding:14px 22px;
-
-border-radius:14px;
-
-font-size:20px;
-font-weight:700;
-
-min-width:140px;
-text-align:center;
-
-}
-
-.exam-layout{
-
-display:grid;
-
-grid-template-columns:
-1fr 340px;
-
-gap:24px;
-
-}
-
-.question-panel{
-
-display:flex;
-flex-direction:column;
-gap:20px;
-
-}
-
-.question-header{
-
-display:flex;
-
-justify-content:space-between;
-
-font-weight:600;
-
-}
-
-.question-card{
-
-background:white;
-
-border-radius:24px;
-
-padding:32px;
-
-min-height:420px;
-
-box-shadow:0 8px 30px rgba(15,23,42,.08);
-
-}
-
-.question-actions{
-
-display:flex;
-justify-content:space-between;
-
-}
-
-.exam-sidebar{
-
-display:flex;
-flex-direction:column;
-gap:20px;
-
-}
-
-.sidebar-card{
-
-background:white;
-
-padding:24px;
-
-border-radius:20px;
-
-box-shadow:0 8px 30px rgba(15,23,42,.08);
-
-}
-
-.question-nav{
-
-display:grid;
-
-grid-template-columns:
-repeat(5,1fr);
-
-gap:10px;
-
-margin-top:16px;
-
-}
-
-.progress-bar{
-
-height:10px;
-
-background:#e2e8f0;
-
-border-radius:999px;
-
-overflow:hidden;
-
-margin:12px 0;
-
-}
-
-.progress-fill{
-
-height:100%;
-
-width:0%;
-
-background:#2563eb;
-
-transition:.3s;
-
-}
-
-.monitor-status{
-
-display:flex;
-flex-direction:column;
-gap:12px;
-
-}
-
-.status-item{
-
-display:flex;
-justify-content:space-between;
-
-}
-
-.submit-btn{
-
-width:100%;
-
-padding:16px;
-
-font-size:16px;
-font-weight:700;
-
-background:#dc2626;
-
-color:white;
-
-border:none;
-
-border-radius:16px;
-
-cursor:pointer;
-
-}
-
-.warning-toast{
-
-position:fixed;
-
-right:20px;
-bottom:20px;
-
-padding:14px 20px;
-
-background:#ef4444;
-
-color:white;
-
-border-radius:14px;
-
-font-weight:600;
-
-display:none;
-
-z-index:9999;
-
-box-shadow:0 8px 20px rgba(0,0,0,.25);
-
-}
-
-@media(max-width:1024px){
-
-.exam-layout{
-
-grid-template-columns:1fr;
-
-}
-
-.exam-sidebar{
-
-order:-1;
-
-}
-
-}
-
-@media(max-width:768px){
-
-.exam-header{
-
-flex-direction:column;
-align-items:flex-start;
-gap:16px;
-
-}
-
-.question-nav{
-
-grid-template-columns:
-repeat(4,1fr);
-
-}
+@media (max-width: 768px) {
+
+    .exam-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .question-nav {
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
 
 }
 
 .exam-security-panel {
-
     position: sticky;
 
     top: 20px;
 
-    background: white;
+    background: var(--card);
+
+    border: 1px solid var(--border);
 
     border-radius: 16px;
 
     padding: 20px;
 
-    box-shadow:
-        0 2px 10px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-sm);
 
     margin-bottom: 20px;
 }
 
 .security-item {
-
     display: flex;
 
     justify-content: space-between;
@@ -325,28 +305,198 @@ repeat(4,1fr);
 
     padding-bottom: 10px;
 
-    border-bottom:
-        1px solid #e2e8f0;
+    border-bottom: 1px solid var(--divider);
+
+    color: var(--text);
 }
 
 .anti-cheat-popup {
-
     position: fixed;
 
     top: 20px;
 
     right: 20px;
 
-    background: #dc2626;
+    background: var(--danger);
 
-    color: white;
+    color: var(--text);
 
     padding: 14px 20px;
 
     border-radius: 10px;
 
-    z-index: 99999;
+    z-index: var(--z-modal);
 
-    animation:
-        fadeIn 0.3s ease;
+    animation: fadeIn 0.3s ease;
+
+    box-shadow: var(--shadow-lg);
+}
+
+/* =========================
+   MODERN ANSWER OPTION
+========================= */
+
+.options {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    margin-top: 28px;
+}
+
+.option-item {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 22px 24px;
+
+    border-radius: 20px;
+
+    border:
+        2px solid rgba(15,118,110,.12);
+
+    background:
+        rgba(255,255,255,.82);
+
+    backdrop-filter:
+        blur(10px);
+
+    cursor: pointer;
+
+    transition:
+        transform .18s ease,
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: var(--text);
+
+    overflow: hidden;
+}
+
+/* hide radio completely */
+
+.option-item input[type="radio"] {
+
+    display: none;
+}
+
+/* hover */
+
+.option-item:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(20,184,166,.30);
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f0fdfa
+        );
+
+    box-shadow:
+        0 12px 26px rgba(15,118,110,.08);
+}
+
+/* left glow */
+
+.option-item::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #14B8A6,
+            #0F766E
+        );
+
+    transition:
+        width .2s ease;
+}
+
+/* selected */
+
+.option-item:has(input:checked) {
+
+    border-color:
+        rgba(15,118,110,.45);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(240,253,250,.98),
+            rgba(220,252,231,.92)
+        );
+
+    box-shadow:
+        0 16px 34px rgba(15,118,110,.12);
+
+    padding-left: 30px;
+}
+
+.option-item:has(input:checked)::before {
+
+    width: 6px;
+}
+
+/* selected tick */
+
+.option-item:has(input:checked)::after {
+
+    content: "✓";
+
+    position: absolute;
+
+    right: 22px;
+
+    width: 32px;
+
+    height: 32px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #14B8A6,
+            #0F766E
+        );
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 8px 18px rgba(20,184,166,.25);
 }

@@ -33,7 +33,7 @@ async function changePassword() {
     try {
 
         await API.request(
-            "/user/change-password",
+            "/api/user/change-password",
             "PUT",
             {
                 oldPassword,

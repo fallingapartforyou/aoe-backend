@@ -35,7 +35,7 @@ try
 
 await API.request(
 
-"/auth/register",
+"/api/auth/register",
 
 "POST",
 
