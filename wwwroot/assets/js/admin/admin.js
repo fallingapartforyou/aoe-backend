@@ -4,19 +4,20 @@ const token =
 const role =
     localStorage.getItem("role");
 
-// =========================
-// AUTH CHECK
-// =========================
+const API_BASE =
+    (
+        window.location.hostname === "localhost"
+    )
+        ?
+        "https://localhost:7225/api/admin"
+        :
+        "https://aoe-backend-3.onrender.com/api/admin";
 
 if (!token || role !== "admin")
 {
     location.href =
         "/pages/auth/login.html";
 }
-
-// =========================
-// ELEMENTS
-// =========================
 
 const statsGrid =
     document.getElementById(
@@ -68,10 +69,6 @@ const logoutBtn =
         "logoutBtn"
     );
 
-// =========================
-// FETCH WRAPPER
-// =========================
-
 async function request(
     url,
     options = {}
@@ -108,10 +105,6 @@ async function request(
 
     return data;
 }
-
-// =========================
-// LOAD DASHBOARD
-// =========================
 
 async function loadDashboard()
 {
@@ -170,10 +163,6 @@ async function loadDashboard()
         alert(err.message);
     }
 }
-
-// =========================
-// LOAD USERS
-// =========================
 
 async function loadUsers()
 {
@@ -339,10 +328,6 @@ async function loadUsers()
     }
 }
 
-// =========================
-// CREATE USER
-// =========================
-
 async function createUser()
 {
     try
@@ -400,10 +385,6 @@ async function createUser()
     }
 }
 
-// =========================
-// BAN USER
-// =========================
-
 async function banUser(id)
 {
     try
@@ -423,10 +404,6 @@ async function banUser(id)
     }
 }
 
-// =========================
-// UNBAN USER
-// =========================
-
 async function unbanUser(id)
 {
     try
@@ -445,10 +422,6 @@ async function unbanUser(id)
         alert(err.message);
     }
 }
-
-// =========================
-// DELETE USER
-// =========================
 
 async function deleteUser(id)
 {
@@ -478,10 +451,6 @@ async function deleteUser(id)
         alert(err.message);
     }
 }
-
-// =========================
-// EVENTS
-// =========================
 
 searchBtn.addEventListener(
     "click",
@@ -520,13 +489,9 @@ logoutBtn.addEventListener(
         localStorage.clear();
 
         location.href =
-            "../auth/login.html";
+            "/pages/auth/login.html";
     }
 );
-
-// =========================
-// INIT
-// =========================
 
 loadDashboard();
 
