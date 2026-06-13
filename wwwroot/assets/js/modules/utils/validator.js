@@ -16,8 +16,10 @@ return /^[0-9]{1,11}$/
 
 name(name) {
 
-return /^[^\s]{1,25}$/
+return /^[\p{L}\s]{1,50}$/u
 .test(name);
+
+},
 
 },
 

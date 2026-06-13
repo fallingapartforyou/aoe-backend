@@ -43,5 +43,20 @@ window.Storage = {
 
     removeRole() {
         localStorage.removeItem("role");
-    }
+    },
+
+    clear() {
+
+    localStorage.removeItem(
+        "token"
+    );
+
+    localStorage.removeItem(
+        "user"
+    );
+
+    localStorage.removeItem(
+        "role"
+    );
+}
 };

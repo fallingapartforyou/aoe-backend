@@ -22,6 +22,55 @@ namespace aoe.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("aoe.Models.ActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("action");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("integer")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("entity_type");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("text")
+                        .HasColumnName("ip_address");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("activity_logs");
+                });
+
             modelBuilder.Entity("aoe.Models.Answer", b =>
                 {
                     b.Property<int>("Id")
@@ -56,7 +105,7 @@ namespace aoe.Migrations
 
                     b.HasIndex("SubmissionId");
 
-                    b.ToTable("answers", (string)null);
+                    b.ToTable("answers");
                 });
 
             modelBuilder.Entity("aoe.Models.Assignment", b =>
@@ -117,7 +166,7 @@ namespace aoe.Migrations
                     b.HasKey("Id")
                         .HasName("assignments_pkey");
 
-                    b.ToTable("assignments", (string)null);
+                    b.ToTable("assignments");
                 });
 
             modelBuilder.Entity("aoe.Models.AssignmentClass", b =>
@@ -147,7 +196,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "ClassId" }, "idx_assignment_classes_class");
 
-                    b.ToTable("assignment_classes", (string)null);
+                    b.ToTable("assignment_classes");
                 });
 
             modelBuilder.Entity("aoe.Models.Class", b =>
@@ -189,7 +238,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "TeacherId" }, "idx_classes_teacher");
 
-                    b.ToTable("classes", (string)null);
+                    b.ToTable("classes");
                 });
 
             modelBuilder.Entity("aoe.Models.ClassJoinRequest", b =>
@@ -229,7 +278,7 @@ namespace aoe.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("class_join_requests", (string)null);
+                    b.ToTable("class_join_requests");
                 });
 
             modelBuilder.Entity("aoe.Models.ClassStudent", b =>
@@ -257,7 +306,54 @@ namespace aoe.Migrations
                     b.HasIndex(new[] { "ClassId", "StudentId" }, "class_students_class_id_student_id_key")
                         .IsUnique();
 
-                    b.ToTable("class_students", (string)null);
+                    b.ToTable("class_students");
+                });
+
+            modelBuilder.Entity("aoe.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_read");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("notifications");
                 });
 
             modelBuilder.Entity("aoe.Models.Question", b =>
@@ -303,7 +399,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "AssignmentId" }, "idx_questions_assignment");
 
-                    b.ToTable("questions", (string)null);
+                    b.ToTable("questions");
                 });
 
             modelBuilder.Entity("aoe.Models.QuestionOption", b =>
@@ -335,7 +431,7 @@ namespace aoe.Migrations
                     b.HasIndex(new[] { "QuestionId", "Label" }, "question_options_question_id_label_key")
                         .IsUnique();
 
-                    b.ToTable("question_options", (string)null);
+                    b.ToTable("question_options");
                 });
 
             modelBuilder.Entity("aoe.Models.Result", b =>
@@ -367,13 +463,25 @@ namespace aoe.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("submitted_at");
 
+                    b.Property<bool>("Suspicious")
+                        .HasColumnType("boolean")
+                        .HasColumnName("suspicious");
+
+                    b.Property<string>("SuspiciousReason")
+                        .HasColumnType("text")
+                        .HasColumnName("suspicious_reason");
+
+                    b.Property<int>("TabSwitchCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("tab_switch_count");
+
                     b.Property<int>("TimeSpentSeconds")
                         .HasColumnType("integer")
                         .HasColumnName("time_spent_seconds");
 
                     b.HasKey("Id");
 
-                    b.ToTable("results", (string)null);
+                    b.ToTable("results");
                 });
 
             modelBuilder.Entity("aoe.Models.StudentAnswer", b =>
@@ -399,9 +507,12 @@ namespace aoe.Migrations
                         .HasColumnName("is_correct");
 
                     b.Property<int>("ResultId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("result_id");
 
                     b.HasKey("StudentId", "AssignmentId", "QuestionId");
+
+                    b.HasIndex("ResultId");
 
                     b.ToTable("student_answers", (string)null);
                 });
@@ -445,7 +556,7 @@ namespace aoe.Migrations
 
                     b.HasIndex(new[] { "StudentId" }, "idx_submissions_student");
 
-                    b.ToTable("submissions", (string)null);
+                    b.ToTable("submissions");
                 });
 
             modelBuilder.Entity("aoe.Models.User", b =>
@@ -502,7 +613,18 @@ namespace aoe.Migrations
                     b.HasIndex(new[] { "Phone" }, "users_phone_key")
                         .IsUnique();
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
+                });
+
+            modelBuilder.Entity("aoe.Models.ActivityLog", b =>
+                {
+                    b.HasOne("aoe.Models.User", "User")
+                        .WithMany("ActivityLogs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("aoe.Models.Answer", b =>
@@ -599,6 +721,17 @@ namespace aoe.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("aoe.Models.Notification", b =>
+                {
+                    b.HasOne("aoe.Models.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("aoe.Models.Question", b =>
                 {
                     b.HasOne("aoe.Models.Assignment", "Assignment")
@@ -621,6 +754,17 @@ namespace aoe.Migrations
                         .HasConstraintName("question_options_question_id_fkey");
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("aoe.Models.StudentAnswer", b =>
+                {
+                    b.HasOne("aoe.Models.Result", "Result")
+                        .WithMany("StudentAnswers")
+                        .HasForeignKey("ResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Result");
                 });
 
             modelBuilder.Entity("aoe.Models.Submission", b =>
@@ -669,6 +813,11 @@ namespace aoe.Migrations
                     b.Navigation("QuestionOptions");
                 });
 
+            modelBuilder.Entity("aoe.Models.Result", b =>
+                {
+                    b.Navigation("StudentAnswers");
+                });
+
             modelBuilder.Entity("aoe.Models.Submission", b =>
                 {
                     b.Navigation("Answers");
@@ -676,11 +825,15 @@ namespace aoe.Migrations
 
             modelBuilder.Entity("aoe.Models.User", b =>
                 {
+                    b.Navigation("ActivityLogs");
+
                     b.Navigation("ClassStudents");
 
                     b.Navigation("Classes");
 
                     b.Navigation("JoinRequests");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Submissions");
                 });

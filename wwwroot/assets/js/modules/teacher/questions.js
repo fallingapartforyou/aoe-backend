@@ -1014,18 +1014,22 @@ function renderAIPreview() {
     }
 
     box.style.display = "block";
-    const selectedCount = aiQuestions.filter(x => x.selected).length;
+
+    const selectedCount =
+        aiQuestions.filter(x =>
+            x.selected
+        ).length;
+
     list.innerHTML = `
-    <div
-        class="ai-summary">
+        <div class="ai-summary">
 
-        Selected:
-        ${selectedCount}
-        /
-        ${aiQuestions.length}
+            Selected:
+            ${selectedCount}
+            /
+            ${aiQuestions.length}
 
-    </div>
-`;
+        </div>
+    `;
 
     aiQuestions.forEach((q, index) => {
 
@@ -1033,48 +1037,66 @@ function renderAIPreview() {
             document.createElement("div");
 
         div.className =
-            "ai-preview-card";
+            "ai-preview-item";
 
         div.innerHTML = `
-    <label
-        class="ai-select-row">
 
-        <input
-            type="checkbox"
-            ${q.selected ? "checked" : ""}
-            onchange="toggleAIQuestion(${index})">
+            <div class="ai-preview-top">
 
-        Keep this question
+                <div>
 
-    </label>
+                    <div class="ai-preview-question">
 
-    <h4>
-        Question ${index + 1}
-    </h4>
+                        Question ${index + 1}
 
-    <p>
-        ${q.content}
-    </p>
+                    </div>
 
-    <div>
+                    <div class="ai-preview-content">
 
-        <b>Correct:</b>
+                        ${q.content}
 
-        ${q.correctAnswer}
+                    </div>
 
-    </div>
-    <div class="ai-actions">
+                    <div class="ai-preview-answer">
 
-    <button
-        class="btn-secondary"
-        onclick="regenerateQuestion(${index})">
+                        Correct:
+                        ${q.correctAnswer}
 
-        Regenerate
+                    </div>
 
-    </button>
+                </div>
 
-</div>
-`;
+                <label class="ai-keep-box">
+
+                    <input
+                        type="checkbox"
+                        ${q.selected ? "checked" : ""}
+                        onchange="toggleAIQuestion(${index})">
+
+                    <span class="custom-check"></span>
+
+                    <span class="keep-label">
+
+                        Keep this question
+
+                    </span>
+
+                </label>
+
+            </div>
+
+            <div class="ai-actions">
+
+                <button
+                    class="btn-secondary"
+                    onclick="regenerateQuestion(${index})">
+
+                    Regenerate
+
+                </button>
+
+            </div>
+        `;
 
         list.appendChild(div);
     });

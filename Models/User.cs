@@ -38,6 +38,12 @@ public partial class User
     [Column("created_at", TypeName = "timestamp without time zone")]
     public DateTime? CreatedAt { get; set; }
 
+    [Column("last_login_at", TypeName = "timestamp without time zone")]
+    public DateTime? LastLoginAt { get; set; }
+
+    [Column("is_banned")]
+    public bool IsBanned { get; set; } = false;
+
     [InverseProperty("Student")]
     public virtual ICollection<ClassStudent> ClassStudents { get; set; } = new List<ClassStudent>();
 

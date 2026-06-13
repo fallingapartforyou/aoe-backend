@@ -103,6 +103,18 @@ namespace aoe.Controllers
                     message = "Wrong password"
                 });
 
+            user.LastLoginAt = DateTime.Now;
+
+            _context.SaveChanges();
+
+            if (user.IsBanned)
+            {
+                return Unauthorized(new
+                {
+                    message = "Account has been banned"
+                });
+            }
+
             var token = GenerateToken(user);
 
             return Ok(new

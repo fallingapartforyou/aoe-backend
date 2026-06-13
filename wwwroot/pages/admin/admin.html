@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        Admin Panel
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../../assets/css/admin/admin.css" />
+
+</head>
+
+<body>
+
+    <!-- =========================
+         PAGE
+    ========================== -->
+
+    <div class="admin-page">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="admin-header">
+
+            <div>
+
+                <h1>
+                    Admin Dashboard
+                </h1>
+
+                <p>
+                    Account management & statistics
+                </p>
+
+            </div>
+
+            <button
+                id="logoutBtn"
+                class="logout-btn">
+
+                Logout
+
+            </button>
+
+        </div>
+
+        <!-- =========================
+             STATISTICS
+        ========================== -->
+
+        <div
+            class="stats-grid"
+            id="statsGrid">
+
+            <!-- injected -->
+
+        </div>
+
+        <!-- =========================
+             TOOLBAR
+        ========================== -->
+
+        <div class="toolbar">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name or email..." />
+
+            <select id="roleFilter">
+
+                <option value="">
+                    All Roles
+                </option>
+
+                <option value="teacher">
+                    Teacher
+                </option>
+
+                <option value="student">
+                    Student
+                </option>
+
+            </select>
+
+            <button id="searchBtn">
+                Search
+            </button>
+
+            <button id="openCreateBtn">
+                Create User
+            </button>
+
+        </div>
+
+        <!-- =========================
+             USERS TABLE
+        ========================== -->
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Name</th>
+
+                        <th>Email</th>
+
+                        <th>Phone</th>
+
+                        <th>Role</th>
+
+                        <th>Password</th>
+
+                        <th>Status</th>
+
+                        <th>Last Login</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="usersTable">
+
+                    <!-- injected -->
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         MODAL
+    ========================== -->
+
+    <div
+        class="modal hidden"
+        id="createModal">
+
+        <div class="modal-content">
+
+            <h2>
+                Create User
+            </h2>
+
+            <input
+                type="text"
+                id="nameInput"
+                placeholder="Name" />
+
+            <input
+                type="email"
+                id="emailInput"
+                placeholder="Email" />
+
+            <input
+                type="text"
+                id="phoneInput"
+                placeholder="Phone" />
+
+            <input
+                type="text"
+                id="passwordInput"
+                placeholder="Password" />
+
+            <select id="roleInput">
+
+                <option value="teacher">
+                    Teacher
+                </option>
+
+                <option value="student">
+                    Student
+                </option>
+
+            </select>
+
+            <div class="modal-actions">
+
+                <button id="createUserBtn">
+                    Create
+                </button>
+
+                <button id="closeModalBtn">
+                    Cancel
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../../assets/js/admin/admin.js"></script>
+
+</body>
+
+</html>

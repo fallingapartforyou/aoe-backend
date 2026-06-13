@@ -111,11 +111,117 @@ namespace aoe.Controllers
         }
 
         // ================= REVIEW =================
-        [HttpGet("review/{assignmentId}/{studentId}")]
-        public IActionResult Review(int assignmentId, int studentId)
+        [HttpGet("review/{resultId}")]
+        public IActionResult Review(int resultId)
         {
             var teacherId = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier
+                )
+            );
+
+            var result =
+                _context.Results
+                .FirstOrDefault(x =>
+                    x.Id == resultId
+                );
+
+            if (result == null)
+                return NotFound();
+
+            bool ownsAssignment =
+            (
+                from ac in _context.AssignmentClasses
+                join c in _context.Classes
+                on ac.ClassId equals c.Id
+                where ac.AssignmentId == result.AssignmentId
+                && c.TeacherId == teacherId
+                select ac
+            ).Any();
+
+            if (!ownsAssignment)
+                return Unauthorized();
+
+            var review =
+                _context.StudentAnswers
+                .Where(sa =>
+                    sa.ResultId == resultId
+                )
+                .Select(sa => new
+                {
+                    sa.QuestionId,
+
+                    Content =
+                        _context.Questions
+                        .Where(q =>
+                            q.Id == sa.QuestionId
+                        )
+                        .Select(q => q.Content)
+                        .FirstOrDefault(),
+
+                    Type =
+                        _context.Questions
+                        .Where(q =>
+                            q.Id == sa.QuestionId
+                        )
+                        .Select(q => q.Type)
+                        .FirstOrDefault(),
+
+                    CorrectAnswer =
+                        _context.Questions
+                        .Where(q =>
+                            q.Id == sa.QuestionId
+                        )
+                        .Select(q => q.CorrectAnswer)
+                        .FirstOrDefault(),
+
+                    StudentAnswer =
+                        sa.Answer,
+
+                    sa.IsCorrect,
+
+                    Explanation =
+                        _context.Questions
+                        .Where(q =>
+                            q.Id == sa.QuestionId
+                        )
+                        .Select(q => q.Explanation)
+                        .FirstOrDefault(),
+
+                    Options =
+                        _context.QuestionOptions
+                        .Where(o =>
+                            o.QuestionId == sa.QuestionId
+                        )
+                        .Select(o => o.Content)
+                        .ToList()
+                })
+                .ToList(); 
+            
+            return Ok(new
+            {
+                result.Id,
+                result.Score,
+                result.AttemptNumber,
+                result.SubmittedAt,
+                result.TimeSpentSeconds,
+                result.TabSwitchCount,
+                result.Suspicious,
+                result.SuspiciousReason,
+
+                Review = review
+            });
+        }
+
+        [HttpGet("attempts/{assignmentId}/{studentId}")]
+        public IActionResult Attempts(
+    int assignmentId,
+    int studentId)
+        {
+            var teacherId = int.Parse(
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier
+                )
             );
 
             bool ownsAssignment =
@@ -131,49 +237,30 @@ namespace aoe.Controllers
             if (!ownsAssignment)
                 return Unauthorized();
 
-            // 🔥 LOAD ALL OPTIONS TRƯỚC (FIX N+1)
-            var review = _context.Questions
-    .Where(q =>
-        _context.StudentAnswers.Any(sa =>
-            sa.QuestionId == q.Id &&
-            sa.StudentId == studentId &&
-            sa.AssignmentId == assignmentId
-        )
-    )
-    .Select(q => new
-    {
-        q.Id,
-        q.Content,
-        q.Type,
-        q.CorrectAnswer,
+            var attempts =
+                _context.Results
+                .Where(x =>
+                    x.AssignmentId == assignmentId
+                    &&
+                    x.StudentId == studentId
+                )
+                .OrderByDescending(x =>
+                    x.AttemptNumber
+                )
+                .Select(x => new
+                {
+                    x.Id,
+                    x.AttemptNumber,
+                    x.Score,
+                    x.SubmittedAt,
+                    x.TimeSpentSeconds,
+                    x.TabSwitchCount,
+                    x.Suspicious,
+                    x.SuspiciousReason
+                })
+                .ToList();
 
-        Answer = _context.StudentAnswers
-            .Where(sa =>
-                sa.QuestionId == q.Id &&
-                sa.StudentId == studentId &&
-                sa.AssignmentId == assignmentId
-            )
-            .Select(sa => sa.Answer)
-            .FirstOrDefault(),
-
-        IsCorrect = _context.StudentAnswers
-            .Where(sa =>
-                sa.QuestionId == q.Id &&
-                sa.StudentId == studentId &&
-                sa.AssignmentId == assignmentId
-            )
-            .Select(sa => sa.IsCorrect)
-            .FirstOrDefault(),
-
-        q.Explanation,
-
-        Options = q.QuestionOptions
-            .Select(o => o.Content)
-            .ToList()
-    })
-    .ToList();
-
-            return Ok(review);
+            return Ok(attempts);
         }
     }
 }

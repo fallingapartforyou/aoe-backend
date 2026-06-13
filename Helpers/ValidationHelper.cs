@@ -19,7 +19,10 @@ namespace aoe.Helpers
 
         public static bool ValidName(string name)
         {
-            return name.Length <= 25 && !name.Contains(" ");
+            return Regex.IsMatch(
+                name,
+                @"^[\p{L}\s]{1,50}$"
+            );
         }
 
         public static bool ValidPassword(string password)

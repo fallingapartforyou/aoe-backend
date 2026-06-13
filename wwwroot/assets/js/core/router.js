@@ -6,6 +6,13 @@ const role =
 Storage.getRole();
 
 if (
+    role === CONFIG.ROLES.ADMIN
+)
+
+location.href =
+"/pages/admin/admin.html";
+
+else if (
 role === CONFIG.ROLES.TEACHER
 )
 

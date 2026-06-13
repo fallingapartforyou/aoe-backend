@@ -1,39 +1,170 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<title>Review</title>
 
-<link rel="stylesheet" href="../../assets/css/base.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
+    <meta charset="UTF-8">
 
-<script src="../../assets/js/core/api.js"></script>
-<script src="../../assets/js/layout/layout.js"></script>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-<script defer src="../../assets/js/modules/teacher/review.js"></script>
-<link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>
+        Review Result
+    </title>
+
+    <!-- =========================
+         CORE
+    ========================== -->
+
+    <link rel="stylesheet"
+    href="../../assets/css/core/variables.css">
+
+    <link rel="stylesheet"
+    href="../../assets/css/core/base.css">
+
+    <link rel="stylesheet"
+    href="../../assets/css/core/animation.css">
+
+    <!-- =========================
+         LAYOUT
+    ========================== -->
+
+    <link rel="stylesheet"
+    href="../../assets/css/layout/sidebar.css">
+
+    <link rel="stylesheet"
+    href="../../assets/css/layout/layout.css">
+
+    <!-- =========================
+         COMPONENTS
+    ========================== -->
+
+    <link rel="stylesheet"
+    href="../../assets/css/components/button.css">
+
+    <link rel="stylesheet"
+    href="../../assets/css/components/card.css">
+
+    <link rel="stylesheet"
+    href="../../assets/css/components/form.css">
+
+    <link rel="stylesheet"
+    href="../../assets/css/components/table.css">
+
+    <!-- =========================
+         PAGE
+    ========================== -->
+
+    <link rel="stylesheet"
+    href="../../assets/css/pages/teacher/review.css">
+
 </head>
 
 <body>
 
-<div id="layout"></div>
+    <div id="layout"></div>
 
-<div class="content">
-<div class="container">
+<div class="page-container">
 
-    <div class="topbar">
-        <button onclick="history.back()">Back</button>
-        <div class="topbar-title">Student Review</div>
-    </div>
+    <main class="layout-main">
 
-    <div id="reviewList"></div>
+        <header class="layout-topbar">
+
+            <div>
+
+                <h1 class="page-title">
+                    Result Review
+                </h1>
+
+                <p class="page-subtitle">
+                    Review student answers and attempt details
+                </p>
+
+            </div>
+
+            <button
+                class="btn btn-secondary"
+                onclick="history.back()">
+
+                Back
+
+            </button>
+
+        </header>
+
+        <section class="layout-content">
+
+            <div
+                id="reviewSummary"
+                class="review-summary-grid">
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Attempts
+                        </h3>
+
+                        <p>
+                            Switch between student attempts
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="attemptList"
+                    class="attempt-list">
+                </div>
+
+            </div>
+
+            <div
+                id="reviewQuestions"
+                class="review-questions">
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
-</div>
+
+    <!-- =========================
+         CORE
+    ========================== -->
+
+    <script src="../../assets/js/core/config.js"></script>
+
+    <script src="../../assets/js/core/storage.js"></script>
+
+    <script src="../../assets/js/core/logout.js"></script>
+
+    <script src="../../assets/js/core/api.js"></script>
+
+    <script src="../../assets/js/core/guard.js"></script>
+
+    <!-- =========================
+         LAYOUT
+    ========================== -->
+
+    <script src="../../assets/js/layout/sidebar.js"></script>
+
+    <script src="../../assets/js/layout/layout.js"></script>
+
+    <!-- =========================
+         PAGE
+    ========================== -->
+
+    <script src="../../assets/js/modules/teacher/review.js"></script>
 
 </body>
+
 </html>
