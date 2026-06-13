@@ -1,6 +1,3 @@
-const API_BASE =
-    "https://localhost:7225/api/admin";
-
 const token =
     localStorage.getItem("token");
 
