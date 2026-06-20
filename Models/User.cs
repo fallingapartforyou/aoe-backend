@@ -61,4 +61,10 @@ public partial class User
 
     [InverseProperty(nameof(ActivityLog.User))]
     public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
+
+    [InverseProperty(nameof(SkillTask.Teacher))]
+    public virtual ICollection<SkillTask>
+    SkillTasks
+    { get; set; }
+    = new List<SkillTask>();
 }

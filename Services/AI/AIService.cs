@@ -1,6 +1,7 @@
 ﻿using aoe.DTOs.AI;
 using System.Text;
 using System.Text.Json;
+using System.Net;
 using static aoe.Services.AI.PromptBuilder;
 
 namespace aoe.Services.AI
@@ -97,27 +98,79 @@ namespace aoe.Services.AI
             };
 
             var json =
-                JsonSerializer.Serialize(body);
+     JsonSerializer.Serialize(body);
 
             var content =
                 new StringContent(
                     json,
                     Encoding.UTF8,
-                    "application/json");
+                    "application/json"
+                );
 
-            var response =
-                await _httpClient
-                .PostAsync(url, content);
+            HttpResponseMessage response;
+            string responseText = "";
 
-            response.EnsureSuccessStatusCode();
+            for (
+                int attempt = 1;
+                attempt <= 3;
+                attempt++
+            )
+            {
+                response =
+                    await _httpClient
+                    .PostAsync(
+                        url,
+                        content
+                    );
 
-            var responseText =
-                await response
-                .Content
-                .ReadAsStringAsync();
+                responseText =
+                    await response
+                    .Content
+                    .ReadAsStringAsync();
+
+                Console.WriteLine(
+                    $"===== GEMINI RESPONSE (Attempt {attempt}) ====="
+                );
+
+                Console.WriteLine(
+                    responseText
+                );
+
+                Console.WriteLine(
+                    "==============================================="
+                );
+
+                if (
+                    response.IsSuccessStatusCode
+                )
+                {
+                    break;
+                }
+
+                if (
+                    response.StatusCode ==
+                    HttpStatusCode.ServiceUnavailable
+                )
+                {
+                    if (attempt < 3)
+                    {
+                        await Task.Delay(
+                            3000
+                        );
+
+                        continue;
+                    }
+                }
+
+                throw new Exception(
+                    $"Gemini Error {(int)response.StatusCode}: {responseText}"
+                );
+            }
 
             using var doc =
-                JsonDocument.Parse(responseText);
+                JsonDocument.Parse(
+                    responseText
+                );
 
             return doc
                 .RootElement
@@ -162,6 +215,15 @@ namespace aoe.Services.AI
                 risk = 100;
 
             return risk;
+        }
+
+        public async Task<string> GenerateRaw(
+    string prompt
+)
+        {
+            return await SendPrompt(
+                prompt
+            );
         }
     }
 }

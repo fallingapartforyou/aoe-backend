@@ -43,6 +43,14 @@ public partial class AoeDbContext : DbContext
 
     public DbSet<ActivityLog> ActivityLogs { get; set; }
 
+    public virtual DbSet<SkillTask> SkillTasks { get; set; }
+
+    public virtual DbSet<SkillSubmission> SkillSubmissions { get; set; }
+
+    public virtual DbSet<SkillReview> SkillReviews { get; set; }
+
+    public virtual DbSet<SkillAnnotation> SkillAnnotations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Answer>(entity =>

@@ -1,0 +1,255 @@
+/* =========================
+   PAGE
+========================= */
+
+.page-content {
+
+    margin-left:
+        var(--sidebar-width);
+
+    padding:
+        32px;
+
+    min-height:
+        100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.skills-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+}
+
+.skills-header p {
+
+    margin-top: 6px;
+}
+
+/* =========================
+   TABLE CARD
+========================= */
+
+.card {
+
+    background:
+        var(--card);
+
+    border:
+        2px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-lg);
+
+    padding: 24px;
+
+    box-shadow:
+        var(--shadow-sm);
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.action-group {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.action-group .btn {
+
+    min-width: 90px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        var(--modal-overlay);
+
+    z-index:
+        var(--z-modal);
+}
+
+.modal.hidden {
+
+    display: none;
+}
+
+.modal-content {
+
+    width: 100%;
+
+    max-width: 720px;
+
+    background:
+        var(--surface);
+
+    border:
+        2px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-xl);
+
+    padding: 28px;
+
+    box-shadow:
+        var(--shadow-lg);
+}
+
+/* =========================
+   MODAL HEADER
+========================= */
+
+.modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+.modal-header button {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        var(--danger-soft);
+
+    color:
+        var(--danger);
+
+    font-size: 22px;
+
+    font-weight: 700;
+}
+
+/* =========================
+   BODY
+========================= */
+
+.modal-body {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.form-group label {
+
+    font-weight: 700;
+
+    color:
+        var(--text-soft);
+}
+
+/* =========================
+   TEXTAREA
+========================= */
+
+textarea {
+
+    min-height: 220px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.modal-footer {
+
+    margin-top: 22px;
+
+    display: flex;
+
+    justify-content: flex-end;
+}
+
+/* =========================
+   UPLOAD
+========================= */
+
+input[type="file"] {
+
+    padding: 12px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 992px)
+{
+    .page-content {
+
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px)
+{
+    .skills-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 14px;
+    }
+
+    .action-group {
+
+        flex-direction: column;
+    }
+
+    .action-group .btn {
+
+        width: 100%;
+    }
+}

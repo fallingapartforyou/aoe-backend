@@ -11,5 +11,7 @@ namespace aoe.Services.AI
         Task<string> ReviewAnswer(ReviewAIAnswerDTO dto);
 
         Task<string> AnalyzeCheating(AnalyzeCheatingDTO dto);
+
+        Task<string> GenerateRaw(string prompt);
     }
 }

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Skills Workspace
+    </title>
+
+    <link rel="stylesheet"
+          href="../../assets/css/core/variables.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/core/base.css">      
+
+    <link rel="stylesheet"
+          href="../../assets/css/components/button.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/components/card.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/components/form.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/components/modal.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/layout/sidebar.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/layout/topbar.css">
+
+    <link rel="stylesheet"
+          href="../../assets/css/pages/teacher/skills.css">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</head>
+
+<body>
+
+    <div id="layout"></div>
+
+    <main class="page-content">
+
+        <!-- HEADER -->
+
+        <section class="skills-header">
+
+            <div>
+
+                <h1>
+                    Skills Workspace
+                </h1>
+
+                <p>
+                    Manage writing, reading,
+                    listening and speaking tasks
+                </p>
+
+            </div>
+
+            <button
+                id="openCreateBtn"
+                class="btn btn-primary">
+
+                <i class="bi bi-plus-lg"></i>
+
+                <span>
+                    Create Task
+                </span>
+
+            </button>
+
+        </section>
+
+        <!-- DASHBOARD -->
+
+        <section class="skills-dashboard">
+
+            <div class="card skill-stat-card">
+
+                <span>
+                    Total Tasks
+                </span>
+
+                <h2 id="totalTasks">
+                    0
+                </h2>
+
+            </div>
+
+            <div class="card skill-stat-card">
+
+                <span>
+                    Submissions
+                </span>
+
+                <h2 id="totalSubmissions">
+                    0
+                </h2>
+
+            </div>
+
+            <div class="card skill-stat-card">
+
+                <span>
+                    Reviewed
+                </span>
+
+                <h2 id="reviewedCount">
+                    0
+                </h2>
+
+            </div>
+
+            <div class="card skill-stat-card">
+
+                <span>
+                    Pending
+                </span>
+
+                <h2 id="pendingCount">
+                    0
+                </h2>
+
+            </div>
+
+        </section>
+
+        <!-- TASKS -->
+
+        <section>
+
+            <div id="skillsGrid"
+                 class="skills-grid">
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- CREATE MODAL -->
+
+    <div id="createModal"
+         class="modal hidden">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3>
+                    Create Skill Task
+                </h3>
+
+                <button
+                    id="closeModalBtn">
+
+                    ×
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="form-group">
+
+                    <label>
+                        Skill Type
+                    </label>
+
+                    <select id="skillType">
+
+                        <option>
+                            Writing
+                        </option>
+
+                        <option>
+                            Reading
+                        </option>
+
+                        <option>
+                            Listening
+                        </option>
+
+                        <option>
+                            Speaking
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Input Type
+                    </label>
+
+                    <select id="inputType">
+
+                        <option>
+                            DOCX
+                        </option>
+
+                        <option>
+                            PDF
+                        </option>
+
+                        <option>
+                            Text
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        CEFR Level
+                    </label>
+
+                    <select id="level">
+
+                        <option>A1</option>
+                        <option>A2</option>
+                        <option>B1</option>
+                        <option>B2</option>
+                        <option>C1</option>
+                        <option>C2</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Topic
+                    </label>
+
+                    <input id="topic"
+                           type="text"
+                           placeholder="Technology, Education, Environment...">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Requirements
+                    </label>
+
+                    <textarea
+                        id="requirements"
+                        rows="6"
+                        placeholder="Essay requirements, word count, task instructions..."></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    id="createSkillBtn"
+                    class="btn btn-primary">
+
+                    Create Task
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../../assets/js/core/config.js"></script>
+
+    <script src="../../assets/js/core/storage.js"></script>
+
+    <script src="../../assets/js/core/logout.js"></script>
+
+    <script src="../../assets/js/core/router.js"></script>
+
+    <script src="../../assets/js/layout/sidebar.js"></script>
+
+    <script src="../../assets/js/layout/layout.js"></script>
+
+    <script src="../../assets/js/modules/teacher/skills.js"></script>
+
+</body>
+
+</html>

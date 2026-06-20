@@ -99,6 +99,29 @@ location.href =
 
 },
 
+goSkills() {
+
+location.href =
+"/pages/teacher/skills.html";
+
+},
+
+goSkillSubmissions(taskId) {
+
+location.href =
+"/pages/teacher/skill-submissions.html?taskId="
++ taskId;
+
+},
+
+goSkillReview(submissionId) {
+
+location.href =
+"/pages/teacher/skill-review.html?submissionId="
++ submissionId;
+
+},
+
 goReports() {
 
 location.href =
@@ -116,13 +139,6 @@ goStatistics() {
 
 location.href =
 "/pages/teacher/statistics.html";
-
-},
-
-goNotifications() {
-
-location.href =
-"/pages/teacher/notifications.html";
 
 },
 
@@ -188,11 +204,6 @@ goStudentStatistics() {
         "/pages/student/statistics.html";
 },
 
-goStudentNotifications() {
-
-    location.href =
-        "/pages/student/notifications.html";
-},
 /* ================= SHARED ================= */
 
 goProfile() {

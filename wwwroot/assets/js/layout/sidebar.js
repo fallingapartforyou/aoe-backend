@@ -64,6 +64,18 @@ window.Sidebar = {
 
         <button
             class="sidebar-item"
+            onclick="Router.goSkills()">
+
+            <i class="bi bi-pencil-square sidebar-icon"></i>
+
+            <span>
+            Skills
+            </span>
+
+        </button>
+
+        <button
+            class="sidebar-item"
             onclick="Router.goNotifications()">
 
             <i class="bi bi-bell-fill sidebar-icon"></i>
